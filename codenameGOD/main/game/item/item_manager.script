@@ -22,8 +22,8 @@ local function handle_click(url, action_id, action, gameobject)
 			msg.post("/dialogue#dialogue", "show_text", {text=current_item.label, delay=3})
 					
 			if current_item.found == 0 and current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
-				current_item.found = 1 
-					msg.post(
+				current_item.found = 1
+				msg.post(
 					"/dialogue#dialogue",
 					"show_text",
 					{text=current_item.text, delay=4, character="/randall", sound="#Randall_2"}
@@ -169,13 +169,8 @@ function on_message(self, message_id, message, sender)
 		end
 	end
 
-	if message_id == hash("show_coins") then
-		local item = items["coins"]
-		item.status = "show"
-		item.position.x = message.x
-		item.position.y = message.y
+	if message_id == hash("update_visible_items") then
 		update_visible_items(self)
-		msg.post("/sound#6-drawer_opening", "play_sound")
 	end
 end
 

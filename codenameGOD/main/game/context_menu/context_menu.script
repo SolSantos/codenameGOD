@@ -1,0 +1,137 @@
+local inside_gameobject = require("main.inside_gameobject")
+local context_data = require("main.context_data")
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.line_factory = "/context_menu#context_line"
+	self.line_width = 90
+	self.line_height = 30
+
+	self.click_elapsed = 0
+	--[[
+		Minimum time interval between closing and opening again.
+		used to prevent opening acidentally the menu after 
+		clicking one of the lines over the attached item.
+	]]
+	self.min_interval = 0.05
+	
+	self.mouse_x = 0
+	self.mouse_y = 0
+
+	-- Object to which the menu is attached to
+	self.attached_to = nil
+	self.menu = {}
+end
+
+function get_sprite_url(obj)
+	local url = msg.url(obj)
+	url.fragment = "sprite"
+	return url
+end
+
+local function clear_context_menu(self)
+	for i = #self.menu, 1, -1 do
+		go.delete(self.menu[i].item)
+		table.remove(self.menu, i)
+	end
+	self.attached_to = nil
+end
+
+local function clear_highlight(self)
+	for _, line in ipairs(self.menu) do
+		local line_url = get_sprite_url(line.item)
+		go.set(line_url, "tint", vmath.vector4(1, 1, 1, 1))
+	end
+end
+
+local function get_hovered_line(self)
+	for _, line in ipairs(self.menu) do
+		local line_url = get_sprite_url(line.item)
+		if inside_gameobject(line_url, self.mouse_x, self.mouse_y) then
+			return line
+		end
+	end
+	return nil
+end
+
+function final(self)
+	clear_context_menu(self)
+end
+
+function update(self, dt)
+	self.click_elapsed = self.click_elapsed + dt
+	
+	clear_highlight(self)
+	local hovered_line = get_hovered_line(self)
+	if hovered_line then
+		local line_url = get_sprite_url(hovered_line.item)
+		go.set(line_url, "tint", vmath.vector4(0.5, 0.5, 0.5, 1))
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("display_context_menu") then
+		if self.click_elapsed < self.min_interval then
+			return
+		end
+		
+		if self.attached_to == sender then
+			return
+		end
+
+		local entries = context_data[message.extra]
+		if not entries then
+			print("The element "..message.extra.." does not have any context entries")
+			return
+		end
+		
+		clear_context_menu(self)
+
+		--[[ 
+			@TODO(drmargarido): See if there is available space on the side of the 
+			screen to create the menu there. If there isn't change the orientation
+			of the menu. Left side instead of right and maybe go down instead of only up.
+		]]
+		for i, entry in ipairs(entries) do
+			local line_x = message.x + self.line_width / 2
+			local line_y = message.y + self.line_height / 2
+			local y_offset = ((i-1) * self.line_height)
+			local pos = vmath.vector3(line_x, line_y, 0)
+			local new_item = factory.create(self.line_factory, pos , nil, {})
+			local url = msg.url(new_item)
+			go.set(url, "scale.y", 0.2)
+			go.animate(url, "scale.y", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 0.08)
+			go.animate(url, "position.y", go.PLAYBACK_ONCE_FORWARD, line_y + y_offset, go.EASING_LINEAR, i * 0.08)
+			url.fragment = "label"
+			label.set_text(url, entry.text)
+			table.insert(self.menu, {item=new_item, click=entry.click})
+		end
+		self.attached_to = sender
+	end
+end
+
+function on_input(self, action_id, action)
+	self.mouse_x = action.x
+	self.mouse_y = action.y
+
+	if action_id == hash("click") and action.pressed then
+		local hovered_line = get_hovered_line(self)
+		if not hovered_line then
+			if self.attached_to then
+				local attached_url = get_sprite_url(self.attached_to)
+				local inside_attached = inside_gameobject(
+					attached_url, self.mouse_x, self.mouse_y
+				)
+				if not inside_attached then
+					clear_context_menu(self)
+				end
+			end
+			return
+		end
+
+		-- @TODO(drmargarido) add sound for the hover and click of lines
+		hovered_line.click(self.mouse_x, self.mouse_y)
+		clear_context_menu(self)
+		self.click_elapsed = 0
+	end
+end

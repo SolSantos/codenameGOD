@@ -17,13 +17,23 @@ instances {
     id: "clickable_area"
     properties {
       id: "event"
-      value: "show_coins"
+      value: "display_context_menu"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "target"
-      value: "/item_manager"
+      value: "/context_menu#context_menu"
       type: PROPERTY_TYPE_URL
+    }
+    properties {
+      id: "use_once"
+      value: "false"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "extra"
+      value: "drawer"
+      type: PROPERTY_TYPE_HASH
     }
   }
   scale3 {
@@ -111,18 +121,23 @@ instances {
     id: "clickable_area"
     properties {
       id: "event"
-      value: "click_telescope"
+      value: "display_context_menu"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "target"
-      value: "main"
+      value: "/context_menu#context_menu"
       type: PROPERTY_TYPE_URL
     }
     properties {
       id: "use_once"
       value: "false"
       type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "extra"
+      value: "telescope"
+      type: PROPERTY_TYPE_HASH
     }
   }
   scale3 {
