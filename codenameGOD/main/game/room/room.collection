@@ -76,34 +76,6 @@ instances {
   }
 }
 instances {
-  id: "arrow"
-  prototype: "/main/game/arrow.go"
-  position {
-    x: 967.0
-    y: 407.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "arrow"
-    properties {
-      id: "target"
-      value: "2.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
-  scale3 {
-    x: 0.7
-    y: 1.1
-    z: 1.0
-  }
-}
-instances {
   id: "telescope_clickable"
   prototype: "/main/game/clickable_area/clickable_area.go"
   position {
@@ -247,31 +219,36 @@ instances {
   prototype: "/main/game/clickable_area/clickable_area.go"
   position {
     x: 964.0
-    y: 405.0
+    y: 409.0
     z: 0.0
   }
   rotation {
-    x: 0.0
+    x: -0.00500328
     y: 0.0
     z: 0.0
-    w: 1.0
+    w: 0.9999875
   }
   component_properties {
     id: "clickable_area"
     properties {
       id: "event"
-      value: "cant_leave"
+      value: "display_context_menu"
       type: PROPERTY_TYPE_HASH
     }
     properties {
       id: "target"
-      value: "main"
+      value: "/context_menu#context_menu"
       type: PROPERTY_TYPE_URL
     }
     properties {
       id: "use_once"
       value: "false"
       type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "extra"
+      value: "room_door"
+      type: PROPERTY_TYPE_HASH
     }
   }
   scale3 {

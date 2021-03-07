@@ -5,8 +5,8 @@ local has_ticket = 0
 local solved_puzzle = false
 local inside_gameobject = require "main.inside_gameobject"
 local room_url
-local arrow_url
 local inv_arrow_url
+local door_sound_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -44,17 +44,11 @@ local item_strings = {
 	}
 }
 
-local show_text = function(text)
-	return function()
-		msg.post("/dialogue#dialogue", "show_text", {text=text})
-	end
-end
-
 context_data[hash("telescope")] = {
-	{text="Inspect", click=show_text("This is a telescope.")}
+	{text="Inspect", click="This is a telescope."}
 }
 context_data[hash("drawer")] = {
-	{text="Inspect", click=show_text("This is the drawer were I hide my money. Shhh...")},
+	{text="Inspect", click="This is the drawer were I hide my money. Shhh..."},
 	{text="Open", click=function(x, y)
 		local item = items["coins"]
 		item.status = "show"
@@ -62,6 +56,34 @@ context_data[hash("drawer")] = {
 		item.position.y = y
 		msg.post("/item_manager#item_manager", "update_visible_items")
 		msg.post("/sound#6-drawer_opening", "play_sound")
+	end}
+}
+context_data[hash("room_door")] = {
+	{text="Inspect", click="Hey im a door!"},
+	{text="Go Out", click=function(x, y)
+		if door_hint_timer <= DOOR_HINT_DELAY then
+			return
+		end
+
+		if gamestate == 3 then
+			msg.post("/collections#main", "load_screen", {
+				name = "house_front",
+				pos = vmath.vector3(222,211,0.4)
+			})
+			msg.post(door_sound_url, "play_sound")
+			return
+		end
+
+		if gamestate ~= 1 and gamestate ~= 2 then
+			return
+		end
+
+		if has_ticket >= 1 then
+			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
+		else
+			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
+		end
+		door_hint_timer = 0
 	end}
 }
 
@@ -90,8 +112,6 @@ end
 
 function init(self)
 	if gamestate == 0 then
-		msg.post("arrow", "disable")
-		msg.post("arrow", "release_input_focus")
 		msg.post(".", "run_sequence_0")
 	else
 		msg.post(".", "moved")
@@ -100,7 +120,7 @@ function init(self)
 	msg.post(inv_arrow_url, "disable")
 	msg.post("sound#ambiance", "play_sound")
 	room_url = msg.url()
-	arrow_url = msg.url("arrow")
+	door_sound_url = msg.url("sound#8-door_knob")
 end
 
 function final(self)
@@ -124,10 +144,6 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("click_nes") then
 		msg.post("/dialogue#dialogue", "show_text", {text="It's a Nintendo. \nTop of the line gaming technology!"})
-	end
-
-	if message_id == hash("click_telescope") then
-		msg.post("/dialogue#dialogue", "show_text", {text="This is a telescope."})
 	end
 
 	if message_id == hash("run_sequence_0") then
@@ -251,8 +267,6 @@ function on_message(self, message_id, message, sender)
 		end)
 		event_manager:register_event(4, function(self, id)
 			msg.post(room_url, "acquire_input_focus")
-			msg.post(arrow_url, "enable")
-			msg.post(arrow_url, "acquire_input_focus")
 		end)
 		gamestate = 3
 	end
