@@ -86,7 +86,7 @@ function on_message(self, message_id, message, sender)
 			return
 		end
 
-		local entries = context_data[message.extra]
+		local entries = context_data[message.context_key]
 		if not entries then
 			print("The element "..message.extra.." does not have any context entries")
 			return

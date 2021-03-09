@@ -1,7 +1,83 @@
 name: "main"
 instances {
+  id: "inventory_arrow"
+  prototype: "/main/game/inventory_arrow.go"
+  position {
+    x: 364.0
+    y: 89.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 0.11
+    y: 0.121
+    z: 1.0
+  }
+}
+instances {
+  id: "telescope_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 116.0
+    y: 168.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "telescope"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.5
+    y: 1.5
+    z: 1.0
+  }
+}
+instances {
+  id: "door_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 964.0
+    y: 409.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "room_door"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.3
+    y: 2.2
+    z: 1.0
+  }
+}
+instances {
   id: "drawer_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
+  prototype: "/main/game/clickable_area/context_area.go"
   position {
     x: 784.0
     y: 241.0
@@ -14,24 +90,9 @@ instances {
     w: 1.0
   }
   component_properties {
-    id: "clickable_area"
+    id: "context_area"
     properties {
-      id: "event"
-      value: "display_context_menu"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "/context_menu#context_menu"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-    properties {
-      id: "extra"
+      id: "context_key"
       value: "drawer"
       type: PROPERTY_TYPE_HASH
     }
@@ -39,6 +100,62 @@ instances {
   scale3 {
     x: 1.0
     y: 0.3
+    z: 1.0
+  }
+}
+instances {
+  id: "nes_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 612.0
+    y: 30.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "nes"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.2
+    y: 0.6
+    z: 1.0
+  }
+}
+instances {
+  id: "tv_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 836.0
+    y: 49.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "tv"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 2.0
+    y: 1.0
     z: 1.0
   }
 }
@@ -72,188 +189,6 @@ instances {
   scale3 {
     x: 0.45
     y: 0.65
-    z: 1.0
-  }
-}
-instances {
-  id: "telescope_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 116.0
-    y: 168.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "display_context_menu"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "/context_menu#context_menu"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-    properties {
-      id: "extra"
-      value: "telescope"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-  scale3 {
-    x: 1.5
-    y: 1.5
-    z: 1.0
-  }
-}
-instances {
-  id: "nes_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 612.0
-    y: 30.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_nes"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 1.2
-    y: 0.6
-    z: 1.0
-  }
-}
-instances {
-  id: "tv_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 836.0
-    y: 49.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_tv"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 2.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "inventory_arrow"
-  prototype: "/main/game/inventory_arrow.go"
-  position {
-    x: 364.0
-    y: 89.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 0.11
-    y: 0.121
-    z: 1.0
-  }
-}
-instances {
-  id: "door_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 964.0
-    y: 409.0
-    z: 0.0
-  }
-  rotation {
-    x: -0.00500328
-    y: 0.0
-    z: 0.0
-    w: 0.9999875
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "display_context_menu"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "/context_menu#context_menu"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-    properties {
-      id: "extra"
-      value: "room_door"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-  scale3 {
-    x: 1.3
-    y: 2.2
     z: 1.0
   }
 }
