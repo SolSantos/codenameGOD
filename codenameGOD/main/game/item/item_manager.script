@@ -185,6 +185,7 @@ function on_input(self, action_id, action)
 		mouse_y = action.y
 		if current_item then
 			msg.post("/inventory", "item_drag", {x=action.x, y=action.y})
+			msg.post("/collections","send_collection", {name = "inventory_arrow"})
 		end
 	end
 

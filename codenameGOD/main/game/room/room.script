@@ -9,6 +9,7 @@ local arrow_url
 local inv_arrow_url
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
+local game_state = require("main.game_state")
 
 local item_strings = {
 	[1] = {
@@ -242,6 +243,30 @@ function on_message(self, message_id, message, sender)
 		go.animate("books", "rotation", go.PLAYBACK_ONCE_FORWARD, vmath.quat_rotation_z(math.rad(-90)), go.EASING_LINEAR, 0.4, 0, function(self, url, property)
 			msg.post("sound#7-books_falling", "play_sound")
 			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="There's the ticket! \nNow, where to put it...", character = "/randall", sound="#Randall_4"})
+			timer.delay(4, false, function(self, id)
+				msg.post("/dialogue#dialogue", "show_text", {delay = 2, text="Oh.", character = "/randall"})
+			end)
+
+		end)
+	end
+
+	if message_id == hash("cant_leave") then
+		if door_hint_timer > DOOR_HINT_DELAY then
+			if gamestate > 0 and gamestate < 3 then
+				if has_ticket >= 1 then
+					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
+				else
+					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
+				end
+				door_hint_timer = 0
+			end
+		end
+	end
+
+	if message_id == hash("inventory_arrow") then
+		if not game_state.first_item_picked then
+			game_state.first_item_picked = true
+			
 			timer.delay(2, false, function(self, id)
 				msg.post(inv_arrow_url, "enable")
 			end)
@@ -258,23 +283,8 @@ function on_message(self, message_id, message, sender)
 				msg.post(inv_arrow_url, "enable")
 			end)
 			timer.delay(4, false, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay = 2, text="Oh.", character = "/randall"})
 				msg.post(inv_arrow_url, "disable")
 			end)
-
-		end)
-	end
-
-	if message_id == hash("cant_leave") then
-		if door_hint_timer > DOOR_HINT_DELAY then
-			if gamestate > 0 and gamestate < 3 then
-				if has_ticket >= 1 then
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
-				else
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
-				end
-				door_hint_timer = 0
-			end
 		end
 	end
 end
