@@ -1,5 +1,6 @@
 local goput = require "main.clickinput"
 local items = require("main.game.item.items")
+local context_data = require("main.context_data")
 local mouse_x, mouse_y
 local current_item = nil
 
@@ -11,6 +12,11 @@ function init(self)
 	-- No item starts inside the inventory
 	for name, item in pairs(items) do
 		item.in_inventory = false
+
+		-- Register context menu for each item
+		context_data["item_"..item.name] = {
+			{text="Inspect", click=item.label}
+		}
 	end
 end
 
@@ -49,6 +55,18 @@ local function handle_click(url, action_id, action, gameobject)
 				current_item = nil
 			end
 		end
+	end
+
+	if action_id == hash("right_click") and action.pressed then
+		local pressed_item = items[gameobject]
+		local key = "item_"..pressed_item.name
+		local url = msg.url(pressed_item.go)
+		url.fragment = "sprite"
+		msg.post(
+			"/context_menu#context_menu", 
+			"display_context_menu", 
+			{x=action.x, y=action.y, context_key=key, area_url=url}
+		)
 	end
 end
 
