@@ -73,7 +73,12 @@ function update(self, dt)
 	if hovered_line then
 		local line_url = get_sprite_url(hovered_line.item)
 		go.set(line_url, "tint", vmath.vector4(0.5, 0.5, 0.5, 1))
+
+		if hovered_line ~= self.last_hovered then
+			msg.post("/sound#context_hover_line", "play_sound", {gain = 0.02})
+		end
 	end
+	self.last_hovered = hovered_line
 end
 
 function on_message(self, message_id, message, sender)
