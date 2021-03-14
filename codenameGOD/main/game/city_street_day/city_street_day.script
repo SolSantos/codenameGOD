@@ -1,6 +1,7 @@
 local inside_gameobject = require "main.inside_gameobject"
 local update_time = 0
 local MOVE_AROUND_TIME = 20
+local metal_hit_url
 local city_url
 
 local bully1_url
@@ -8,6 +9,15 @@ local bully2_url
 local bully3_url
 
 local push_sound_url
+
+local context_data = require("main.context_data")
+context_data[hash("city_street_trash")] = {
+	{text="Inspect", click="Trash cans on the side of the road."},
+	{text="Hit", click=function()
+		msg.post(metal_hit_url, "play_sound")
+		msg.post(city_url, "bully_escape")
+	end}
+}
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -20,6 +30,7 @@ function init(self)
 	bully2_url = msg.url("bully2")
 	bully3_url = msg.url("bully3")
 	push_sound_url = msg.url("sound#9-push")
+	metal_hit_url = msg.url("sound#11-metal_hit")
 end
 
 function final(self)
@@ -127,9 +138,6 @@ function on_message(self, message_id, message, sender)
 			msg.post("sound#10-hit", "play_sound")
 			msg.post(city_url, "bully_escape")
 		end
-	elseif message_id == hash("trash_hit") then
-		msg.post("sound#11-metal_hit", "play_sound")
-		msg.post(city_url, "bully_escape")
 	elseif message_id == hash("bully_escape") then
 
 		msg.post("/collections#main", "stop_game")

@@ -61,7 +61,7 @@ instances {
 }
 instances {
   id: "trash_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
+  prototype: "/main/game/clickable_area/context_area.go"
   position {
     x: 453.0
     y: 217.0
@@ -74,16 +74,11 @@ instances {
     w: 1.0
   }
   component_properties {
-    id: "clickable_area"
+    id: "context_area"
     properties {
-      id: "event"
-      value: "trash_hit"
+      id: "context_key"
+      value: "city_street_trash"
       type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
     }
   }
   scale3 {
@@ -230,17 +225,9 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
-  "embedded_components {\n"
+  "components {\n"
   "  id: \"ambiance\"\n"
-  "  type: \"sound\"\n"
-  "  data: \"sound: \\\"/assets/sounds/5-City Ambience.wav\\\"\\n"
-  "looping: 1\\n"
-  "group: \\\"master\\\"\\n"
-  "gain: 1.0\\n"
-  "pan: 0.0\\n"
-  "speed: 1.0\\n"
-  "loopcount: 0\\n"
-  "\"\n"
+  "  component: \"/assets/sounds/5-City Ambience.wav\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -253,17 +240,9 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
-  "embedded_components {\n"
+  "components {\n"
   "  id: \"Bullies_Theme_verse\"\n"
-  "  type: \"sound\"\n"
-  "  data: \"sound: \\\"/assets/sounds/Bullies_Theme_verse.wav\\\"\\n"
-  "looping: 1\\n"
-  "group: \\\"master\\\"\\n"
-  "gain: 1.0\\n"
-  "pan: 0.0\\n"
-  "speed: 1.0\\n"
-  "loopcount: 0\\n"
-  "\"\n"
+  "  component: \"/assets/sounds/Bullies_Theme_verse.wav\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

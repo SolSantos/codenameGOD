@@ -1,213 +1,5 @@
 name: "main"
 instances {
-  id: "drawer_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 784.0
-    y: 241.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "show_coins"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "/item_manager"
-      type: PROPERTY_TYPE_URL
-    }
-  }
-  scale3 {
-    x: 1.0
-    y: 0.3
-    z: 1.0
-  }
-}
-instances {
-  id: "books_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 252.0
-    y: 361.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "show_ticket"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-  }
-  scale3 {
-    x: 0.45
-    y: 0.65
-    z: 1.0
-  }
-}
-instances {
-  id: "arrow"
-  prototype: "/main/game/arrow.go"
-  position {
-    x: 967.0
-    y: 407.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "arrow"
-    properties {
-      id: "target"
-      value: "2.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
-  scale3 {
-    x: 0.7
-    y: 1.1
-    z: 1.0
-  }
-}
-instances {
-  id: "telescope_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 116.0
-    y: 168.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_telescope"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 1.5
-    y: 1.5
-    z: 1.0
-  }
-}
-instances {
-  id: "nes_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 612.0
-    y: 30.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_nes"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 1.2
-    y: 0.6
-    z: 1.0
-  }
-}
-instances {
-  id: "tv_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 836.0
-    y: 49.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_tv"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 2.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
   id: "inventory_arrow"
   prototype: "/main/game/inventory_arrow.go"
   position {
@@ -228,11 +20,11 @@ instances {
   }
 }
 instances {
-  id: "door_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
+  id: "telescope_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
   position {
-    x: 964.0
-    y: 405.0
+    x: 116.0
+    y: 168.0
     z: 0.0
   }
   rotation {
@@ -242,26 +34,156 @@ instances {
     w: 1.0
   }
   component_properties {
-    id: "clickable_area"
+    id: "context_area"
     properties {
-      id: "event"
-      value: "cant_leave"
+      id: "context_key"
+      value: "telescope"
       type: PROPERTY_TYPE_HASH
     }
+  }
+  scale3 {
+    x: 1.5
+    y: 1.5
+    z: 1.0
+  }
+}
+instances {
+  id: "door_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 964.0
+    y: 409.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
     properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
+      id: "context_key"
+      value: "room_door"
+      type: PROPERTY_TYPE_HASH
     }
   }
   scale3 {
     x: 1.3
     y: 2.2
+    z: 1.0
+  }
+}
+instances {
+  id: "drawer_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 784.0
+    y: 241.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "drawer"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.0
+    y: 0.3
+    z: 1.0
+  }
+}
+instances {
+  id: "nes_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 612.0
+    y: 30.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "nes"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.2
+    y: 0.6
+    z: 1.0
+  }
+}
+instances {
+  id: "tv_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 836.0
+    y: 49.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "tv"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 2.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "books_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 252.0
+    y: 361.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "books"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 0.45
+    y: 0.65
     z: 1.0
   }
 }
@@ -413,17 +335,9 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
-  "embedded_components {\n"
+  "components {\n"
   "  id: \"ambiance\"\n"
-  "  type: \"sound\"\n"
-  "  data: \"sound: \\\"/assets/sounds/3-Room Ambience.wav\\\"\\n"
-  "looping: 1\\n"
-  "group: \\\"master\\\"\\n"
-  "gain: 1.0\\n"
-  "pan: 0.0\\n"
-  "speed: 1.0\\n"
-  "loopcount: 0\\n"
-  "\"\n"
+  "  component: \"/assets/sounds/3-Room Ambience.wav\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
