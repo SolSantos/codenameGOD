@@ -10,7 +10,8 @@ return {
 		scenario = "room",
 		status = "show",
 		found = 0,
-		label = "A friendly pet rock."
+		label = "A friendly pet rock.",
+		movable = true
 	},
 	coins = {
 		name = "coins",
@@ -20,7 +21,8 @@ return {
 		scenario = "room",
 		status = "hide",
 		found = 0,
-		label = "Some coins."
+		label = "Some coins.",
+		movable = true
 	},
 	ticket = {
 		name = "ticket",
@@ -30,7 +32,8 @@ return {
 		scenario = "room",
 		status = "show",
 		found = 0,
-		label = "A ticket."
+		label = "A ticket.",
+		movable = true
 	},
 	shoe1 = {
 		name = "shoe1",
@@ -40,7 +43,8 @@ return {
 		scenario = "room",
 		status = "show",
 		found = 0,
-		label = "This is the left shoe."
+		label = "This is the left shoe.",
+		movable = true
 	},
 	shoe2 = {
 		name = "shoe2",
@@ -50,7 +54,8 @@ return {
 		scenario = "room",
 		status = "show",
 		found = 0,
-		label = "This is the right shoe."
+		label = "This is the right shoe.",
+		movable = true
 	}
 	-- END OF ROOM ITEMS
 }

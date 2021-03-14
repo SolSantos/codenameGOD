@@ -1,137 +1,5 @@
 name: "default"
 instances {
-  id: "arrow"
-  prototype: "/main/game/arrow.go"
-  position {
-    x: 833.0
-    y: 330.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 1.0
-    w: 6.123234E-17
-  }
-  component_properties {
-    id: "arrow"
-    properties {
-      id: "target"
-      value: "3.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
-  scale3 {
-    x: 0.6
-    y: 0.25
-    z: 1.0
-  }
-}
-instances {
-  id: "arrow_room"
-  prototype: "/main/game/arrow.go"
-  position {
-    x: 190.0
-    y: 319.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.70710677
-    w: -0.70710677
-  }
-  component_properties {
-    id: "arrow"
-    properties {
-      id: "target"
-      value: "1.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
-  scale3 {
-    x: 0.8
-    y: 0.55
-    z: 1.0
-  }
-}
-instances {
-  id: "trash_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 911.0
-    y: 169.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_trash"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 1.5
-    y: 1.1
-    z: 1.0
-  }
-}
-instances {
-  id: "sky_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
-  position {
-    x: 911.0
-    y: 459.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "clickable_area"
-    properties {
-      id: "event"
-      value: "click_sky"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
-    }
-    properties {
-      id: "use_once"
-      value: "false"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-  }
-  scale3 {
-    x: 2.294
-    y: 1.993
-    z: 1.0
-  }
-}
-instances {
   id: "bike_clickable"
   prototype: "/main/game/clickable_area/context_area.go"
   position {
@@ -156,6 +24,118 @@ instances {
   scale3 {
     x: 1.4
     y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "sky_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 911.0
+    y: 459.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "sky"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 2.294
+    y: 1.993
+    z: 1.0
+  }
+}
+instances {
+  id: "trash_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 911.0
+    y: 169.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "trash"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.5
+    y: 1.1
+    z: 1.0
+  }
+}
+instances {
+  id: "city_street_arrow"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 833.0
+    y: 330.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "city_street_arrow"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.25
+    y: 0.45
+    z: 1.0
+  }
+}
+instances {
+  id: "back_to_room_door"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 190.0
+    y: 319.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "back_to_room_door"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.1
+    y: 1.55
     z: 1.0
   }
 }

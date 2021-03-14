@@ -17,7 +17,12 @@ end
 local function handle_click(url, action_id, action, gameobject)
 	if action_id == hash("click") then
 		if action.pressed then
-			current_item = items[gameobject]
+			local pressed_item = items[gameobject]
+			if not pressed_item.movable then
+				return
+			end
+			
+			current_item = pressed_item
 
 			msg.post("/dialogue#dialogue", "show_text", {text=current_item.label, delay=3})
 					

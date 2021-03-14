@@ -82,7 +82,7 @@ function on_message(self, message_id, message, sender)
 			return
 		end
 		
-		if self.attached_to == sender then
+		if self.attached_to == message.area_url then
 			return
 		end
 
@@ -109,7 +109,7 @@ function on_message(self, message_id, message, sender)
 			local line_x = message.x + (self.line_width / 2 * h_orientation)
 			local line_y = message.y + (self.line_height / 2 * v_orientation)
 			local y_offset = ((i-1) * self.line_height) * v_orientation
-			local pos = vmath.vector3(line_x, line_y, 0)
+			local pos = vmath.vector3(line_x, line_y, 1)
 			local new_item = factory.create(self.line_factory, pos , nil, {})
 			local url = msg.url(new_item)
 			go.set(url, "scale.y", 0.2)
@@ -119,7 +119,7 @@ function on_message(self, message_id, message, sender)
 			label.set_text(url, entry.text)
 			table.insert(self.menu, {item=new_item, click=entry.click})
 		end
-		self.attached_to = sender
+		self.attached_to = message.area_url
 	end
 end
 

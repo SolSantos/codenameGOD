@@ -161,7 +161,7 @@ instances {
 }
 instances {
   id: "books_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
+  prototype: "/main/game/clickable_area/context_area.go"
   position {
     x: 252.0
     y: 361.0
@@ -174,16 +174,11 @@ instances {
     w: 1.0
   }
   component_properties {
-    id: "clickable_area"
+    id: "context_area"
     properties {
-      id: "event"
-      value: "show_ticket"
+      id: "context_key"
+      value: "books"
       type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
     }
   }
   scale3 {

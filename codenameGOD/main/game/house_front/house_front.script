@@ -16,6 +16,31 @@ local item_strings = {
 context_data[hash("broke_bike")] = {
 	{text="Inspect", click="A useless bike. Who designed this?"}
 }
+context_data[hash("trash")] = {
+	{text="Inspect", click="Trash cans."}
+}
+context_data[hash("sky")] = {
+	{text="Inspect", click="Beautiful sky today."}
+}
+context_data[hash("back_to_room_door")] = {
+	{text="Inspect", click="My house door."},
+	{text="Go", click=function()
+		msg.post("/collections#main", "load_screen", {
+			name = "room",
+			pos = vmath.vector3(422,311,0.4)
+		})
+		msg.post("sound#8-door_knob", "play_sound")
+	end}
+}
+context_data[hash("city_street_arrow")] = {
+	{text="Inspect", click="City Street Road."},
+	{text="Go", click=function()
+		msg.post("/collections#main", "load_screen", {
+			name = "city_street_day",
+			pos = vmath.vector3(200,211,0.4)
+		})
+	end}
+}
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -62,13 +87,5 @@ function on_message(self, message_id, message, sender)
 	
 	if message_id == hash("moved") then
 		update_time = 0
-	end
-
-	if message_id == hash("click_sky") then
-		msg.post("/dialogue#dialogue", "show_text", {text="Beautiful sky today."})
-	end
-
-	if message_id == hash("click_trash") then
-		msg.post("/dialogue#dialogue", "show_text", {text="Trash cans."})
 	end
 end

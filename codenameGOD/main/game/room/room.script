@@ -7,6 +7,7 @@ local inside_gameobject = require "main.inside_gameobject"
 local room_url
 local inv_arrow_url
 local door_sound_url = nil
+local books_context_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -44,60 +45,71 @@ local item_strings = {
 	}
 }
 
-context_data[hash("telescope")] = {
-	{text="Inspect", click="This is a telescope."}
-}
-context_data[hash("drawer")] = {
-	{text="Inspect", click="This is the drawer were I hide my money. Shhh..."},
-	{text="Open", click=function(x, y)
-		local item = items["coins"]
-		item.status = "show"
-		item.position.x = x
-		item.position.y = y
-		msg.post("/item_manager#item_manager", "update_visible_items")
-		msg.post("/sound#6-drawer_opening", "play_sound")
-	end}
-}
-context_data[hash("room_door")] = {
-	{text="Inspect", click="Hey im a door!"},
-	{text="Go Out", click=function(x, y)
-		if door_hint_timer <= DOOR_HINT_DELAY then
-			return
-		end
 
-		if gamestate == 3 then
-			msg.post("/collections#main", "load_screen", {
-				name = "house_front",
-				pos = vmath.vector3(222,211,0.4)
-			})
-			msg.post(door_sound_url, "play_sound")
-			return
-		end
+local update_context_entries
+update_context_entries = function()
+	context_data[hash("telescope")] = {
+		{text="Inspect", click="This is a telescope."}
+	}
+	context_data[hash("drawer")] = {
+		{text="Inspect", click="This is the drawer were I hide my money. Shhh..."}
+	}
+	if not game_state.drawer_opened then
+		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
+			game_state.drawer_opened = true
+			msg.post("/sound#6-drawer_opening", "play_sound")
+			local item = items["coins"]
+			item.status = "show"
+			item.position.x = x
+			item.position.y = y
+			msg.post("/item_manager#item_manager", "update_visible_items")
+			update_context_entries()
+		end})
+	end
+	context_data[hash("room_door")] = {
+		{text="Inspect", click="Door to the outside."},
+		{text="Go Out", click=function(x, y)
+			if door_hint_timer <= DOOR_HINT_DELAY then
+				return
+			end
 
-		if gamestate ~= 1 and gamestate ~= 2 then
-			return
-		end
+			if gamestate == 3 then
+				msg.post("/collections#main", "load_screen", {
+					name = "house_front",
+					pos = vmath.vector3(222,211,0.4)
+				})
+				msg.post(door_sound_url, "play_sound")
+				return
+			end
 
-		if has_ticket >= 1 then
-			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
-		else
-			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
-		end
-		door_hint_timer = 0
-	end}
-}
-context_data[hash("nes")] = {
-	{text="Inspect", click="It's a Nintendo. \nTop of the line gaming technology!"}
-}
-context_data[hash("tv")] = {
-	{text="Inspect", click="Just your average TV."}
-}
-context_data[hash("books")] = {
-	{text="Inspect", click="Pretty sure I was using my ticket as a\nbookmark last night"},
-	{text="Move",    click=function()
-		msg.post(room_url, "show_ticket")
-	end}
-}
+			if gamestate ~= 1 and gamestate ~= 2 then
+				return
+			end
+
+			if has_ticket >= 1 then
+				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
+			else
+				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
+			end
+			door_hint_timer = 0
+		end}
+	}
+	context_data[hash("nes")] = {
+		{text="Inspect", click="It's a Nintendo. \nTop of the line gaming technology!"}
+	}
+	context_data[hash("tv")] = {
+		{text="Inspect", click="Just your average TV."}
+	}
+	context_data[hash("books")] = {
+		{text="Inspect", click="Pretty sure I was using my ticket as a\nbookmark last night"},
+		{text="Move",    click=function()
+			msg.post(room_url, "show_ticket")
+			items.ticket.movable = true
+			game_state.ticket_moved = true
+			go.delete(books_context_url)
+		end}
+	}
+end
 
 function update(self, dt)
 	update_time = update_time + dt
@@ -137,6 +149,13 @@ function init(self)
 	if items.ticket.found == 0 then
 		msg.post("", "disable")
 	end
+
+	update_context_entries()
+	if not game_state.ticket_moved then 
+		items.ticket.movable = false
+	end
+
+	books_context_url = msg.url("books_clickable")
 end
 
 function final(self)
@@ -287,11 +306,12 @@ function on_message(self, message_id, message, sender)
 		go.animate("books", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(252,212,0.1), go.EASING_LINEAR, 0.4)
 		go.animate("books", "rotation", go.PLAYBACK_ONCE_FORWARD, vmath.quat_rotation_z(math.rad(-90)), go.EASING_LINEAR, 0.4, 0, function(self, url, property)
 			msg.post("sound#7-books_falling", "play_sound")
-			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="There's the ticket! \nNow, where to put it...", character = "/randall", sound="#Randall_4"})
-			timer.delay(4, false, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay = 2, text="Oh.", character = "/randall"})
-			end)
-
+			if not game_state.ticket_moved then
+				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="There's the ticket! \nNow, where to put it...", character = "/randall", sound="#Randall_4"})
+				timer.delay(4, false, function(self, id)
+					msg.post("/dialogue#dialogue", "show_text", {delay = 2, text="Oh.", character = "/randall"})
+				end)
+			end
 		end)
 	end
 

@@ -1,34 +1,35 @@
 local inside_gameobject = require("main.inside_gameobject")
+local goput = require("main.clickinput")
 go.property("context_key", hash(""))
 
+function handle_input(url, action_id, action, key)
+	if action_id == hash("click") and action.pressed then
+		msg.post(
+			"/context_menu#context_menu", 
+			"display_context_menu", 
+			{x=action.x, y=action.y, context_key=key, area_url=url}
+		)
+	end
+end
+
 function init(self)
-	msg.post(".", "acquire_input_focus")
+	self.sprite_url = msg.url()
+	self.sprite_url.fragment = "sprite"
+	goput.add(self.sprite_url, nil, handle_input, self.context_key)
 	msg.post("/clickable_area_manager", "register_area")
 end
 
 function final(self)
-	msg.post(".", "release_input_focus")
 	msg.post("/clickable_area_manager", "unregister_area")
-end
-
-function on_input(self, action_id, action)
-	if action_id == hash("click") and action.pressed then
-		if inside_gameobject("#sprite", action.x, action.y) then
-			msg.post(
-				"/context_menu#context_menu", 
-				"display_context_menu", 
-				{x=action.x, y=action.y, context_key=self.context_key}
-			)
-		end
-	end
+	goput.remove(self.sprite_url)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("stop_game") then
-		msg.post(".", "release_input_focus")
+		goput.remove(self.sprite_url)
 	end
 
 	if message_id == hash("restart_game") then
-		msg.post(".", "acquire_input_focus")
+		goput.add(self.sprite_url, nil, handle_input, self.context_key)
 	end
 end
