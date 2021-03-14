@@ -61,7 +61,7 @@ instances {
 }
 instances {
   id: "trash_clickable"
-  prototype: "/main/game/clickable_area/clickable_area.go"
+  prototype: "/main/game/clickable_area/context_area.go"
   position {
     x: 453.0
     y: 217.0
@@ -74,16 +74,11 @@ instances {
     w: 1.0
   }
   component_properties {
-    id: "clickable_area"
+    id: "context_area"
     properties {
-      id: "event"
-      value: "trash_hit"
+      id: "context_key"
+      value: "city_street_trash"
       type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "target"
-      value: "main"
-      type: PROPERTY_TYPE_URL
     }
   }
   scale3 {
