@@ -79,7 +79,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("hint") then
-		if gamestate == 3 then
+		if game_state.in_gameplay then
 			msg.post("/dialogue#dialogue", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
 		end
 		msg.post(".", "moved")

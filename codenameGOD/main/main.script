@@ -1,4 +1,3 @@
-gamestate = 0
 hint_count = 0
 event_manager = require "main.event_manager"
 
