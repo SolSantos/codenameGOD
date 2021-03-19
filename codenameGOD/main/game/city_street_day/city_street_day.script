@@ -28,7 +28,7 @@ context_data[hash("city_street_trash")] = {
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	if game_state.has_ticket then
+	if game_state.allowed_leave then
 		msg.post(".", "bully_sequence_0")
 	end
 	msg.post("sound#ambiance", "play_sound")
@@ -109,7 +109,7 @@ function on_message(self, message_id, message, sender)
 				msg.post("/dialogue#Bullies_3", "play_sound")
 			end)
 		end)
-		game_state.has_ticket = false
+		game_state.allowed_leave = false
 		
 		event_manager:register_event(4, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=2, text="Please no!!", character = "randall", sound="#Randall_panic1", skip=true})
@@ -194,25 +194,23 @@ function on_message(self, message_id, message, sender)
 		end)
 		
 	elseif message_id == hash("bully_trash_warning") then
-		math.random(); math.random(); math.random()
 		local r = math.random(1,3)
 		if r == 1 then
-			event_manager:register_event(1, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "IS THERE SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_5", skip=false})
+			event_manager:register_event(0.04, function(self, id)
+				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4", skip=true})
 			end)
 		elseif r==2 then
-			event_manager:register_event(1, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "BRO THAT SCARED ME BRO", character = bully2_url, sound="#Bullies_5", skip=false})
+			event_manager:register_event(0.04, function(self, id)
+				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5", skip=true})
 			end)
 
 		else
-			event_manager:register_event(1, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "AH I DIDNT BRING EXTRA UNDIES", character = bully2_url, sound="#Bullies_5", skip=false})
+			event_manager:register_event(0.04, function(self, id)
+				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4", skip=true})
 			end)
 		end
 	
 	elseif message_id == hash("idle") then
-		math.random(); math.random(); math.random()
 		local r = math.random(1,#item_strings)
 		msg.post("/randall", "go_to", {
 			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2), 
