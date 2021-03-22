@@ -8,6 +8,7 @@ local room_url
 local inv_arrow_url
 local door_sound_url = nil
 local books_context_url = nil
+local drawer_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -58,6 +59,7 @@ update_context_entries = function()
 		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
 			game_state.drawer_opened = true
 			msg.post("/sound#6-drawer_opening", "play_sound")
+			msg.post(drawer_url, "play_animation", {id = hash("open_drawer")})
 			local item = items["coins"]
 			item.status = "show"
 			item.position.x = x
@@ -145,7 +147,8 @@ function init(self)
 	msg.post("sound#ambiance", "play_sound")
 	room_url = msg.url()
 	door_sound_url = msg.url("sound#8-door_knob")
-
+	drawer_url = msg.url("drawer#sprite")
+	
 	if items.ticket.found == 0 then
 		msg.post("", "disable")
 	end
