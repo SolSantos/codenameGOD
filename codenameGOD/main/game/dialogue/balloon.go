@@ -48,7 +48,7 @@ embedded_components {
   "}\n"
   "leading: 1.0\n"
   "tracking: 0.0\n"
-  "pivot: PIVOT_NW\n"
+  "pivot: PIVOT_CENTER\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: true\n"
   "text: \"Default\"\n"
@@ -56,8 +56,8 @@ embedded_components {
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
-    x: -214.0
-    y: 71.0
+    x: 2.0
+    y: -19.0
     z: 0.0
   }
   rotation {
@@ -71,7 +71,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/assets/balloon.atlas\"\n"
-  "default_animation: \"balloon1\"\n"
+  "default_animation: \"balloon2\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""

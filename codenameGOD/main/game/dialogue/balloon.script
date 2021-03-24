@@ -1,17 +1,50 @@
+local utils = require("main.game.dialogue.utils")
+local get_visible_text = utils.get_visible_text
+
+local ORIENTATION = {UP=1, DOWN=2, LEFT=3, RIGHT=4}
+local BALLOON = {
+	[1]={width=1, height=1, image="", offset=vmath.vector3(0, 0, 0)},
+	[2]={width=1, height=1, image="", offset=vmath.vector3(0, 0, 0)}
+}
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	self.label = msg.url("#label")
+	self.balloon_text = nil
+	self.show_elapsed = 0
+	self.last_message_id = 0
+	
+	msg.post(".", "disable")
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	if self.balloon_text then
+		self.show_elapsed = self.show_elapsed + dt
+		local visible_text = get_visible_text(self.balloon_text, self.show_elapsed)
+		label.set_text(self.label, visible_text)
+	end
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	if message_id == hash("show_text") and message.character then
+		self.last_message_id = self.last_message_id + 1
+		local message_id = self.last_message_id
+
+		local pos = go.get_position(message.character)
+		pos.z = 1
+		go.set_position(pos, self.label)
+		
+		self.balloon_text = message.text
+		self.show_elapsed = 0
+		
+		label.set_text(self.label, "")
+		msg.post(".", "enable")
+
+		timer.delay(message.delay or 4, false, function(self, id)
+			if message_id == self.last_message_id then
+				self.balloon_text = nil
+				label.set_text(self.label, "")
+				msg.post(".", "disable")
+			end
+		end)
+	end
 end
