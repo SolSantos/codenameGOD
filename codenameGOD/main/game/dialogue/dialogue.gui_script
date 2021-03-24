@@ -47,7 +47,7 @@ function on_message(self, message_id, message, sender)
 
 			local current_sound = self.last_sound
 			timer.delay(0.5, false, function()	
-				if current_sound ~= self.last_sound then
+				if current_sound ~= self.last_sound and self.sound ~= nil then
 					msg.post(current_sound, "stop_sound")
 				end
 			end)

@@ -248,7 +248,6 @@ function on_message(self, message_id, message, sender)
 		end
 
 	elseif message_id == hash("hint") then
-		print("hint time")
 		if game_state.in_gameplay and not game_state.both_shoes then
 			if items.ticket.in_inventory then
 				msg.post("/dialogue#dialogue", "show_text", {delay=5, text = "Boy, I sure wish my shoes \nmagically flew towards me!", character = "/randall", sound="#Randall_4"})
