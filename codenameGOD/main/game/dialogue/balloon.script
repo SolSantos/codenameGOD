@@ -1,3 +1,11 @@
+--[[
+    TODO: Handle orientation changes when the balloon goes out of the window
+    TODO: Think how to put a chat balloon where there is no character
+    TODO: Think about the position of a chat balloon in specific animations positions
+    TODO: Should we change the balloon to the bigger one when a line goes over the limit? Or if the balloon would fill completely?
+    TODO: Should something be done when a character with a balloon moves?
+]]
+
 local utils = require("main.game.dialogue.utils")
 local get_visible_text = utils.get_visible_text
 
@@ -37,7 +45,7 @@ function init(self)
 	self.last_message_id = 0
 	self.h_orientation = ORIENTATION.LEFT
 	self.v_orientation = ORIENTATION.DOWN
-	
+
 	msg.post(".", "disable")
 end
 
@@ -63,10 +71,10 @@ function on_message(self, message_id, message, sender)
 		go.set_position(pos, ".")
 		go.set(self.label, "size", balloon.label_size)
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
-		
+
 		self.balloon_text = message.text
 		self.show_elapsed = 0
-		
+
 		label.set_text(self.label, "")
 		msg.post(".", "enable")
 
