@@ -1,5 +1,4 @@
 --[[
-    TODO: Handle orientation changes when the balloon goes out of the window
     TODO: Think how to put a chat balloon where there is no character
     TODO: Think about the position of a chat balloon in specific animations positions
     TODO: Should we change the balloon to the bigger one when a line goes over the limit? Or if the balloon would fill completely?
@@ -9,19 +8,21 @@
 local utils = require("main.game.dialogue.utils")
 local get_visible_text = utils.get_visible_text
 
-local ORIENTATION = {UP=1, DOWN=2, LEFT=3, RIGHT=4}
+local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
 local BALLOONS = {
 	[1]={
 		width=476,
 		height=176,
 		image="balloon1",
-		label_size=vmath.vector3(430, 100, 0)
+		label_size=vmath.vector3(430, 100, 0),
+		offset=vmath.vector3(-50, 0, 0)
 	},
 	[2]={
 		width=296,
 		height=128,
 		image="balloon2",
-		label_size=vmath.vector3(256, 64, 0)
+		label_size=vmath.vector3(256, 64, 0),
+		offset=vmath.vector3(0, 0, 0)
 	}
 }
 
@@ -43,8 +44,6 @@ function init(self)
 	self.balloon_text = nil
 	self.show_elapsed = 0
 	self.last_message_id = 0
-	self.h_orientation = ORIENTATION.LEFT
-	self.v_orientation = ORIENTATION.DOWN
 
 	msg.post(".", "disable")
 end
@@ -65,9 +64,27 @@ function on_message(self, message_id, message, sender)
 		local pos = go.get_position(message.character)
 		local balloon_id = get_balloon_to_use(message.text)
 		local balloon = BALLOONS[balloon_id]
-		pos.x = pos.x + balloon.width / 2
-		pos.y = pos.y + balloon.height / 2
+
+		local offset_x = balloon.width / 2 + balloon.offset.x
+		local offset_y = balloon.height / 2 + balloon.offset.y
+		
+		local w, h = window.get_size()
+		local h_orientation = ORIENTATION.RIGHT
+		if pos.x + offset_x + balloon.width >= w then
+			h_orientation = ORIENTATION.LEFT
+		end
+		sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
+
+		local v_orientation = ORIENTATION.UP
+		if pos.y + offset_y + balloon.height >= h then
+			v_orientation = ORIENTATION.DOWN
+		end
+		sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
+		
+		pos.x = pos.x + (offset_x * h_orientation)
+		pos.y = pos.y + (offset_y * v_orientation)
 		pos.z = 1
+		
 		go.set_position(pos, ".")
 		go.set(self.label, "size", balloon.label_size)
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
