@@ -56,8 +56,8 @@ embedded_components {
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
-    x: 2.0
-    y: -19.0
+    x: 0.0
+    y: 21.0
     z: 0.0
   }
   rotation {
