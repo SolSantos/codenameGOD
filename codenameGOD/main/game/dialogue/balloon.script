@@ -3,17 +3,17 @@ local get_visible_text = utils.get_visible_text
 local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
 
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
-local SMALL_BALLOON = 1
-local BIG_BALLOON = 2
+local BIG_BALLOON = 1
+local SMALL_BALLOON = 2
 local BALLOONS = {
-	[SMALL_BALLOON]={
+	[BIG_BALLOON]={
 		width=476,
 		height=176,
 		image="balloon1",
 		label_size=vmath.vector3(430, 100, 0),
 		offset=vmath.vector3(-50, 0, 0)
 	},
-	[BIG_BALLOON]={
+	[SMALL_BALLOON]={
 		width=296,
 		height=128,
 		image="balloon2",
