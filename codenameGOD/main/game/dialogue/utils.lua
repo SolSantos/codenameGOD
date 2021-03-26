@@ -6,5 +6,6 @@ local get_visible_text = function(text, elapsed)
 end
 
 return {
+	LETTERS_PER_SECOND = LETTERS_PER_SECOND,
 	get_visible_text=get_visible_text 
 }

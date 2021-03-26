@@ -26,7 +26,11 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("show_text") then
-		msg.post("/balloon", message_id, message)
+		if message.character or message.pos then
+			msg.post("/balloon", message_id, message)
+			return
+		end
+		
 		self.last_message_id = self.last_message_id + 1
 		local current_message_id = self.last_message_id
 		
