@@ -113,7 +113,19 @@ function on_message(self, message_id, message, sender)
 			end
 		end)
 
-		-- TODO: Play sound when talking
+		if message.sound then
+			local sound_url = "/dialogue"..message.sound
+			msg.post(sound_url, "play_sound")
+
+			local current_sound = self.last_sound
+			timer.delay(0.5, false, function()	
+				if current_sound and current_sound ~= self.last_sound then
+					msg.post(current_sound, "stop_sound")
+				end
+			end)
+
+			self.last_sound = sound_url
+		end
 		-- TODO: Allow special animations to be set?
 	end
 end
