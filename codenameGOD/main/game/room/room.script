@@ -1,9 +1,8 @@
 local update_time = 0
 local MOVE_AROUND_TIME = 15
 local shoe_count = 0
-local has_ticket = 0
-local solved_puzzle = false
 local inside_gameobject = require "main.inside_gameobject"
+local puzzle_sound = false
 local room_url
 local inv_arrow_url
 local door_sound_url = nil
@@ -75,7 +74,7 @@ update_context_entries = function()
 				return
 			end
 
-			if gamestate == 3 then
+			if game_state.in_gameplay and game_state.allowed_leave then
 				msg.post("/collections#main", "load_screen", {
 					name = "house_front",
 					pos = vmath.vector3(222,211,0.4)
@@ -84,11 +83,11 @@ update_context_entries = function()
 				return
 			end
 
-			if gamestate ~= 1 and gamestate ~= 2 then
+			if not game_state.in_gameplay then
 				return
 			end
 
-			if has_ticket >= 1 then
+			if items.ticket.in_inventory then
 				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
 			else
 				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
@@ -127,8 +126,11 @@ function update(self, dt)
 			hint_count = 0
 		end
 	end
-	if not solved_puzzle and (has_ticket >= 1 and shoe_count >= 2) then
-		solved_puzzle = true
+
+	-- Puzzle solved (puzzle_solved so it only plays once)
+	if items.ticket.in_inventory and game_state.both_shoes and not puzzle_sound and not game_state.allowed_leave then
+		puzzle_sound = true
+		game_state.allowed_leave = true
 		msg.post("/sound#2-puzzle_solve", "play_sound")
 		event_manager:register_event(2, function(self, id)
 			msg.post(room_url, "run_sequence_2")
@@ -137,7 +139,8 @@ function update(self, dt)
 end
 
 function init(self)
-	if gamestate == 0 then
+	-- Run the intro cutscene
+	if not game_state.intro_done then
 		msg.post(".", "run_sequence_0")
 	else
 		msg.post(".", "moved")
@@ -234,35 +237,35 @@ function on_message(self, message_id, message, sender)
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
 		end)
-		gamestate = 1
+		game_state.intro_done = true
+		game_state.in_gameplay = true
 	elseif message_id == hash("idle") then
-		if gamestate == 1 or gamestate == 3 then
+		if game_state.in_gameplay then
 			math.random(); math.random(); math.random()
 			local r = math.random(1,#item_strings)
 			msg.post("/randall", "go_to", {
 				pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2),
 				duration=2
 			})
-			msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text, sound="#Randall_3", character="/randall"})
+			msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text, character="/randall", sound="#Randall_3"})
 		end
 
 	elseif message_id == hash("hint") then
-		print("hint time")
-		if gamestate > 0 and gamestate < 3 then
-			if has_ticket >= 1 then
+		if game_state.in_gameplay and not game_state.both_shoes then
+			if items.ticket.in_inventory then
 				msg.post("/dialogue#dialogue", "show_text", {delay=5, text = "Boy, I sure wish my shoes \nmagically flew towards me!", character = "/randall", sound="#Randall_4"})
 			else
 				msg.post("/dialogue#dialogue", "show_text", {delay=6, text = "Pretty sure I was using my ticket as a\nbookmark last night... I need to find it.", character = "/randall", sound="#Randall_3"})
 			end
 		end
-		if gamestate == 3 then
+		if items.ticket.in_inventory and game_state.both_shoes then
 			msg.post("/dialogue#dialogue", "show_text", {text = "I really need to go now.\n I'm gonna be late!", character = "/randall", sound="#Randall_1"})
 		end
 		msg.post(".", "moved")
 
 	elseif message_id == hash("shoe_found") and shoe_count < 2 then
 		local randall_pos = go.get_position("/randall")
-		if shoe_count < 2 and inside_gameobject(msg.url("/randall#sprite"), message.x, message.y) then
+		if not game_state.both_shoes and inside_gameobject(msg.url("/randall#sprite"), message.x, message.y) then
 			shoe_count = shoe_count + 1
 			msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
 			if shoe_count == 1 then
@@ -270,6 +273,7 @@ function on_message(self, message_id, message, sender)
 			end
 			if shoe_count == 2 then
 				msg.post("/dialogue#dialogue", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
+				game_state.both_shoes = true
 			end
 		end
 		msg.post(".", "moved")
@@ -286,10 +290,8 @@ function on_message(self, message_id, message, sender)
 		end)
 		msg.post(".", "moved")
 
-	elseif message_id == hash("ticket_found") and has_ticket == 0 then
+	elseif message_id == hash("ticket_found") and not items.ticket.in_inventory then
 		msg.post("/dialogue#dialogue", "show_text", {delay=3.5, text="All safe for later!", character = "/randall", sound="#Randall_5"})
-
-		has_ticket = has_ticket + 1
 
 	elseif message_id == hash("run_sequence_2") then
 		event_manager:register_event(1, function(self, id)
@@ -298,7 +300,6 @@ function on_message(self, message_id, message, sender)
 		event_manager:register_event(4, function(self, id)
 			msg.post(room_url, "acquire_input_focus")
 		end)
-		gamestate = 3
 	end
 
 	if message_id == hash("moved") then
@@ -320,8 +321,8 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("cant_leave") then
 		if door_hint_timer > DOOR_HINT_DELAY then
-			if gamestate > 0 and gamestate < 3 then
-				if has_ticket >= 1 then
+			if game_state.in_gameplay and not game_state.got_shoes then
+				if items.ticket.in_inventory then
 					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
 				else
 					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})

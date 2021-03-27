@@ -1,0 +1,131 @@
+local utils = require("main.game.dialogue.utils")
+local get_visible_text = utils.get_visible_text
+local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
+
+local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
+local BIG_BALLOON = 1
+local SMALL_BALLOON = 2
+local BALLOONS = {
+	[BIG_BALLOON]={
+		width=476,
+		height=176,
+		image="balloon1",
+		label_size=vmath.vector3(430, 100, 0),
+		offset=vmath.vector3(-50, 0, 0)
+	},
+	[SMALL_BALLOON]={
+		width=296,
+		height=128,
+		image="balloon2",
+		label_size=vmath.vector3(256, 64, 0),
+		offset=vmath.vector3(0, 0, 0)
+	}
+}
+
+local function get_balloon_to_use(text)
+	local SMALL_BALLOON_SPACE = 30
+	local SMALL_BALLOON_MAX_LINES = 4
+	
+	local lines = 0
+	for line in text:gmatch("[^\n]+") do
+		lines = lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
+	end
+
+	if lines > SMALL_BALLOON_MAX_LINES then
+		return BIG_BALLOON
+	else
+		return SMALL_BALLOON
+	end
+end
+
+function init(self)
+	self.label = msg.url("#label")
+	self.balloon_text = nil
+	self.show_elapsed = 0
+	self.last_message_id = 0
+
+	msg.post(".", "disable")
+end
+
+function update(self, dt)
+	if self.balloon_text then
+		self.show_elapsed = self.show_elapsed + dt
+		local visible_text = get_visible_text(self.balloon_text, self.show_elapsed)
+		label.set_text(self.label, visible_text)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show_text") then
+		if not message.character and not message.pos then
+			return
+		end
+		message.text = message.text or ""
+		
+		self.last_message_id = self.last_message_id + 1
+		local message_id = self.last_message_id
+
+		local pos = message.pos or go.get_position(message.character)
+		local balloon_id = get_balloon_to_use(message.text)
+		local balloon = BALLOONS[balloon_id]
+
+		local offset_x = balloon.width / 2 + balloon.offset.x
+		local offset_y = balloon.height / 2 + balloon.offset.y
+		
+		local w, h = window.get_size()
+		local h_orientation = ORIENTATION.RIGHT
+		if pos.x + offset_x + (balloon.width / 2) >= w then
+			h_orientation = ORIENTATION.LEFT
+		end
+		sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
+
+		local v_orientation = ORIENTATION.UP
+		if pos.y + offset_y + (balloon.height / 2) >= h then
+			v_orientation = ORIENTATION.DOWN
+		end
+		sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
+		
+		pos.x = pos.x + (offset_x * h_orientation)
+		pos.y = pos.y + (offset_y * v_orientation)
+		pos.z = 1
+		
+		go.set_position(pos, ".")
+		go.set(self.label, "size", balloon.label_size)
+		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
+
+		self.balloon_text = message.text
+		self.show_elapsed = 0
+
+		label.set_text(self.label, "")
+		msg.post(".", "enable")
+
+		if message.character then
+			msg.post(message.character, "start_talking")
+		end
+		timer.delay(message.delay or (message.text:len() / LETTERS_PER_SECOND + 1), false, function(self, id)
+			if message_id == self.last_message_id then
+				self.balloon_text = nil
+				label.set_text(self.label, "")
+				msg.post(".", "disable")
+			end
+			if message.character then
+				msg.post(message.character, "stop_talking")
+			end
+		end)
+
+		if message.sound then
+			local sound_url = "/dialogue"..message.sound
+			msg.post(sound_url, "play_sound")
+
+			local current_sound = self.last_sound
+			timer.delay(0.5, false, function()	
+				if current_sound and current_sound ~= self.last_sound then
+					msg.post(current_sound, "stop_sound")
+				end
+			end)
+
+			self.last_sound = sound_url
+		end
+		-- TODO: Allow special animations to be set?
+	end
+end
