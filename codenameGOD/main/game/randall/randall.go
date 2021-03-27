@@ -1,6 +1,6 @@
 components {
   id: "randall"
-  component: "/main/game/character.script"
+  component: "/main/game/randall/randall.script"
   position {
     x: 0.0
     y: 0.0

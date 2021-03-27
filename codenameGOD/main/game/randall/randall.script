@@ -1,0 +1,92 @@
+local STATE = {
+	IDLE=1,
+	TALKING=2,
+	MOVING=3,
+	TALKING_MOVING=4,
+	OTHER=5
+}
+
+local DIRECTION = {
+	RIGHT=1,
+	LEFT=2
+}
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.current_animation = hash("idle")
+	self.new_animation = hash("idle")
+	self.state = STATE.IDLE
+	self.direction = nil
+end
+
+function update(self, dt)
+	if self.new_animation ~= self.current_animation then
+		msg.post("#sprite", "play_animation", {id = self.new_animation})
+		self.current_animation = self.new_animation
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("start_talking") then
+		if self.state == STATE.MOVING then
+			self.state = STATE.TALKING_MOVING
+			if self.direction == DIRECTION.RIGHT then
+				self.new_animation = hash("walk_talk_right")
+			else
+				self.new_animation = hash("walk_talk_left")
+			end
+		else
+			self.state = STATE.TALKING
+			self.new_animation = hash("talking")
+		end
+	end
+	if message_id == hash("stop_talking") and (self.state == STATE.TALKING or self.state == STATE.TALKING_MOVING) then
+		self.state = STATE.IDLE
+		self.new_animation = hash("idle")
+	end
+	if message_id == hash("go_to") then
+		if message.pos == go.get_position() then
+			return
+		end
+		if self.state == STATE.TALKING then
+			self.state = STATE.TALKING_MOVING
+		else
+			self.state = STATE.MOVING
+		end
+
+		self.direction = DIRECTION.LEFT
+		if message.pos.x > go.get_position().x then
+			self.direction = DIRECTION.RIGHT
+		end
+		
+		if self.direction == DIRECTION.RIGHT then
+			if self.state == STATE.TALKING_MOVING then
+				self.new_animation = hash("walk_talk_right")
+			else
+				self.new_animation = hash("walking_right")
+			end
+		else
+			if self.state == STATE.TALKING_MOVING then
+				self.new_animation = hash("walk_talk_left")
+			else
+				self.new_animation = hash("walking_left")
+			end
+		end
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration, 0, function()
+			if self.state == STATE.MOVING then
+				self.state = STATE.IDLE
+				self.new_animation = hash("idle")
+			elseif self.state == STATE.TALKING_MOVING then
+				self.state = STATE.TALKING
+				self.new_animation = hash("talking")
+			end
+		end)
+	end
+	if message_id == hash("set_animation") then
+		self.state = STATE.OTHER
+		self.new_animation = hash(message.animation)
+	end
+end
+
+function on_input(self, action_id, action)
+end
