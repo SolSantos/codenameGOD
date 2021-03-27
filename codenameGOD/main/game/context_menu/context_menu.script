@@ -17,11 +17,11 @@ function init(self)
 	self.click_elapsed = 0
 	--[[
 		Minimum time interval between closing and opening again.
-		used to prevent opening acidentally the menu after 
+		used to prevent opening acidentally the menu after
 		clicking one of the lines over the attached item.
 	]]
 	self.min_interval = 0.05
-	
+
 	self.mouse_x = 0
 	self.mouse_y = 0
 
@@ -67,7 +67,7 @@ end
 
 function update(self, dt)
 	self.click_elapsed = self.click_elapsed + dt
-	
+
 	clear_highlight(self)
 	local hovered_line = get_hovered_line(self)
 	if hovered_line then
@@ -86,7 +86,7 @@ function on_message(self, message_id, message, sender)
 		if self.click_elapsed < self.min_interval then
 			return
 		end
-		
+
 		if self.attached_to == message.area_url then
 			return
 		end
@@ -96,7 +96,7 @@ function on_message(self, message_id, message, sender)
 			print("The element "..message.extra.." does not have any context entries")
 			return
 		end
-		
+
 		clear_context_menu(self)
 
 		local v_orientation = ORIENTATION.UP
@@ -109,7 +109,7 @@ function on_message(self, message_id, message, sender)
 		if message.y + self.line_height * #self.menu > h then
 			v_orientation = ORIENTATION.DOWN
 		end
-		
+
 		for i, entry in ipairs(entries) do
 			local line_x = message.x + (self.line_width / 2 * h_orientation)
 			local line_y = message.y + (self.line_height / 2 * v_orientation)
@@ -147,9 +147,8 @@ function on_input(self, action_id, action)
 			return
 		end
 
-		-- @TODO(drmargarido) add sound for the hover and click of lines
 		if type(hovered_line.click) == "string" then
-			msg.post("/dialogue#dialogue", "show_text", {text=hovered_line.click or "No Text Here Yet!"})
+			msg.post("/dialogue#dialogue", "show_text", {text=hovered_line.click or "No Text Here Yet!", character="/randall"})
 		elseif type(hovered_line.click) == "function" then
 			hovered_line.click(self.mouse_x, self.mouse_y)
 		else
