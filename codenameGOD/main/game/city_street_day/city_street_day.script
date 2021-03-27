@@ -130,7 +130,7 @@ function on_message(self, message_id, message, sender)
 			end)
 		end)
 		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Somebody help me please!", character = "randall", sound="#Randall_panic2"})
+			msg.post("/dialogue#dialogue", "show_text", {delay=3, text="Somebody help me please!", character = "randall", sound="#Randall_panic2", animation = "scream"})
 			msg.post(city_url, "acquire_input_focus")
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
@@ -209,14 +209,6 @@ function on_message(self, message_id, message, sender)
 				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4", skip=true})
 			end)
 		end
-	
-	elseif message_id == hash("idle") then
-		local r = math.random(1,#item_strings)
-		msg.post("/randall", "go_to", {
-			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2), 
-			duration=2
-		})
-		msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text})
 	end
 	
 	if message_id == hash("moved") then

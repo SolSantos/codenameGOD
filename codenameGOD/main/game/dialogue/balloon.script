@@ -99,8 +99,14 @@ function on_message(self, message_id, message, sender)
 		label.set_text(self.label, "")
 		msg.post(".", "enable")
 
-		if message.character then
-			msg.post(message.character, "start_talking")
+		if message.animation then
+			if message.character then
+				msg.post(message.character, "set_animation", {animation=message.animation})
+			end
+		else
+			if message.character then
+				msg.post(message.character, "start_talking")
+			end
 		end
 		timer.delay(message.delay or (message.text:len() / LETTERS_PER_SECOND + 1), false, function(self, id)
 			if message_id == self.last_message_id then
@@ -108,8 +114,14 @@ function on_message(self, message_id, message, sender)
 				label.set_text(self.label, "")
 				msg.post(".", "disable")
 			end
-			if message.character then
-				msg.post(message.character, "stop_talking")
+			if message.animation then
+				if message.character then
+					msg.post(message.character, "set_animation", {animation="idle"})
+				end
+			else	
+				if message.character then
+					msg.post(message.character, "stop_talking")
+				end
 			end
 		end)
 

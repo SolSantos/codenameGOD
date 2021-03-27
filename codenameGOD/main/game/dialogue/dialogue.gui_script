@@ -51,9 +51,6 @@ function on_message(self, message_id, message, sender)
 			gui.set_enabled(skip, false)
 			self.skip_active = false
 		end
-		if message.character then
-			msg.post(message.character, "start_talking")
-		end
 		if message.sound then
 			msg.post(message.sound, "play_sound")
 
@@ -66,7 +63,16 @@ function on_message(self, message_id, message, sender)
 
 			self.last_sound = message.sound
 		end
-		
+		if message.animation then
+			if message.character then
+				msg.post(message.character, "set_animation", {animation=message.animation})
+			end
+		else
+			if message.character then
+				msg.post(message.character, "start_talking")
+			end
+		end
+
 		timer.delay(message.delay or 4, false, function(self, id)
 			if current_message_id == self.last_message_id then
 				gui.set_enabled(text, false)
@@ -75,9 +81,15 @@ function on_message(self, message_id, message, sender)
 				self.skip_active = false
 				self.dialog_text = nil
 			end
-			
-			if message.character then
-				msg.post(message.character, "stop_talking")
+
+			if message.animation then
+				if message.character then
+					msg.post(message.character, "set_animation", {animation="idle"})
+				end
+			else	
+				if message.character then
+					msg.post(message.character, "stop_talking")
+				end
 			end
 		end)
 	end

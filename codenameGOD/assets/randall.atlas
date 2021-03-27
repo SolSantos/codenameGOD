@@ -2,15 +2,19 @@ animations {
   id: "idle"
   images {
     image: "/assets/images/characters/idle/idle1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/idle/idle2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/idle/idle3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/idle/idle4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -21,15 +25,19 @@ animations {
   id: "talking"
   images {
     image: "/assets/images/characters/talking/talking1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/talking/talking2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/talking/talking3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/talking/talking4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -40,15 +48,19 @@ animations {
   id: "walking_right"
   images {
     image: "/assets/images/characters/walking/walking1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -59,65 +71,85 @@ animations {
   id: "special"
   images {
     image: "/assets/images/characters/special/special1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special10.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special11.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special12.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special13.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special14.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special15.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special16.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special17.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special19.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special20.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special6.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special7.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special8.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/special/special9.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_LOOP_FORWARD
+  playback: PLAYBACK_ONCE_FORWARD
   fps: 6
   flip_horizontal: 0
   flip_vertical: 0
@@ -126,15 +158,19 @@ animations {
   id: "walking_left"
   images {
     image: "/assets/images/characters/walking/walking21.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking22.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking23.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/walking/walking24.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -145,15 +181,19 @@ animations {
   id: "bed_sleeping"
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -164,15 +204,19 @@ animations {
   id: "bed_awake"
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep6.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep7.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep8.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
@@ -183,19 +227,368 @@ animations {
   id: "bed_talking"
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep10.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep11.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep12.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/images/characters/randall_sleep/randall_sleep9.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
   flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "scream"
+  images {
+    image: "/assets/images/characters/scream/randall1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/scream/randall2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/scream/randall3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/scream/randall4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_talk_right"
+  images {
+    image: "/assets/images/characters/walk-talk/randall1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "walk_talk_left"
+  images {
+    image: "/assets/images/characters/walk-talk/randall1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/walk-talk/randall4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_idle"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_idle1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_idle2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_idle3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_idle4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_talk"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_shoeless_talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_idle"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_idle1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_idle2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_idle3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_idle4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_talk"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle & talk/randall_semi-shoeless_talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_walk_right"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_walk_left"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_walk_right"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_walk_left"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_walk_talk_right"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "shoeless_walk_talk_left"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_shoeless_walk-talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_walk_talk_right"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "semi_shoeless_walk_talk_left"
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/shoe-shoeless_idle_talk_walk_walk-n-talk/randall_semi-shoeless_walk-talk4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 1
   flip_vertical: 0
 }
 margin: 0

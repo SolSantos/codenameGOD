@@ -30,6 +30,9 @@ function on_message(self, message_id, message, sender)
 			end
 		end)
 	end
+	if message_id == hash("set_animation") then
+		self.new_animation = hash(message.animation)
+	end
 end
 
 function on_input(self, action_id, action)
