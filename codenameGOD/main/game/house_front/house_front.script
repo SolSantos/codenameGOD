@@ -1,6 +1,8 @@
 local update_time = 0
-local MOVE_AROUND_TIME = 15
+local MOVE_AROUND_TIME = 10
 local context_data = require("main.context_data")
+local game_state = require("main.game_state")
+local door_sound_url = nil
 
 local item_strings = {
 	[1] = {
@@ -25,11 +27,11 @@ context_data[hash("sky")] = {
 context_data[hash("back_to_room_door")] = {
 	{text="Inspect", click="My house door."},
 	{text="Go", click=function()
+		msg.post(door_sound_url, "play_sound")
 		msg.post("/collections#main", "load_screen", {
 			name = "room",
 			pos = vmath.vector3(422,311,0.4)
 		})
-		msg.post("sound#8-door_knob", "play_sound")
 	end}
 }
 context_data[hash("city_street_arrow")] = {
@@ -45,6 +47,7 @@ context_data[hash("city_street_arrow")] = {
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("sound#ambiance", "play_sound")
+	door_sound_url = msg.url("sound#8-door_knob")
 end
 
 function final(self)
@@ -55,6 +58,7 @@ function update(self,dt)
 	update_time = update_time + dt
 	
 	if update_time >= MOVE_AROUND_TIME then
+		msg.post(door_sound_url, "play_sound")
 		update_time = 0
 		hint_count = hint_count + 1 
 		if hint_count < 2 then
@@ -69,7 +73,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("idle") then
-		math.random(); math.random(); math.random()
+		math.random();
 		local r = math.random(1,#item_strings)
 		msg.post("/randall", "go_to", {
 			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2), 
@@ -79,7 +83,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("hint") then
-		if gamestate == 3 then
+		if game_state.in_gameplay then
 			msg.post("/dialogue#dialogue", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
 		end
 		msg.post(".", "moved")
