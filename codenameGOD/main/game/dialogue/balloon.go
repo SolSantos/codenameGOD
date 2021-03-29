@@ -48,7 +48,7 @@ embedded_components {
   "}\n"
   "leading: 1.0\n"
   "tracking: 0.0\n"
-  "pivot: PIVOT_CENTER\n"
+  "pivot: PIVOT_NW\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: true\n"
   "text: \"Default\"\n"
@@ -56,8 +56,8 @@ embedded_components {
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
-    x: 0.0
-    y: 21.0
+    x: -129.0
+    y: 52.0
     z: 0.0
   }
   rotation {
