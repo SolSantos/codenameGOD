@@ -13,6 +13,8 @@ local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
 local context_data = require("main.context_data")
 local items = require("main.game.item.items")
+local drawer_open = false
+
 
 local item_strings = {
 	[1] = {
@@ -54,16 +56,27 @@ update_context_entries = function()
 	context_data[hash("drawer")] = {
 		{text="Inspect", click="This is the drawer were I hide my money. Shhh..."}
 	}
-	if not game_state.drawer_opened then
+	if drawer_open then
+		table.insert(context_data[hash("drawer")], {text="Close", click=function(x, y)
+			drawer_open = false
+			msg.post("/sound#6-drawer_opening", "play_sound")
+			msg.post(drawer_url, "play_animation", {id = hash("close_drawer")})
+			update_context_entries()
+		end})
+	else
 		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
-			game_state.drawer_opened = true
+			drawer_open = true
 			msg.post("/sound#6-drawer_opening", "play_sound")
 			msg.post(drawer_url, "play_animation", {id = hash("open_drawer")})
-			local item = items["coins"]
-			item.status = "show"
-			item.position.x = x
-			item.position.y = y
-			msg.post("/item_manager#item_manager", "update_visible_items")
+			
+			if not game_state.coins_shown then
+				game_state.coins_shown = true
+				local coins = items["coins"]
+				coins.status = "show"
+				coins.position.x = x
+				coins.position.y = y
+				msg.post("/item_manager#item_manager", "update_visible_items")
+			end
 			update_context_entries()
 		end})
 	end
