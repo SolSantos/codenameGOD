@@ -16,16 +16,29 @@ local item_strings = {
 }
 
 context_data[hash("broke_bike")] = {
-	{text="Inspect", click="A useless bike. Who designed this?"}
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
+		update_time = 0
+	end}
 }
 context_data[hash("trash")] = {
-	{text="Inspect", click="Trash cans."}
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "Trash can, not trash cannot.\n Heh.", character="randall"})
+		update_time = 0
+	end}
+	
 }
 context_data[hash("sky")] = {
-	{text="Inspect", click="Beautiful sky today."}
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "Beautiful sky today.", character="randall"})
+		update_time = 0
+	end}
 }
 context_data[hash("back_to_room_door")] = {
-	{text="Inspect", click="My house door."},
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "The front entrance to my headquarters.", character="randall"})
+		update_time = 0
+	end},
 	{text="Go", click=function()
 		msg.post(door_sound_url, "play_sound")
 		msg.post("/collections#main", "load_screen", {
@@ -34,8 +47,12 @@ context_data[hash("back_to_room_door")] = {
 		})
 	end}
 }
+
 context_data[hash("city_street_arrow")] = {
-	{text="Inspect", click="City Street Road."},
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "This road leads to the city. Not the city of Rome, no.", character="randall"})
+		update_time = 0
+	end},
 	{text="Go", click=function()
 		msg.post("/collections#main", "load_screen", {
 			name = "city_street_day",

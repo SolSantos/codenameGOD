@@ -8,6 +8,7 @@ local inv_arrow_url
 local door_sound_url = nil
 local books_context_url = nil
 local drawer_url = nil
+local bro_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -16,7 +17,7 @@ local items = require("main.game.item.items")
 
 local item_strings = {
 	[1] = {
-		text = "My telescope <3 Many nights spent looking\nat girl-I mean...at the stars! Yes.",
+		text = "Would you look at that, Aries isn't aligned with Venus today either, Helena. Oops!",
 		position = {x=210, y=200}
 	},
 	[2] = {
@@ -28,7 +29,7 @@ local item_strings = {
 		position = {x=450, y=300}
 	},
 	[4] = {
-		text = "That sure is a nice place for a poster.",
+		text = "That sure is a nice place for a poster. Hmm.",
 		position = {x=800, y=280}
 	},
 	[5] = {
@@ -49,10 +50,16 @@ local item_strings = {
 local update_context_entries
 update_context_entries = function()
 	context_data[hash("telescope")] = {
-		{text="Inspect", click="This is a telescope."}
+		{text="Inspect", click=function()
+			msg.post("/dialogue#dialogue", "show_text", {text = "My telescope! Many nights spent looking\nat girl--stars. Yes, indeed.", character="randall"})
+			update_time = 0
+		end}
 	}
 	context_data[hash("drawer")] = {
-		{text="Inspect", click="This is the drawer were I hide my money. Shhh..."}
+		{text="Inspect", click=function()
+			msg.post("/dialogue#dialogue", "show_text", {text = "I like to hide my change under my socks. It's rewarding to find a nickle between my toes every now and then!", character="randall"})
+			update_time = 0
+		end}
 	}
 	if not game_state.drawer_opened then
 		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
@@ -68,7 +75,10 @@ update_context_entries = function()
 		end})
 	end
 	context_data[hash("room_door")] = {
-		{text="Inspect", click="Door to the outside."},
+		{text="Inspect", click=function()
+			msg.post("/dialogue#dialogue", "show_text", {text = "Door to the outside.\nThe wild urban jungle. The big adventure.The great unknown.\n....My frontyard.", character="randall"})
+			update_time = 0
+		end},
 		{text="Go Out", click=function(x, y)
 			if door_hint_timer <= DOOR_HINT_DELAY then
 				return
@@ -90,19 +100,25 @@ update_context_entries = function()
 			if items.ticket.in_inventory then
 				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
 			else
-				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
+				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Not going anywhere without my ticket!", character = "/randall", sound="#Randall_1"})
 			end
 			door_hint_timer = 0
 		end}
 	}
 	context_data[hash("nes")] = {
-		{text="Inspect", click="It's a Nintendo. \nTop of the line gaming technology!"}
+		{text="Inspect", click=function()
+			msg.post("/dialogue#dialogue", "show_text", {text = "It's a Nintendo. \nTop of the line gaming technology!", character="randall"})
+			update_time = 0
+		end}
 	}
 	context_data[hash("tv")] = {
-		{text="Inspect", click="Just your average TV."}
+		{text="Inspect", click=function()
+			msg.post("/dialogue#dialogue", "show_text", {text = "My TV. Yea, it's 480p. The future is here baby!", character="randall"})
+			update_time = 0
+		end}
 	}
 	context_data[hash("books")] = {
-		{text="Inspect", click="Pretty sure I was using my ticket as a\nbookmark last night"},
+		{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
 		{text="Move",    click=function()
 			msg.post(room_url, "show_ticket")
 			items.ticket.movable = true
@@ -151,6 +167,7 @@ function init(self)
 	room_url = msg.url()
 	door_sound_url = msg.url("sound#8-door_knob")
 	drawer_url = msg.url("drawer#sprite")
+	bro_url = msg.url("randall_bro")
 	
 	if items.ticket.found == 0 then
 		msg.post("", "disable")
@@ -184,7 +201,7 @@ function on_message(self, message_id, message, sender)
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		msg.post("/randall#sprite", "play_animation", {id = hash("bed_sleeping")})
 		event_manager:register_event(3, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", sound="#Bullies_4", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = bro_url, sound="#Bullies_4", skip=true})
 			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
 		end)
 		event_manager:register_event(5, function(self, id)
@@ -193,7 +210,7 @@ function on_message(self, message_id, message, sender)
 		end)
 
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", sound="#Bullies_2", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", character = bro_url, sound="#Bullies_2", skip=true})
 			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
 		end)
 
@@ -241,8 +258,7 @@ function on_message(self, message_id, message, sender)
 		game_state.in_gameplay = true
 	elseif message_id == hash("idle") then
 		if game_state.in_gameplay then
-			math.random(); math.random(); math.random()
-			local r = math.random(1,#item_strings)
+			local r = math.random(1, #item_strings)
 			msg.post("/randall", "go_to", {
 				pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2),
 				duration=2
