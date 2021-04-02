@@ -1,4 +1,4 @@
-local STATE = {
+RANDALL_STATE = {
 	LYING_DOWN=1,
 	SHOELESS=2,
 	ONE_SHOE=3,
@@ -27,21 +27,37 @@ local get_direction_text = function(direction)
 	end
 end
 
-local default_on_message = function(mapping, self, message_id, message, sender)
-	local direction = get_direction_text(self.direction)
-	
-	if message_id == hash("start_talking") then
-		if self.action == ACTION.MOVE then
-			self.action = ACTION.WALK_TALK
+local update_animation = function(self, mapping)
+	if self.action_changed or self.state_changed then
+		self.action_changed = false
+		self.state_changed = false
+		
+		local direction = get_direction_text(self.direction)
+		if self.action == ACTION.WALK then
+			self.new_animation = hash(mapping.walk..direction)
+		elseif self.action == ACTION.TALK then
+			self.new_animation = hash(mapping.talk)
+		elseif self.action == ACTION.WALK_TALK then
 			self.new_animation = hash(mapping.walk_talk..direction)
+		elseif self.action == ACTION.SLEEP then
+		elseif self.action == ACTION.IDLE then
+			self.new_animation = hash(mapping.idle)
+		end
+	end
+end
+
+local default_on_message = function(mapping, self, message_id, message, sender)
+	if message_id == hash("start_talking") then
+		if self.action == ACTION.WALK then
+			self.action = ACTION.WALK_TALK
 		else
 			self.action = ACTION.TALK
-			self.new_animation = hash(mapping.talk)
 		end
+		self.action_changed = true
 	end
 	if message_id == hash("stop_talking") and (self.action == ACTION.TALK or self.action == ACTION.WALK_TALK) then
 		self.action = ACTION.IDLE
-		self.new_animation = hash(mapping.idle)
+		self.action_changed = true
 	end
 	if message_id == hash("go_to") then
 		if message.pos == go.get_position() then
@@ -57,42 +73,47 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 		if message.pos.x > go.get_position().x then
 			self.direction = DIRECTION.RIGHT
 		end
-
-		direction = get_direction_text(self.direction)
-		if self.action == ACTION.WALK_TALK then
-			self.new_animation = hash(mapping.walk_talk..direction)
-		else
-			self.new_animation = hash(mapping.walk..direction)
-		end
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration, 0, function()
 			if self.action == ACTION.WALK then
 				self.action = ACTION.IDLE
-				self.new_animation = hash(mapping.idle)
 			elseif self.action == ACTION.WALK_TALK then
 				self.action = ACTION.TALK
-				self.new_animation = hash(mapping.talk)
 			end
+			update_animation(self, mapping)
 		end)
+		self.action_changed = true
 	end
 	if message_id == hash("set_animation") then
 		self.action = ACTION.OTHER
 		self.new_animation = hash(message.animation)
 	end
+
+	update_animation(self, mapping)
 end
 
 local state_on_message = {
-	[STATE.LYING_DOWN] = function(self, message_id, message, sender)
+	[RANDALL_STATE.LYING_DOWN] = function(self, message_id, message, sender)
 
 	end,
-	[STATE.SHOELESS] = function(self, message_id, message, sender)
-		local anims_mapping = {}
+	[RANDALL_STATE.SHOELESS] = function(self, message_id, message, sender)
+		local anims_mapping = {
+			idle="shoeless_idle",
+			walk="shoeless_walking",
+			talk="shoeless_talk",
+			walk_talk="shoeless_walk_talk"
+		}
 		default_on_message(anims_mapping, self, message_id, message, sender)
 	end,
-	[STATE.ONE_SHOE] = function(self, message_id, message, sender)
-		local anims_mapping = {}
+	[RANDALL_STATE.ONE_SHOE] = function(self, message_id, message, sender)
+		local anims_mapping = {
+			idle="semi_shoeless_idle",
+			walk="semi_shoeless_walking",
+			talk="semi_shoeless_talk",
+			walk_talk="semi_shoeless_walk_talk"
+		}
 		default_on_message(anims_mapping, self, message_id, message, sender)
 	end,
-	[STATE.NORMAL] = function(self, message_id, message, sender)
+	[RANDALL_STATE.NORMAL] = function(self, message_id, message, sender)
 		local anims_mapping = {
 			idle="idle",
 			walk="walking",
@@ -105,10 +126,12 @@ local state_on_message = {
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	self.current_animation = hash("idle")
-	self.new_animation = hash("idle")
-	self.state = STATE.NORMAL
+	self.current_animation = hash("shoeless_idle")
+	self.new_animation = hash("shoeless_idle")
+	self.state = RANDALL_STATE.SHOELESS
 	self.action = ACTION.IDLE
+	self.state_changed = false
+	self.action_changed = false
 	self.direction = nil
 end
 
@@ -120,6 +143,10 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
+	if message_id == hash("set_state") then
+		self.state = message.state
+		self.state_changed  = true
+	end
 	state_on_message[self.state](self, message_id, message, sender)
 end
 

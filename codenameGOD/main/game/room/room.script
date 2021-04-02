@@ -243,7 +243,8 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash("run_sequence_1") then
 		go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-		msg.post("/randall#sprite", "play_animation", {id = hash("idle")})
+		msg.post("/randall#sprite", "play_animation", {id = hash("shoeless_idle")})
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
 		msg.post("/collections#main", "stop_game")
 		event_manager:register_event(3, function(self, id)
 			msg.post(room_url, "acquire_input_focus")
@@ -282,9 +283,11 @@ function on_message(self, message_id, message, sender)
 			shoe_count = shoe_count + 1
 			msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
 			if shoe_count == 1 then
+				msg.post("/randall", "set_state", {state=RANDALL_STATE.ONE_SHOE})
 				msg.post("/dialogue#dialogue", "show_text", {text="That's one shoe!", character = "/randall", sound="#Randall_short1"})
 			end
 			if shoe_count == 2 then
+				msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 				msg.post("/dialogue#dialogue", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
 				game_state.both_shoes = true
 			end
