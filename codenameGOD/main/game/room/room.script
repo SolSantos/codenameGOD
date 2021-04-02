@@ -193,43 +193,37 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("run_sequence_0") then
+		local travis_pos = vmath.vector3(1020, 380, 1)
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
-		msg.post("/randall#sprite", "play_animation", {id = hash("bed_sleeping")})
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+		msg.post("/randall", "sleep")
 		event_manager:register_event(3, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", sound="#Bullies_4", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", pos=travis_pos, sound="#Bullies_4", skip=true})
+			msg.post("/randall", "wakeup")
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", sound="#Randall_1", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", character="/randall", sound="#Randall_1", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", sound="#Bullies_2", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", pos=travis_pos, sound="#Bullies_2", skip=true})
 		end)
 
 		event_manager:register_event(2.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", sound="#Randall_short2", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
-		end)
-
-		event_manager:register_event(3, function()
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
-		end)
-
-		event_manager:register_event(2, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
-		end)
-
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", character="/randall", sound="#Randall_short2", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", sound="#Randall_4"})
+			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(1.5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
 		end)
 
 		local transition = msg.url("transition")
@@ -243,7 +237,6 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash("run_sequence_1") then
 		go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-		msg.post("/randall#sprite", "play_animation", {id = hash("shoeless_idle")})
 		msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
 		msg.post("/collections#main", "stop_game")
 		event_manager:register_event(3, function(self, id)
