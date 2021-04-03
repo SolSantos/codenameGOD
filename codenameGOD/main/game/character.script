@@ -29,6 +29,7 @@ function on_message(self, message_id, message, sender)
 				self.new_animation = hash("idle")
 			end
 		end)
+		msg.post("/balloon", "character_moved")
 	end
 	if message_id == hash("set_animation") then
 		self.new_animation = hash(message.animation)

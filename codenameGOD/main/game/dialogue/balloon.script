@@ -5,6 +5,8 @@ local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
 local BIG_BALLOON = 1
 local SMALL_BALLOON = 2
+local NO_ARROW_BIG_BALLOON = 3
+local NO_ARROW_SMALL_BALLOON = 4
 local BALLOONS = {
 	[BIG_BALLOON]={
 		width=476,
@@ -17,6 +19,20 @@ local BALLOONS = {
 		width=296,
 		height=128,
 		image="balloon2",
+		label_size=vmath.vector3(256, 64, 0),
+		offset=vmath.vector3(0, 0, 0)
+	},
+	[NO_ARROW_BIG_BALLOON]={
+		width=476,
+		height=176,
+		image="balloon3",
+		label_size=vmath.vector3(430, 100, 0),
+		offset=vmath.vector3(-50, 0, 0)
+	},
+	[NO_ARROW_SMALL_BALLOON]={
+		width=296,
+		height=128,
+		image="balloon4",
 		label_size=vmath.vector3(256, 64, 0),
 		offset=vmath.vector3(0, 0, 0)
 	}
@@ -43,6 +59,8 @@ function init(self)
 	self.balloon_text = nil
 	self.show_elapsed = 0
 	self.last_message_id = 0
+	self.current_balloon = SMALL_BALLOON
+	self.current_character = nil
 
 	msg.post(".", "disable")
 end
@@ -59,11 +77,30 @@ local hide_balloon = function(self)
 	self.balloon_text = nil
 	label.set_text(self.label, "")
 	msg.post(".", "disable")
+	self.current_character = nil
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("hide") then
 		hide_balloon(self)
+	end
+
+	if message_id == hash("character_moved") then
+		sender.fragment = nil
+		if self.current_character ~= sender then
+			return
+		end
+		if self.current_balloon ~= SMALL_BALLOON and self.current_balloon ~= BIG_BALLOON then
+			return
+		end
+
+		if self.current_balloon == SMALL_BALLOON then
+			self.current_balloon = NO_ARROW_SMALL_BALLOON
+		else
+			self.current_balloon = NO_ARROW_BIG_BALLOON
+		end
+		local balloon = BALLOONS[self.current_balloon]
+		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 	end
 	
 	if message_id == hash("show_text") then
@@ -78,7 +115,9 @@ function on_message(self, message_id, message, sender)
 		local pos = message.pos or go.get_position(message.character)
 		local balloon_id = get_balloon_to_use(message.text)
 		local balloon = BALLOONS[balloon_id]
-
+		self.current_balloon = balloon_id
+		self.current_character = msg.url(message.character)
+		
 		local offset_x = balloon.width / 2 + balloon.offset.x
 		local offset_y = balloon.height / 2 + balloon.offset.y
 		

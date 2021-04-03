@@ -57,6 +57,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 	if message_id == hash("start_talking") then
 		if self.action == ACTION.WALK then
 			set_action(self, ACTION.WALK_TALK)
+			msg.post("/balloon", "character_moved")
 		else
 			set_action(self, ACTION.TALK)
 		end
@@ -70,6 +71,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 		end
 		if self.action == ACTION.TALK then
 			set_action(self, ACTION.WALK_TALK)
+			msg.post("/balloon", "character_moved")
 		else
 			set_action(self, ACTION.WALK)
 		end
@@ -86,6 +88,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 			end
 			update_animation(self, mapping)
 		end)
+		msg.post("/balloon", "character_moved")
 	end
 	if message_id == hash("scream") then
 		set_action(self, ACTION.SCREAM)
