@@ -59,7 +59,7 @@ animations {
     image: "/assets/images/background assets/room_drawer1.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_LOOP_FORWARD
+  playback: PLAYBACK_ONCE_FORWARD
   fps: 12
   flip_horizontal: 0
   flip_vertical: 0
