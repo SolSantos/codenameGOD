@@ -11,7 +11,7 @@ local ACTION = {
 	WALK=3,
 	WALK_TALK=4,
 	SLEEP=5,
-	OTHER=6
+	SCREAM=6
 }
 
 local DIRECTION = {
@@ -42,6 +42,8 @@ local update_animation = function(self, mapping)
 			self.new_animation = hash(mapping.sleep)
 		elseif self.action == ACTION.IDLE then
 			self.new_animation = hash(mapping.idle)
+		elseif self.action == ACTION.SCREAM then
+			self.new_animation = hash(mapping.scream)
 		end
 	end
 end
@@ -59,7 +61,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 			set_action(self, ACTION.TALK)
 		end
 	end
-	if message_id == hash("stop_talking") and (self.action == ACTION.TALK or self.action == ACTION.WALK_TALK) then
+	if message_id == hash("stop_talking") and (self.action == ACTION.TALK or self.action == ACTION.WALK_TALK or self.action == ACTION.SCREAM) then
 		set_action(self, ACTION.IDLE)
 	end
 	if message_id == hash("go_to") then
@@ -85,9 +87,8 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 			update_animation(self, mapping)
 		end)
 	end
-	if message_id == hash("set_animation") then
-		set_action(self, ACTION.OTHER)
-		self.new_animation = hash(message.animation)
+	if message_id == hash("scream") then
+		set_action(self, ACTION.SCREAM)
 	end
 
 	update_animation(self, mapping)
@@ -138,7 +139,8 @@ local state_on_message = {
 			idle="idle",
 			walk="walking",
 			talk="talking",
-			walk_talk="walk_talk"
+			walk_talk="walk_talk",
+			scream="scream"
 		}
 		default_on_message(anims_mapping, self, message_id, message, sender)
 	end,
