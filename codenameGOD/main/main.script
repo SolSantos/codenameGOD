@@ -45,6 +45,7 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post("/item_manager", "changed_scenario", {name=message.name})
 		msg.post("/inventory#inventory", "inv_close")
+		msg.post("/balloon", "hide")
 	end
 
 	if message_id == hash("stop_game") or message_id == hash("restart_game") then

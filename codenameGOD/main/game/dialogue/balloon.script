@@ -55,7 +55,17 @@ function update(self, dt)
 	end
 end
 
+local hide_balloon = function(self)
+	self.balloon_text = nil
+	label.set_text(self.label, "")
+	msg.post(".", "disable")
+end
+
 function on_message(self, message_id, message, sender)
+	if message_id == hash("hide") then
+		hide_balloon(self)
+	end
+	
 	if message_id == hash("show_text") then
 		if not message.character and not message.pos then
 			return
@@ -104,9 +114,7 @@ function on_message(self, message_id, message, sender)
 		end		
 		timer.delay(message.delay or (message.text:len() / LETTERS_PER_SECOND + 1), false, function(self, id)
 			if message_id == self.last_message_id then
-				self.balloon_text = nil
-				label.set_text(self.label, "")
-				msg.post(".", "disable")
+				hide_balloon(self)
 			end	
 			if message.character then
 				msg.post(message.character, "stop_talking")
