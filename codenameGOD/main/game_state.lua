@@ -8,6 +8,7 @@ return {
 	-- Check if first puzzle is completed
 	allowed_leave = false,
 	first_item_picked = false,
-	drawer_opened = false,
+	-- Tells if we already opened the drawer in the room and saw the coins
+	coins_shown = false,
 	ticket_moved = false
 }

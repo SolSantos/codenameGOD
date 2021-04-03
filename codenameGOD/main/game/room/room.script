@@ -13,6 +13,8 @@ local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
 local context_data = require("main.context_data")
 local items = require("main.game.item.items")
+local drawer_open = false
+
 
 local item_strings = {
 	[1] = {
@@ -54,16 +56,27 @@ update_context_entries = function()
 	context_data[hash("drawer")] = {
 		{text="Inspect", click="This is the drawer were I hide my money. Shhh..."}
 	}
-	if not game_state.drawer_opened then
+	if drawer_open then
+		table.insert(context_data[hash("drawer")], {text="Close", click=function(x, y)
+			drawer_open = false
+			msg.post("/sound#6-drawer_opening", "play_sound")
+			msg.post(drawer_url, "play_animation", {id = hash("close_drawer")})
+			update_context_entries()
+		end})
+	else
 		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
-			game_state.drawer_opened = true
+			drawer_open = true
 			msg.post("/sound#6-drawer_opening", "play_sound")
 			msg.post(drawer_url, "play_animation", {id = hash("open_drawer")})
-			local item = items["coins"]
-			item.status = "show"
-			item.position.x = x
-			item.position.y = y
-			msg.post("/item_manager#item_manager", "update_visible_items")
+			
+			if not game_state.coins_shown then
+				game_state.coins_shown = true
+				local coins = items["coins"]
+				coins.status = "show"
+				coins.position.x = x
+				coins.position.y = y
+				msg.post("/item_manager#item_manager", "update_visible_items")
+			end
 			update_context_entries()
 		end})
 	end
@@ -180,43 +193,37 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("run_sequence_0") then
+		local travis_pos = vmath.vector3(1020, 380, 1)
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
-		msg.post("/randall#sprite", "play_animation", {id = hash("bed_sleeping")})
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+		msg.post("/randall", "sleep")
 		event_manager:register_event(3, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", sound="#Bullies_4", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", pos=travis_pos, sound="#Bullies_4", skip=true})
+			msg.post("/randall", "wakeup")
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", sound="#Randall_1", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", character="/randall", sound="#Randall_1", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", sound="#Bullies_2", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
+			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", pos=travis_pos, sound="#Bullies_2", skip=true})
 		end)
 
 		event_manager:register_event(2.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", sound="#Randall_short2", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
-		end)
-
-		event_manager:register_event(3, function()
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_awake")})
-		end)
-
-		event_manager:register_event(2, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", skip=true})
-			msg.post("/randall#sprite", "play_animation", {id = hash("bed_talking")})
-		end)
-
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", character="/randall", sound="#Randall_short2", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", sound="#Randall_4"})
+			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(1.5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
 		end)
 
 		local transition = msg.url("transition")
@@ -230,7 +237,7 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash("run_sequence_1") then
 		go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-		msg.post("/randall#sprite", "play_animation", {id = hash("idle")})
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
 		msg.post("/collections#main", "stop_game")
 		event_manager:register_event(3, function(self, id)
 			msg.post(room_url, "acquire_input_focus")
@@ -269,9 +276,11 @@ function on_message(self, message_id, message, sender)
 			shoe_count = shoe_count + 1
 			msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
 			if shoe_count == 1 then
+				msg.post("/randall", "set_state", {state=RANDALL_STATE.ONE_SHOE})
 				msg.post("/dialogue#dialogue", "show_text", {text="That's one shoe!", character = "/randall", sound="#Randall_short1"})
 			end
 			if shoe_count == 2 then
+				msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 				msg.post("/dialogue#dialogue", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
 				game_state.both_shoes = true
 			end
