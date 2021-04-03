@@ -14,7 +14,10 @@ local push_sound_url
 local game_state = require("main.game_state")
 local context_data = require("main.context_data")
 context_data[hash("city_street_trash")] = {
-	{text="Inspect", click="Trash cans on the side of the road."},
+	{text="Inspect", click=function()
+		msg.post("/dialogue#dialogue", "show_text", {text = "...Why am I admiring trash at a time like this.", character="randall"})
+		update_time = 0
+	end},
 	{text="Hit", click=function()
 		msg.post(metal_hit_url, "play_sound")
 		trash_hit = trash_hit + 1 
@@ -112,11 +115,11 @@ function on_message(self, message_id, message, sender)
 		game_state.allowed_leave = false
 		
 		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=2, text="Please no!!", character = "randall", sound="#Randall_panic1", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=2, text="Please, don't!!!", character = "randall", sound="#Randall_panic1", skip=true})
 		end)
 			
 		event_manager:register_event(2, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4,text="Heh, guess it won't see \nthe light of day now.", character = bully1_url, sound="#Bullies_4", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=4,text="Heh, guess the tournament is over for you, \nbro!", character = bully1_url, sound="#Bullies_4", skip=true})
 			msg.post("/item_manager#item_manager", "destroy_item",{text = "ticket"})
 		end)
 		event_manager:register_event(4, function(self, id)
@@ -194,19 +197,20 @@ function on_message(self, message_id, message, sender)
 		end)
 		
 	elseif message_id == hash("bully_trash_warning") then
-		local r = math.random(1,3)
+		math.random()
+		local r = math.random(3)
 		if r == 1 then
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4", skip=true})
 			end)
 		elseif r==2 then
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5", skip=true})
 			end)
 
 		else
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=1, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4", skip=true})
 			end)
 		end
 	end
