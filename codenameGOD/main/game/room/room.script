@@ -162,6 +162,8 @@ function init(self)
 	-- Run the intro cutscene
 	if not game_state.intro_done then
 		msg.post(".", "run_sequence_0")
+	elseif game_state.comming_from_bullies then
+		msg.post(".", "run_sequence_3")
 	else
 		msg.post(".", "moved")
 	end
@@ -179,6 +181,7 @@ function init(self)
 
 	update_context_entries()
 	if not game_state.ticket_moved then
+		
 		items.ticket.movable = false
 	end
 
@@ -233,9 +236,8 @@ function on_message(self, message_id, message, sender)
 			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
 		end)
 
-		local transition = msg.url("transition")
 		event_manager:register_event(4.5, function(self, id)
-			msg.post(transition, "play_transition")
+			msg.post("/transition", "play_transition")
 		end)
 
 		event_manager:register_event(1.25, function(self, id)
@@ -315,6 +317,17 @@ function on_message(self, message_id, message, sender)
 		event_manager:register_event(4, function(self, id)
 			msg.post(room_url, "acquire_input_focus")
 		end)
+	elseif message_id == hash("run_sequence_3") then
+		local door_pos = vmath.vector3(922, 400, 0.2)
+		go.set_position(door_pos, "/randall")
+		msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=2})
+		event_manager:register_event(2, function(self, id)
+			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=4})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/cutscene#cutscene", "cutscene_end")
+		end)
+		game_state.comming_from_bullies = false
 	end
 
 	if message_id == hash("moved") then

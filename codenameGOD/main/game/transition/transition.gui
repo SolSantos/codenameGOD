@@ -1,4 +1,4 @@
-script: "/main/game/room/transition.gui_script"
+script: "/main/game/transition/transition.gui_script"
 background_color {
   x: 0.0
   y: 0.0
