@@ -62,8 +62,12 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 			set_action(self, ACTION.TALK)
 		end
 	end
-	if message_id == hash("stop_talking") and (self.action == ACTION.TALK or self.action == ACTION.WALK_TALK or self.action == ACTION.SCREAM) then
-		set_action(self, ACTION.IDLE)
+	if message_id == hash("stop_talking") then
+		if self.action == ACTION.TALK or self.action == ACTION.SCREAM then
+			set_action(self, ACTION.IDLE)
+		elseif self.action == ACTION.WALK_TALK then
+			set_action(self, ACTION.WALK)
+		end
 	end
 	if message_id == hash("go_to") then
 		if message.pos == go.get_position() then

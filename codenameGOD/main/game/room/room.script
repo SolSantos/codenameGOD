@@ -90,20 +90,16 @@ update_context_entries = function()
 	context_data[hash("room_door")] = {
 		{text="Inspect", click=inspect_show_text("Door to the outside.\nThe wild urban jungle. The big adventure.The great unknown.\n....My frontyard.")},
 		{text="Go Out", click=function(x, y)
-			if door_hint_timer <= DOOR_HINT_DELAY then
+			if door_hint_timer <= DOOR_HINT_DELAY or not game_state.in_gameplay then
 				return
 			end
-
-			if game_state.in_gameplay and game_state.allowed_leave then
+			
+			if game_state.allowed_leave then
 				msg.post("/collections#main", "load_screen", {
 					name = "house_front",
 					pos = vmath.vector3(222,211,0.4)
 				})
 				msg.post(door_sound_url, "play_sound")
-				return
-			end
-
-			if not game_state.in_gameplay then
 				return
 			end
 
@@ -148,7 +144,7 @@ function update(self, dt)
 	end
 
 	-- Puzzle solved (puzzle_solved so it only plays once)
-	if items.ticket.in_inventory and game_state.both_shoes and not puzzle_sound and not game_state.allowed_leave then
+	if not game_state.allowed_leave and items.ticket.in_inventory and game_state.both_shoes and not puzzle_sound then
 		puzzle_sound = true
 		game_state.allowed_leave = true
 		msg.post("/sound#2-puzzle_solve", "play_sound")
@@ -181,7 +177,6 @@ function init(self)
 
 	update_context_entries()
 	if not game_state.ticket_moved then
-		
 		items.ticket.movable = false
 	end
 
@@ -320,12 +315,16 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("run_sequence_3") then
 		local door_pos = vmath.vector3(922, 400, 0.2)
 		go.set_position(door_pos, "/randall")
-		msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=2})
-		event_manager:register_event(2, function(self, id)
-			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=4})
+		msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=3})
+		event_manager:register_event(1, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {text="...", character = "/randall", sound="#Randall_short1"})
 		end)
-		event_manager:register_event(5, function(self, id)
+		event_manager:register_event(2, function(self, id)
+			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=6})
+		end)
+		event_manager:register_event(7, function(self, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
+			msg.post("/collections#main", "restart_game")
 		end)
 		game_state.comming_from_bullies = false
 	end
