@@ -16,7 +16,6 @@ local context_data = require("main.context_data")
 local items = require("main.game.item.items")
 local drawer_open = false
 
-
 local item_strings = {
 	[1] = {
 		text = "Would you look at that, Aries isn't aligned with Venus today either, Helena. Oops!",
@@ -132,7 +131,7 @@ function update(self, dt)
 	update_time = update_time + dt
 	door_hint_timer = door_hint_timer + dt
 
-	if update_time >= MOVE_AROUND_TIME then
+	if self.show_hints and update_time >= MOVE_AROUND_TIME then
 		update_time = 0
 		hint_count = hint_count + 1
 		if hint_count < 3 then
@@ -181,6 +180,7 @@ function init(self)
 	end
 
 	books_context_url = msg.url("books_clickable")
+	self.show_hints = false
 end
 
 function final(self)
@@ -250,6 +250,7 @@ function on_message(self, message_id, message, sender)
 		end)
 		game_state.intro_done = true
 		game_state.in_gameplay = true
+		self.show_hints = true
 	elseif message_id == hash("idle") then
 		if game_state.in_gameplay then
 			local r = math.random(1, #item_strings)
@@ -316,17 +317,48 @@ function on_message(self, message_id, message, sender)
 		local door_pos = vmath.vector3(922, 400, 0.2)
 		go.set_position(door_pos, "/randall")
 		msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=3})
-		event_manager:register_event(1, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {text="...", character = "/randall", sound="#Randall_short1"})
-		end)
-		event_manager:register_event(2, function(self, id)
+		event_manager:register_event(3, function(self, id)
 			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=6})
 		end)
-		event_manager:register_event(7, function(self, id)
+		event_manager:register_event(8, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="That was just so weird, what just happened...", character = "/randall", sound="#Randall_short1"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Even earlier with my shoes... and then my ticket", character = "/randall", sound="#Randall_short2"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Could it be!? I'm not alone!?", character = "/randall", sound="#Randall_1"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="This can only be explained by the works of...", character = "/randall", sound="#Randall_6"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="A GOD!", character = "/randall", sound="#Randall_short1"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="... I Think.", character = "/randall", sound="#Randall_6"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=6, text="They were talking about becky throwing a party tonight.", character = "/randall", sound="#Randall_short1"})
+		end)
+		event_manager:register_event(6, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It will definitely be at the local club...", character = "/randall", sound="#Randall_1"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="If god really is beside me, then I'm sure to finally win Becky's heart and show Chad's gang who's boss!", character = "/randall", sound="#Randall_6"})
+		end)
+		event_manager:register_event(8, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Oh mighty god!", character = "/randall", sound="#Randall_short1"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please give me a sign!", character = "/randall", sound="#Randall_short2"})
+		end)
+		event_manager:register_event(5, function(_, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
+			self.show_hints = true
+			game_state.comming_from_bullies = false
 		end)
-		game_state.comming_from_bullies = false
 	end
 
 	if message_id == hash("moved") then
