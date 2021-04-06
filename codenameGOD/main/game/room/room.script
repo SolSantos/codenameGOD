@@ -127,11 +127,123 @@ update_context_entries = function()
 	}
 end
 
-function update(self, dt)
-	update_time = update_time + dt
-	door_hint_timer = door_hint_timer + dt
+local cutscenes = {
+	intro=function(self)
+		msg.post("/collections#main", "stop_game")
+		msg.post("/cutscene#cutscene", "cutscene_start")
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+		msg.post("/randall", "sleep")
+		event_manager:register_event(3, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = bro_url, sound="#Bullies_4", skip=true})
+			msg.post("/randall", "wakeup")
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", character="/randall", sound="#Randall_1", skip=true})
+		end)
 
-	if self.show_hints and update_time >= MOVE_AROUND_TIME then
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", character = bro_url, sound="#Bullies_2", skip=true})
+		end)
+
+		event_manager:register_event(2.5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", character="/randall", sound="#Randall_short2", skip=true})
+		end)
+
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(1.5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", character="/randall", skip=true})
+		end)
+
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
+		end)
+
+		event_manager:register_event(4.5, function(self, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1.25, function(self, id)
+			go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
+			msg.post("/collections#main", "stop_game")
+		end)
+		event_manager:register_event(3, function(_, id)
+			msg.post(room_url, "acquire_input_focus")
+			msg.post("/collections#main", "restart_game")
+			msg.post("/cutscene#cutscene", "cutscene_end")
+			game_state.intro_done = true
+			game_state.in_gameplay = true
+			self.show_hints = true
+		end)
+	end,
+	ready_for_tournament=function(self)
+		event_manager:register_event(1, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Alright! Time to bounce out of here!", character = "/randall", sound="#Randall_1"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post(room_url, "acquire_input_focus")
+		end)
+	end,
+	back_from_bullies=function(self)
+		local door_pos = vmath.vector3(922, 400, 0.2)
+		event_manager:register_event(0, function(self, id)
+			go.set_position(door_pos, "/randall")
+			msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=3})
+		end)
+		event_manager:register_event(3, function(self, id)
+			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=6})
+		end)
+		event_manager:register_event(8, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="That was just so weird, what just happened...", character = "/randall", sound="#Randall_6"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Even earlier with my shoes... and then my ticket", character = "/randall", sound="#Randall_5"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Could it be!? I'm not alone!?", character = "/randall", sound="#Randall_panic1"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="This can only be explained by the works of...", character = "/randall", sound="#Randall_4"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="A GOD!!!!!!!!!!", character = "/randall", sound="#Randall_panic2"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="... I Think.", character = "/randall", sound="#Randall_short4"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=6, text="They were talking about becky throwing a party tonight.", character = "/randall", sound="#Randall_6"})
+		end)
+		event_manager:register_event(6, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It will definitely be at the local club...", character = "/randall", sound="#Randall_2"})
+		end)
+		event_manager:register_event(5, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="If god really is beside me, then I'm sure to finally win Becky's heart and show Chad's gang who's boss!", character = "/randall", sound="#Randall_3"})
+		end)
+		event_manager:register_event(8, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Oh mighty god!", character = "/randall", sound="#Randall_panic1"})
+		end)
+		event_manager:register_event(4, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please give me a sign!", character = "/randall", sound="#Randall_4"})
+		end)
+		event_manager:register_event(5, function(_, id)
+			msg.post("/cutscene#cutscene", "cutscene_end")
+			msg.post("/collections#main", "restart_game")
+			self.show_hints = true
+			game_state.comming_from_bullies = false
+		end)
+	end
+}
+
+function update(self, dt)
+	if self.show_hints then
+		update_time = update_time + dt
+		door_hint_timer = door_hint_timer + dt
+	end
+
+	if update_time >= MOVE_AROUND_TIME then
 		update_time = 0
 		hint_count = hint_count + 1
 		if hint_count < 3 then
@@ -147,8 +259,8 @@ function update(self, dt)
 		puzzle_sound = true
 		game_state.allowed_leave = true
 		msg.post("/sound#2-puzzle_solve", "play_sound")
-		event_manager:register_event(2, function(self, id)
-			msg.post(room_url, "run_sequence_2")
+		event_manager:register_event(2, function(_, id)
+			cutscenes.ready_for_tournament(self)
 		end)
 	end
 end
@@ -156,9 +268,9 @@ end
 function init(self)
 	-- Run the intro cutscene
 	if not game_state.intro_done then
-		msg.post(".", "run_sequence_0")
+		cutscenes.intro(self)
 	elseif game_state.comming_from_bullies then
-		msg.post(".", "run_sequence_3")
+		cutscenes.back_from_bullies(self)
 	else
 		msg.post(".", "moved")
 	end
@@ -198,60 +310,7 @@ function on_input(self, action_id, action)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("run_sequence_0") then
-		msg.post("/collections#main", "stop_game")
-		msg.post("/cutscene#cutscene", "cutscene_start")
-		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
-		msg.post("/randall", "sleep")
-		event_manager:register_event(3, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = bro_url, sound="#Bullies_4", skip=true})
-			msg.post("/randall", "wakeup")
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's saturday! I'm not falling \nfor that again Travis!", character="/randall", sound="#Randall_1", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Whatever turd!", character = bro_url, sound="#Bullies_2", skip=true})
-		end)
-
-		event_manager:register_event(2.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", character="/randall", sound="#Randall_short2", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", character="/randall", skip=true})
-		end)
-
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", character="/randall", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
-		end)
-
-		event_manager:register_event(4.5, function(self, id)
-			msg.post("/transition", "play_transition")
-		end)
-
-		event_manager:register_event(1.25, function(self, id)
-			msg.post(room_url, "run_sequence_1")
-		end)
-
-	elseif message_id == hash("run_sequence_1") then
-		go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-		msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
-		msg.post("/collections#main", "stop_game")
-		event_manager:register_event(3, function(self, id)
-			msg.post(room_url, "acquire_input_focus")
-			msg.post("/collections#main", "restart_game")
-			msg.post("/cutscene#cutscene", "cutscene_end")
-		end)
-		game_state.intro_done = true
-		game_state.in_gameplay = true
-		self.show_hints = true
-	elseif message_id == hash("idle") then
+	if message_id == hash("idle") then
 		if game_state.in_gameplay then
 			local r = math.random(1, #item_strings)
 			msg.post("/randall", "go_to", {
@@ -305,62 +364,7 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash("ticket_found") and not items.ticket.in_inventory then
 		msg.post("/dialogue#dialogue", "show_text", {delay=3.5, text="All safe for later!", character = "/randall", sound="#Randall_5"})
-
-	elseif message_id == hash("run_sequence_2") then
-		event_manager:register_event(1, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Alright! Time to bounce out of here!", character = "/randall", sound="#Randall_1"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post(room_url, "acquire_input_focus")
-		end)
-	elseif message_id == hash("run_sequence_3") then
-		local door_pos = vmath.vector3(922, 400, 0.2)
-		go.set_position(door_pos, "/randall")
-		msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=3})
-		event_manager:register_event(3, function(self, id)
-			msg.post("/randall", "go_to", {pos=vmath.vector3(440, 280, 0.2), duration=6})
-		end)
-		event_manager:register_event(8, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="That was just so weird, what just happened...", character = "/randall", sound="#Randall_short1"})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Even earlier with my shoes... and then my ticket", character = "/randall", sound="#Randall_short2"})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Could it be!? I'm not alone!?", character = "/randall", sound="#Randall_1"})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="This can only be explained by the works of...", character = "/randall", sound="#Randall_6"})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="A GOD!", character = "/randall", sound="#Randall_short1"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="... I Think.", character = "/randall", sound="#Randall_6"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=6, text="They were talking about becky throwing a party tonight.", character = "/randall", sound="#Randall_short1"})
-		end)
-		event_manager:register_event(6, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It will definitely be at the local club...", character = "/randall", sound="#Randall_1"})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="If god really is beside me, then I'm sure to finally win Becky's heart and show Chad's gang who's boss!", character = "/randall", sound="#Randall_6"})
-		end)
-		event_manager:register_event(8, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Oh mighty god!", character = "/randall", sound="#Randall_short1"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please give me a sign!", character = "/randall", sound="#Randall_short2"})
-		end)
-		event_manager:register_event(5, function(_, id)
-			msg.post("/cutscene#cutscene", "cutscene_end")
-			msg.post("/collections#main", "restart_game")
-			self.show_hints = true
-			game_state.comming_from_bullies = false
-		end)
 	end
-
 	if message_id == hash("moved") then
 		update_time = 0
 	end
