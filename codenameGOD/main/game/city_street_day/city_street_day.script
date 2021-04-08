@@ -1,6 +1,6 @@
 local inside_gameobject = require "main.inside_gameobject"
 local update_time = 0
-local MOVE_AROUND_TIME = 20
+local MOVE_AROUND_TIME = 10
 local metal_hit_url
 local trash_hit = 0
 local city_url

@@ -12,5 +12,7 @@ return {
 	coins_shown = false,
 	ticket_moved = false,
 	-- The player came back to room after the bullies steal his ticket
-	comming_from_bullies = false
+	comming_from_bullies = false,
+	-- Randall is waiting for a sign from god
+	awaiting_signal = false
 }
