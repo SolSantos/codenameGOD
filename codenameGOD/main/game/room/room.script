@@ -11,6 +11,8 @@ local drawer_url = nil
 local window_url = nil
 local bro_url = nil
 local tv_sound_url = nil
+local window_sound_url = nil
+local zipper_sound_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -20,7 +22,7 @@ local drawer_open = false
 local sign_tv = false
 local sign_drawer = false
 local sign_window = false
-
+local sign_trousers = false
 local divine_signs = 0
 
 local item_strings = {
@@ -133,8 +135,18 @@ update_context_entries = function()
 	context_data[hash("tv")] = {
 		{text="Inspect", click=inspect_show_text("My TV. Yea, it's 480p. The future is here baby!")}
 	}
+	context_data[hash("books")] = {
+		{text="Inspect", click=inspect_show_text("I hope the Dark Tower series ends soon, I hate waiting!")},
+		{text="Move",    click=function()
+			msg.post(room_url, "show_ticket")
+			items.ticket.movable = true
+			game_state.ticket_moved = true
+			go.delete(books_context_url)
+		end}
+	}
+
 	context_data[hash("room_window")] = {}
-	
+	context_data[hash("randall_trousers")] = {}
 	if game_state.awaiting_signal then
 		if not sign_tv then
 			table.insert(context_data[hash("tv")], {text="Turn On", click=function(x, y)
@@ -147,22 +159,25 @@ update_context_entries = function()
 		end
 		if not sign_window then
 			table.insert(context_data[hash("room_window")], {text="Pull", click=function()
+				sign_window = true
 				msg.post(window_url, "play_animation", {id = hash("room_window3")})
 				divine_signs = divine_signs + 1
 				msg.post(room_url, "divine_sign")
+				msg.post(window_sound_url, "play_sound")
+				update_context_entries()
+			end})
+		end
+		if not sign_trousers then
+			table.insert(context_data[hash("randall_trousers")], {text="Pull", click=function()
+				sign_trousers = true
+				msg.post("/randall", "drop_trousers")
+				divine_signs = divine_signs + 1
+				msg.post(room_url, "divine_sign")
+				msg.post(zipper_sound_url, "play_sound")
 				update_context_entries()
 			end})
 		end
 	end
-	context_data[hash("books")] = {
-		{text="Inspect", click=inspect_show_text("I hope the Dark Tower series ends soon, I hate waiting!")},
-		{text="Move",    click=function()
-			msg.post(room_url, "show_ticket")
-			items.ticket.movable = true
-			game_state.ticket_moved = true
-			go.delete(books_context_url)
-		end}
-	}
 end
 
 local cutscenes = {
@@ -348,6 +363,8 @@ function init(self)
 	window_url = msg.url("window#sprite")
 	bro_url = msg.url("randall_bro")
 	tv_sound_url = msg.url("sound#16-tv_news")
+	window_sound_url = msg.url("sound#18-open_window")
+	zipper_sound_url = msg.url("sound#19-zipper")
 	
 	if items.ticket.found == 0 then
 		msg.post("", "disable")

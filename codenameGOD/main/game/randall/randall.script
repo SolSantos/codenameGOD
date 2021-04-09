@@ -11,7 +11,8 @@ local ACTION = {
 	WALK=3,
 	WALK_TALK=4,
 	SLEEP=5,
-	SCREAM=6
+	SCREAM=6,
+	TROUSERS_DOWN=7
 }
 
 local DIRECTION = {
@@ -44,6 +45,8 @@ local update_animation = function(self, mapping)
 			self.new_animation = hash(mapping.idle)
 		elseif self.action == ACTION.SCREAM then
 			self.new_animation = hash(mapping.scream)
+		elseif self.action == ACTION.TROUSERS_DOWN then
+			self.new_animation = hash(mapping.trousers_down)
 		end
 	end
 end
@@ -98,6 +101,10 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 		set_action(self, ACTION.SCREAM)
 	end
 
+	if message_id == hash("drop_trousers") then
+		set_action(self, ACTION.TROUSERS_DOWN)
+	end
+	
 	update_animation(self, mapping)
 end
 
@@ -147,7 +154,8 @@ local state_on_message = {
 			walk="walking",
 			talk="talking",
 			walk_talk="walk_talk",
-			scream="scream"
+			scream="scream",
+			trousers_down="idle"
 		}
 		default_on_message(anims_mapping, self, message_id, message, sender)
 	end,
