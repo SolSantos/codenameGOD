@@ -18,6 +18,14 @@ images {
   image: "/assets/images/background assets/room_drawer1.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/images/background assets/room_window1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_window3.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "open_drawer"
   images {

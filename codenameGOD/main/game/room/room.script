@@ -8,7 +8,9 @@ local inv_arrow_url
 local door_sound_url = nil
 local books_context_url = nil
 local drawer_url = nil
+local window_url = nil
 local bro_url = nil
+local tv_sound_url = nil
 local door_hint_timer = 0
 local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
@@ -17,6 +19,8 @@ local items = require("main.game.item.items")
 local drawer_open = false
 local sign_tv = false
 local sign_drawer = false
+local sign_window = false
+
 local divine_signs = 0
 
 local item_strings = {
@@ -129,14 +133,26 @@ update_context_entries = function()
 	context_data[hash("tv")] = {
 		{text="Inspect", click=inspect_show_text("My TV. Yea, it's 480p. The future is here baby!")}
 	}
+	context_data[hash("room_window")] = {}
+	
 	if game_state.awaiting_signal then
-		table.insert(context_data[hash("tv")], {text="Turn On", click=function(x, y)
-			sign_tv = true
-			divine_signs = divine_signs + 1
-			msg.post(room_url, "divine_sign")
-			msg.post("/sound#16-tv_news", "play_sound")
-			update_context_entries()
-		end})
+		if not sign_tv then
+			table.insert(context_data[hash("tv")], {text="Turn On", click=function(x, y)
+				sign_tv = true
+				divine_signs = divine_signs + 1
+				msg.post(room_url, "divine_sign")
+				msg.post(tv_sound_url, "play_sound")
+				update_context_entries()
+			end})
+		end
+		if not sign_window then
+			table.insert(context_data[hash("room_window")], {text="Pull", click=function()
+				msg.post(window_url, "play_animation", {id = hash("room_window3")})
+				divine_signs = divine_signs + 1
+				msg.post(room_url, "divine_sign")
+				update_context_entries()
+			end})
+		end
 	end
 	context_data[hash("books")] = {
 		{text="Inspect", click=inspect_show_text("I hope the Dark Tower series ends soon, I hate waiting!")},
@@ -258,8 +274,8 @@ local cutscenes = {
 			self.show_hints = true
 			game_state.comming_from_bullies = false
 			game_state.awaiting_signal = true
+			update_context_entries()
 		end)
-		update_context_entries()
 	end,
 	ouija_cutscene=function(self)
 		game_state.in_gameplay = false
@@ -329,8 +345,10 @@ function init(self)
 	room_url = msg.url()
 	door_sound_url = msg.url("sound#8-door_knob")
 	drawer_url = msg.url("drawer#sprite")
+	window_url = msg.url("window#sprite")
 	bro_url = msg.url("randall_bro")
-
+	tv_sound_url = msg.url("sound#16-tv_news")
+	
 	if items.ticket.found == 0 then
 		msg.post("", "disable")
 	end
@@ -441,8 +459,8 @@ function on_message(self, message_id, message, sender)
 		if divine_signs == 1 then
 			msg.post("/dialogue#dialogue", "show_text", {text = "It's really happening! Ok. One more totally unique interaction to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
 		elseif divine_signs == 2 then
+			game_state.awaiting_signal = false
 			cutscenes.ouija_cutscene(self)
-			game_state.awaiting_signal = true
 		end
 	end
 	if message_id == hash("show_ticket") then
