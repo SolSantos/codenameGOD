@@ -93,10 +93,14 @@ function on_message(self, message_id, message, sender)
 
 		local entries = context_data[message.context_key]
 		if not entries then
-			print("The element "..message.extra.." does not have any context entries")
+			print("The element "..message.context_key.." does not have any context entries")
 			return
 		end
 
+		if #entries == 0 then
+			return
+		end
+		
 		clear_context_menu(self)
 
 		local v_orientation = ORIENTATION.UP

@@ -43,7 +43,6 @@ local function handle_click(url, action_id, action, gameobject)
 						
 		elseif action.released then
 			if current_item then
-				
 				go.set_position(vmath.vector3(mouse_x, mouse_y, 0), current_item.go)
 
 				msg.post(
@@ -143,7 +142,6 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("dropped_outside_inventory") then
 		local dropped_item = items[message.item_name]
-		
 		if (message.item_name == "shoe1" or  message.item_name == "shoe2") and self.current_scenario == "room" then	
 			msg.post("/collections", "send_collection", {name = "shoe_found", params = {x = mouse_x, y = mouse_y, item_name = message.item_name}})
 		end
@@ -207,5 +205,5 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	return goput.on_input(action_id, action, gameobject)
+	return goput.on_input(action_id, action)
 end

@@ -20,3 +20,6 @@ debug = 0
 default_texture_mag_filter = nearest
 default_texture_min_filter = nearest
 
+[sound]
+max_component_count = 64
+

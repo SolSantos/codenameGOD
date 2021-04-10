@@ -53,11 +53,11 @@ function M.on_input(action_id, action)
 		local pos = go.get_position(sprite_data.go_url)
 		pos.x = pos.x + sprite_data.offset.x * go_scale.x
 		pos.y = pos.y + sprite_data.offset.y * go_scale.y
-
+		
 		local scaled_size = vmath.vector3(size.x * go_scale.x * sprite_scale.x, size.y * go_scale.y * sprite_scale.y, 0)
 
 		if action.x >= pos.x - scaled_size.x / 2 and action.x <= pos.x + scaled_size.x / 2 and action.y >= pos.y - scaled_size.y / 2 and action.y <= pos.y + scaled_size.y / 2 then
-			return sprite_data.callback(sprite_data.go_url, action_id, action,sprite_data.gameobject)
+			sprite_data.callback(sprite_data.go_url, action_id, action,sprite_data.gameobject)
 		end
 	end
 	return false

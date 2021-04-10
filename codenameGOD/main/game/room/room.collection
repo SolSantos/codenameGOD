@@ -207,6 +207,34 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "window_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 552.0
+    y: 444.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "room_window"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 3.55
+    y: 1.6
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "background"
@@ -370,29 +398,39 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
-  ""
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-embedded_instances {
-  id: "transition"
-  data: "components {\n"
-  "  id: \"transition\"\n"
-  "  component: \"/main/game/room/transition.gui\"\n"
+  "components {\n"
+  "  id: \"16-tv_news\"\n"
+  "  component: \"/assets/sounds/16-tv_news.wav\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"18-open_window\"\n"
+  "  component: \"/assets/sounds/18-open_window.wav\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"19-zipper\"\n"
+  "  component: \"/assets/sounds/19-zipper.wav\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -569,6 +607,46 @@ embedded_instances {
   position {
     x: 600.0
     y: 56.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "window"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"tile_set: \\\"/assets/bg_assets.atlas\\\"\\n"
+  "default_animation: \\\"room_window1\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 553.0
+    y: 446.0
     z: 0.0
   }
   rotation {

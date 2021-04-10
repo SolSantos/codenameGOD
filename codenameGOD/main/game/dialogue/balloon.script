@@ -2,6 +2,10 @@ local utils = require("main.game.dialogue.utils")
 local get_visible_text = utils.get_visible_text
 local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
 
+local SMALL_BALLOON_SPACE = 30 -- letters
+local SMALL_BALLOON_MAX_LINES = 4
+local BIG_BALLOON_SPACE = 49
+
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
 local BIG_BALLOON = 1
 local SMALL_BALLOON = 2
@@ -12,36 +16,76 @@ local BALLOONS = {
 		width=476,
 		height=176,
 		image="balloon1",
-		label_size=vmath.vector3(430, 100, 0),
 		offset=vmath.vector3(-50, 0, 0)
 	},
 	[SMALL_BALLOON]={
 		width=296,
 		height=128,
 		image="balloon2",
-		label_size=vmath.vector3(256, 64, 0),
 		offset=vmath.vector3(0, 0, 0)
 	},
 	[NO_ARROW_BIG_BALLOON]={
 		width=476,
 		height=176,
 		image="balloon3",
-		label_size=vmath.vector3(430, 100, 0),
 		offset=vmath.vector3(-50, 0, 0)
 	},
 	[NO_ARROW_SMALL_BALLOON]={
 		width=296,
 		height=128,
 		image="balloon4",
-		label_size=vmath.vector3(256, 64, 0),
 		offset=vmath.vector3(0, 0, 0)
 	}
 }
 
+-- When text is being displayed letter by letter and reaches the end of the line,
+-- the word in the limit jumps to the next line. This function adds line breaks
+-- before the words in the limit, so they pass to the next line, staying in their
+-- positions and improving readability.
+local function break_limit_words(text, balloon_space)
+	local final_text = ""
+	local line_letters = 0
+	local word = ""
+	local last_separator = nil
+	for letter in text:gmatch(".") do
+		local word_ended = false
+		local word_fit = (line_letters + #word + 1) <= balloon_space
+		if letter == " " or letter == "\n" then
+			word_ended = true
+		else
+			word = word..letter
+		end
+
+		if word_ended then
+			if last_separator == " " then
+				local word_fit = (line_letters + #word + 1) <= balloon_space
+				if word_fit then
+					final_text = final_text.." "..word
+					line_letters = line_letters + #word + 1
+				else
+					final_text = final_text.."\n"..word
+					line_letters = #word
+				end
+			elseif last_separator == "\n" then
+				final_text = final_text.."\n"..word
+				line_letters = #word
+			else
+				final_text = final_text..word
+				line_letters = line_letters + #word
+			end
+
+			last_separator = letter
+			word = ""
+		end
+	end
+	if last_separator then
+		final_text = final_text..last_separator
+	end
+	final_text = final_text..word
+	return final_text
+end
+
 local function get_balloon_to_use(text)
-	local SMALL_BALLOON_SPACE = 30
-	local SMALL_BALLOON_MAX_LINES = 4
-	
 	local lines = 0
 	for line in text:gmatch("[^\n]+") do
 		lines = lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
@@ -56,6 +100,8 @@ end
 
 function init(self)
 	self.label = msg.url("#label")
+	self.big_label = msg.url("#big_label")
+	self.current_label = self.label
 	self.balloon_text = nil
 	self.show_elapsed = 0
 	self.last_message_id = 0
@@ -69,15 +115,28 @@ function update(self, dt)
 	if self.balloon_text then
 		self.show_elapsed = self.show_elapsed + dt
 		local visible_text = get_visible_text(self.balloon_text, self.show_elapsed)
-		label.set_text(self.label, visible_text)
+		label.set_text(self.current_label, visible_text)
 	end
 end
 
-local hide_balloon = function(self)
+local function hide_balloon(self)
 	self.balloon_text = nil
 	label.set_text(self.label, "")
+	label.set_text(self.big_label, "")
 	msg.post(".", "disable")
 	self.current_character = nil
+end
+
+local function set_active_label(self, balloon)
+	if balloon == BIG_BALLOON or balloon == NO_ARROW_BIG_BALLOON then
+		msg.post(self.big_label, "enable")
+		msg.post(self.label, "disable")
+		self.current_label = self.big_label
+	else
+		msg.post(self.label, "enable")
+		msg.post(self.big_label, "disable")
+		self.current_label = self.label
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -104,16 +163,20 @@ function on_message(self, message_id, message, sender)
 	end
 	
 	if message_id == hash("show_text") then
-		if not message.character and not message.pos then
+		if not message.character then
 			return
 		end
-		message.text = message.text or ""
+		local text = break_limit_words(message.text, SMALL_BALLOON_SPACE) or ""
 		
 		self.last_message_id = self.last_message_id + 1
 		local message_id = self.last_message_id
 
-		local pos = message.pos or go.get_position(message.character)
-		local balloon_id = get_balloon_to_use(message.text)
+		local pos = go.get_position(message.character)
+		local balloon_id = get_balloon_to_use(text)
+		if balloon_id == BIG_BALLOON then
+			text = break_limit_words(message.text, BIG_BALLOON_SPACE) or ""
+		end
+		
 		local balloon = BALLOONS[balloon_id]
 		self.current_balloon = balloon_id
 		self.current_character = msg.url(message.character)
@@ -139,25 +202,21 @@ function on_message(self, message_id, message, sender)
 		pos.z = 1
 		
 		go.set_position(pos, ".")
-		go.set(self.label, "size", balloon.label_size)
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 
-		self.balloon_text = message.text
+		self.balloon_text = text
 		self.show_elapsed = 0
 
-		label.set_text(self.label, "")
+		set_active_label(self, balloon_id)
+		label.set_text(self.current_label, "")
 		msg.post(".", "enable")
 	
-		if message.character then
-			msg.post(message.character, message.event or "start_talking")
-		end		
-		timer.delay(message.delay or (message.text:len() / LETTERS_PER_SECOND + 1), false, function(self, id)
+		msg.post(message.character, message.event or "start_talking")	
+		timer.delay(message.delay or ((text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
 			if message_id == self.last_message_id then
 				hide_balloon(self)
 			end	
-			if message.character then
-				msg.post(message.character, "stop_talking")
-			end
+			msg.post(message.character, "stop_talking")	
 		end)
 
 		if message.sound then
