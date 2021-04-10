@@ -191,7 +191,7 @@ local cutscenes = {
 			msg.post("/randall", "wakeup")
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's Saturday! I'm not falling \nfor that again Travis!", character="/randall", sound="#Randall_1", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It's Saturday! I'm not falling for that again Travis!", character="/randall", sound="#Randall_1", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
@@ -207,7 +207,7 @@ local cutscenes = {
 		end)
 
 		event_manager:register_event(1.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual \nSorcery: The congregation anual tournament!", character="/randall", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual Sorcery: The congregation anual tournament!", character="/randall", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
