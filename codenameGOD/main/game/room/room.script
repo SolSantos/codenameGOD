@@ -69,7 +69,7 @@ update_context_entries = function()
 		{text="Inspect", click=inspect_show_text("My telescope! Many nights spent looking\nat girl--stars. Yes, indeed.")}
 	}
 	context_data[hash("drawer")] = {
-		{text="Inspect", click=inspect_show_text("I like to hide my change under my socks. It's rewarding to find a nickle between my toes every now and then!")}
+		{text="Inspect", click=inspect_show_text("I like to hide my change under my socks. It's rewarding to find a nickel between my toes every now and then!")}
 	}
 	if drawer_open then
 		table.insert(context_data[hash("drawer")], {text="Close", click=function(x, y)
@@ -101,7 +101,7 @@ update_context_entries = function()
 		end})
 	end
 	context_data[hash("room_door")] = {
-		{text="Inspect", click=inspect_show_text("Door to the outside.\nThe wild urban jungle. The big adventure.The great unknown.\n....My frontyard.")},
+		{text="Inspect", click=inspect_show_text("Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard.")},
 		{text="Go Out", click=function(x, y)
 			if door_hint_timer <= DOOR_HINT_DELAY or not game_state.in_gameplay then
 				return
@@ -207,7 +207,7 @@ local cutscenes = {
 		end)
 
 		event_manager:register_event(1.5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the anual Sorcery: The congregation anual tournament!", character="/randall", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="I'm gonna be late for the annual \nSorcery: The congregation annual tournament!", character="/randall", skip=true})
 		end)
 
 		event_manager:register_event(5, function(self, id)
