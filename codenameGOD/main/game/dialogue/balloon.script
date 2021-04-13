@@ -131,10 +131,12 @@ local function set_active_label(self, balloon)
 	if balloon == BIG_BALLOON or balloon == NO_ARROW_BIG_BALLOON then
 		msg.post(self.big_label, "enable")
 		msg.post(self.label, "disable")
+		label.set_text(self.label, "")
 		self.current_label = self.big_label
 	else
 		msg.post(self.label, "enable")
 		msg.post(self.big_label, "disable")
+		label.set_text(self.big_label, "")
 		self.current_label = self.label
 	end
 end
