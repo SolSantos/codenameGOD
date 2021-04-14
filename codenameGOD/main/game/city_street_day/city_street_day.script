@@ -1,6 +1,4 @@
 local inside_gameobject = require "main.inside_gameobject"
-local update_time = 0
-local MOVE_AROUND_TIME = 10
 local metal_hit_url
 local trash_hit = 0
 local city_url
@@ -20,7 +18,6 @@ local context_data = require("main.context_data")
 context_data[hash("city_street_trash")] = {
 	{text="Inspect", click=function()
 		msg.post("/dialogue#dialogue", "show_text", {text = "...Why am I admiring trash at a time like this.", character="randall"})
-		update_time = 0
 	end},
 	{text="Hit", click=function()
 		msg.post(metal_hit_url, "play_sound")
@@ -189,16 +186,6 @@ function final(self)
 	msg.post("sound#ambiance", "stop_sound")
 end
 
-function update(self,dt)
-	update_time = update_time + dt
-	if update_time >= MOVE_AROUND_TIME then
-		update_time = 0
-		if game_state.in_gameplay then
-			msg.post(city_url, "idle")
-		end
-	end
-end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("pet_rock_drop") then
 		local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
@@ -226,9 +213,5 @@ function on_message(self, message_id, message, sender)
 				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4"})
 			end)
 		end
-	end
-	
-	if message_id == hash("moved") then
-		update_time = 0
 	end
 end
