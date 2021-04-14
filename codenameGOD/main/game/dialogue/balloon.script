@@ -1,5 +1,7 @@
 local utils = require("main.game.dialogue.utils")
 local get_visible_text = utils.get_visible_text
+local inside_gameobject = require("main.inside_gameobject")
+
 local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
 
 local SMALL_BALLOON_SPACE = 30 -- letters
@@ -46,7 +48,8 @@ local function break_limit_words(text, balloon_space)
 	local final_text = ""
 	local line_letters = 0
 	local word = ""
-	local last_separator = nil
+	local last_separator = "" -- No separator for the first word
+	text = text.." "  -- This extra space will be ignored
 	for letter in text:gmatch(".") do
 		local word_ended = false
 		local word_fit = (line_letters + #word + 1) <= balloon_space
@@ -57,31 +60,22 @@ local function break_limit_words(text, balloon_space)
 		end
 
 		if word_ended then
-			if last_separator == " " then
-				local word_fit = (line_letters + #word + 1) <= balloon_space
-				if word_fit then
-					final_text = final_text.." "..word
-					line_letters = line_letters + #word + 1
-				else
-					final_text = final_text.."\n"..word
-					line_letters = #word
-				end
-			elseif last_separator == "\n" then
-				final_text = final_text.."\n"..word
-				line_letters = #word
-			else
-				final_text = final_text..word
-				line_letters = line_letters + #word
+			local word_fit = (line_letters + #word + 1) <= balloon_space
+			if last_separator == " " and not word_fit then
+				last_separator = "\n"
 			end
 
+			final_text = final_text..last_separator..word
+			if last_separator == " " then
+				line_letters = line_letters + #word + 1
+			else
+				line_letters = #word
+			end
+			
 			last_separator = letter
 			word = ""
 		end
 	end
-	if last_separator then
-		final_text = final_text..last_separator
-	end
-	final_text = final_text..word
 	return final_text
 end
 
@@ -99,14 +93,26 @@ local function get_balloon_to_use(text)
 end
 
 function init(self)
+	msg.post(".","acquire_input_focus")
+
 	self.label = msg.url("#label")
 	self.big_label = msg.url("#big_label")
+	self.skip = msg.url("#skip")
+	self.big_skip = msg.url("#big_skip")
 	self.current_label = self.label
+	self.current_skip = self.skip
+	self.can_skip = false
 	self.balloon_text = nil
 	self.show_elapsed = 0
 	self.last_message_id = 0
 	self.current_balloon = SMALL_BALLOON
 	self.current_character = nil
+	self.balloon_visible = false
+	
+	self.skip_offset = {
+		[self.skip] = vmath.vector3(125, -2, 0),
+		[self.big_skip] = vmath.vector3(216, -28, 0)
+	}
 
 	msg.post(".", "disable")
 end
@@ -125,20 +131,51 @@ local function hide_balloon(self)
 	label.set_text(self.big_label, "")
 	msg.post(".", "disable")
 	self.current_character = nil
+	self.balloon_visible = false
 end
 
-local function set_active_label(self, balloon)
-	if balloon == BIG_BALLOON or balloon == NO_ARROW_BIG_BALLOON then
+local function set_active_elements(self, balloon_id)
+	msg.post(self.skip, "disable")
+	msg.post(self.big_skip, "disable")
+	
+	if balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
 		msg.post(self.big_label, "enable")
+		self.current_label = self.big_label
 		msg.post(self.label, "disable")
 		label.set_text(self.label, "")
-		self.current_label = self.big_label
+
+		self.current_skip = self.big_skip
+		if self.can_skip then
+			msg.post(self.big_skip, "enable")
+		end
 	else
 		msg.post(self.label, "enable")
 		msg.post(self.big_label, "disable")
 		label.set_text(self.big_label, "")
 		self.current_label = self.label
+		self.current_skip = self.skip
+		if self.can_skip then
+			msg.post(self.skip, "enable")
+		end
 	end
+end
+
+local function get_orientation(pos, balloon)
+	local balloon_right = pos.x + balloon.width + balloon.offset.x
+	local balloon_top = pos.y + balloon.height + balloon.offset.y
+
+	local w, h = window.get_size()
+	local h_orientation = ORIENTATION.RIGHT
+	if balloon_right >= w then
+		h_orientation = ORIENTATION.LEFT
+	end
+
+	local v_orientation = ORIENTATION.UP
+	if balloon_top >= h then
+		v_orientation = ORIENTATION.DOWN
+	end
+
+	return h_orientation, v_orientation
 end
 
 function on_message(self, message_id, message, sender)
@@ -183,41 +220,33 @@ function on_message(self, message_id, message, sender)
 		self.current_balloon = balloon_id
 		self.current_character = msg.url(message.character)
 		
+		local h_orientation, v_orientation = get_orientation(pos, balloon)
+		sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
+		sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
+
 		local offset_x = balloon.width / 2 + balloon.offset.x
 		local offset_y = balloon.height / 2 + balloon.offset.y
-		
-		local w, h = window.get_size()
-		local h_orientation = ORIENTATION.RIGHT
-		if pos.x + offset_x + (balloon.width / 2) >= w then
-			h_orientation = ORIENTATION.LEFT
-		end
-		sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
-
-		local v_orientation = ORIENTATION.UP
-		if pos.y + offset_y + (balloon.height / 2) >= h then
-			v_orientation = ORIENTATION.DOWN
-		end
-		sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
-		
 		pos.x = pos.x + (offset_x * h_orientation)
 		pos.y = pos.y + (offset_y * v_orientation)
-		pos.z = 1
-		
+		pos.z = 0.9
+
 		go.set_position(pos, ".")
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 
 		self.balloon_text = text
 		self.show_elapsed = 0
 
-		set_active_label(self, balloon_id)
-		label.set_text(self.current_label, "")
 		msg.post(".", "enable")
+		self.balloon_visible = true
+		self.can_skip = message.skip or false
+		set_active_elements(self, balloon_id)
+		label.set_text(self.current_label, "")
 	
 		msg.post(message.character, message.event or "start_talking")	
 		timer.delay(message.delay or ((text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
 			if message_id == self.last_message_id then
 				hide_balloon(self)
-			end	
+			end
 			msg.post(message.character, "stop_talking")	
 		end)
 
@@ -233,6 +262,20 @@ function on_message(self, message_id, message, sender)
 			end)
 
 			self.last_sound = sound_url
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if self.balloon_visible and self.can_skip then
+		if action_id == hash("click") and action.pressed then
+			if inside_gameobject(self.current_skip, action.x, action.y, self.skip_offset[self.current_skip]) then
+				event_manager:skip_event()
+			end
+		end
+
+		if action_id == hash("skip") and action.pressed then
+			event_manager:skip_event()
 		end
 	end
 end

@@ -2,7 +2,7 @@ local utils = require("main.game.dialogue.utils")
 local get_visible_text = utils.get_visible_text
 
 function init(self)
-	msg.post(".","acquire_input_focus")
+	--msg.post(".","acquire_input_focus")
 	local box  = gui.get_node("box")
 	gui.set_enabled(box, false)
 	local text  = gui.get_node("text")
