@@ -137,7 +137,7 @@ update_context_entries = function()
 			msg.post(room_url, "show_ticket")
 			items.ticket.movable = true
 			game_state.ticket_moved = true
-			go.delete(books_context_url)
+			msg.post(books_context_url, "deactivate")
 		end}
 	}
 
