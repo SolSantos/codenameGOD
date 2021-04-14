@@ -266,16 +266,25 @@ function on_message(self, message_id, message, sender)
 	end
 end
 
+local function skip_balloon(self)
+	local total_duration = self.balloon_text:len() / LETTERS_PER_SECOND * 1000
+	if self.show_elapsed < total_duration then
+		self.show_elapsed = total_duration
+	else
+		event_manager:skip_event()
+	end
+end
+
 function on_input(self, action_id, action)
 	if self.balloon_visible and self.can_skip then
 		if action_id == hash("click") and action.pressed then
 			if inside_gameobject(self.current_skip, action.x, action.y, self.skip_offset[self.current_skip]) then
-				event_manager:skip_event()
+				skip_balloon(self)
 			end
 		end
 
 		if action_id == hash("skip") and action.pressed then
-			event_manager:skip_event()
+			skip_balloon(self)
 		end
 	end
 end
