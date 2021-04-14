@@ -2,7 +2,9 @@ RANDALL_STATE = {
 	LYING_DOWN=1,
 	SHOELESS=2,
 	ONE_SHOE=3,
-	NORMAL=4
+	NORMAL=4,
+	PRAISING=5,
+	PRAISING_NO_PANTS=6
 }
 
 local ACTION = {
@@ -12,7 +14,7 @@ local ACTION = {
 	WALK_TALK=4,
 	SLEEP=5,
 	SCREAM=6,
-	TROUSERS_DOWN=7
+	PANTS_FALL=7
 }
 
 local DIRECTION = {
@@ -31,13 +33,14 @@ end
 local update_animation = function(self, mapping)
 	if self.action_changed then
 		self.action_changed = false
-		
-		local direction = get_direction_text(self.direction)
+
 		if self.action == ACTION.WALK then
+			local direction = get_direction_text(self.direction)
 			self.new_animation = hash(mapping.walk..direction)
 		elseif self.action == ACTION.TALK then
 			self.new_animation = hash(mapping.talk)
 		elseif self.action == ACTION.WALK_TALK then
+			local direction = get_direction_text(self.direction)
 			self.new_animation = hash(mapping.walk_talk..direction)
 		elseif self.action == ACTION.SLEEP then
 			self.new_animation = hash(mapping.sleep)
@@ -45,8 +48,8 @@ local update_animation = function(self, mapping)
 			self.new_animation = hash(mapping.idle)
 		elseif self.action == ACTION.SCREAM then
 			self.new_animation = hash(mapping.scream)
-		elseif self.action == ACTION.TROUSERS_DOWN then
-			self.new_animation = hash(mapping.trousers_down)
+		elseif self.action == ACTION.PANTS_FALL then
+			self.new_animation = hash(mapping.pants_fall)
 		end
 	end
 end
@@ -100,10 +103,6 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 	if message_id == hash("scream") then
 		set_action(self, ACTION.SCREAM)
 	end
-
-	if message_id == hash("drop_trousers") then
-		set_action(self, ACTION.TROUSERS_DOWN)
-	end
 	
 	update_animation(self, mapping)
 end
@@ -117,6 +116,15 @@ local lying_down_on_message = function(mapping, self, message_id, message)
 		set_action(self, ACTION.IDLE)
 	elseif message_id == hash("sleep") then
 		set_action(self, ACTION.SLEEP)
+	end
+	update_animation(self, mapping)
+end
+
+local praise_message = function(mapping, self, message_id, message)
+	if message_id == hash("start_talking") then
+		set_action(self, ACTION.TALK)
+	elseif message_id == hash("stop_talking") and self.action == ACTION.TALK then
+		set_action(self, ACTION.IDLE)
 	end
 	update_animation(self, mapping)
 end
@@ -154,11 +162,25 @@ local state_on_message = {
 			walk="walking",
 			talk="talking",
 			walk_talk="walk_talk",
-			scream="scream",
-			trousers_down="idle"
+			scream="scream"
 		}
 		default_on_message(anims_mapping, self, message_id, message, sender)
 	end,
+	[RANDALL_STATE.PRAISING] = function(self, message_id, message, sender)
+		local anims_mapping = {
+			idle="praising_idle",
+			talk="praising_talk",
+		}
+		praise_message(anims_mapping, self, message_id, message, sender)
+	end,
+	[RANDALL_STATE.PRAISING_NO_PANTS] = function(self, message_id, message, sender)
+		local anims_mapping = {
+			idle="praising_no_pants_idle",
+			talk="praising_no_pants_talk",
+			pants_fall="praising_no_pants_lose_pants"
+		}
+		praise_message(anims_mapping, self, message_id, message, sender)
+	end
 }
 
 function init(self)
@@ -181,7 +203,11 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("set_state") then
 		self.state = message.state
-		set_action(self, ACTION.IDLE)
+		if message.state == RANDALL_STATE.PRAISING_NO_PANTS then
+			set_action(self, ACTION.PANTS_FALL)
+		else
+			set_action(self, ACTION.IDLE)
+		end
 	end
 	state_on_message[self.state](self, message_id, message, sender)
 end

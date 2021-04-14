@@ -24,6 +24,7 @@ local sign_drawer = false
 local sign_window = false
 local sign_trousers = false
 local divine_signs = 0
+local show_hints = false
 
 local item_strings = {
 	[1] = {
@@ -164,12 +165,16 @@ update_context_entries = function()
 		end
 		if not sign_trousers then
 			table.insert(context_data[hash("randall_trousers")], {text="Pull", click=function()
+				show_hints = false
 				sign_trousers = true
-				msg.post("/randall", "drop_trousers")
-				divine_signs = divine_signs + 1
-				msg.post(room_url, "divine_sign")
+				msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING_NO_PANTS})
 				msg.post(zipper_sound_url, "play_sound")
-				update_context_entries()
+				event_manager:register_event(4, function()
+					divine_signs = divine_signs + 1
+					msg.post(room_url, "divine_sign")
+					update_context_entries()
+					show_hints = true
+				end)
 			end})
 		end
 	end
@@ -177,9 +182,9 @@ end
 
 local cutscenes = {
 	intro=function(self)
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
-		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
 		msg.post("/randall", "sleep")
 		event_manager:register_event(3, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = bro_url, sound="#Bullies_4", skip=true})
@@ -223,7 +228,7 @@ local cutscenes = {
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			game_state.intro_done = true
 			game_state.in_gameplay = true
-			self.show_hints = true
+			show_hints = true
 		end)
 	end,
 	ready_for_tournament=function(self)
@@ -277,11 +282,12 @@ local cutscenes = {
 		end)
 		event_manager:register_event(4, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please give me a sign!", character = "/randall", sound="#Randall_4"})
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING})
 		end)
 		event_manager:register_event(5, function(_, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
-			self.show_hints = true
+			show_hints = true
 			game_state.comming_from_bullies = false
 			game_state.awaiting_signal = true
 			update_context_entries()
@@ -313,7 +319,7 @@ local cutscenes = {
 }
 
 function update(self, dt)
-	if self.show_hints then
+	if show_hints then
 		update_time = update_time + dt
 		door_hint_timer = door_hint_timer + dt
 	end
@@ -341,6 +347,8 @@ function update(self, dt)
 end
 
 function init(self)
+	show_hints = false
+	
 	-- Run the intro cutscene
 	if not game_state.intro_done then
 		cutscenes.intro(self)
@@ -371,21 +379,10 @@ function init(self)
 	end
 
 	books_context_url = msg.url("books_clickable")
-	self.show_hints = false
 end
 
 function final(self)
 	msg.post("sound#ambiance", "stop_sound")
-end
-
-function on_input(self, action_id, action)
-	--teste para ver se objetos aparecem no sítio na mudança de cenários
-	if action_id == hash("m") then
-		msg.post("/collections#main", "load_screen", {
-			name = "house_front",
-			pos = vmath.vector3(422,311,0.4)
-		})
-	end
 end
 
 function on_message(self, message_id, message, sender)

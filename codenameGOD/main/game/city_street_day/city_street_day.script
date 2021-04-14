@@ -120,7 +120,8 @@ cutscenes = {
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		msg.post(bullies_verse_sound_url, "stop_sound")
 		event_manager:register_event(1, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=3, text="HEY, WHAT WAS THAT???", character = bully2_url, sound="#Bullies_5", skip=true})
+			msg.post("/dialogue#dialogue", 
+			"show_text", {delay=3, text="HEY, WHAT WAS THAT???", character = bully2_url, sound="#Bullies_5", skip=true})
 		end)
 		event_manager:register_event(3, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=2.5, text="Who did that bro?", character = bully3_url, sound="#Bullies_4", skip=true})
@@ -135,7 +136,7 @@ cutscenes = {
 		local bully1_pos = go.get_position(bully1_url)
 		local bully2_pos = go.get_position(bully2_url)
 		local bully3_pos = go.get_position(bully3_url)
-		event_manager:register_event(4, function(self, id)			
+		event_manager:register_event(4, function(self, id)
 			msg.post(bully1_url, "go_to", {
 				pos=vmath.vector3(1100, bully1_pos.y, bully1_pos.z), 
 				duration=2.5
@@ -213,16 +214,16 @@ function on_message(self, message_id, message, sender)
 		local r = math.random(3)
 		if r == 1 then
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4"})
 			end)
 		elseif r==2 then
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5"})
 			end)
 
 		else
 			event_manager:register_event(0.04, function(self, id)
-				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4", skip=true})
+				msg.post("/dialogue#dialogue", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4"})
 			end)
 		end
 	end
