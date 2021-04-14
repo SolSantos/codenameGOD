@@ -12,7 +12,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.line_factory = "/context_menu#context_line"
 	self.line_width = 90
-	self.line_height = 30
+	self.line_height = 29.5
 
 	self.click_elapsed = 0
 	--[[
@@ -61,6 +61,28 @@ local function get_hovered_line(self)
 	return nil
 end
 
+local function get_orientation(self, x, y)
+	local v_orientation = ORIENTATION.UP
+	local h_orientation = ORIENTATION.RIGHT
+	
+	local w, h = window.get_size() 
+	
+	-- The coordinates received internaly are still of the base resolution
+	-- but the window size we received is the scaled size so we need to 
+	-- adapt the other coordinates to match the scale
+	local scale = vmath.vector3(w / 1024, h / 576, 1)
+	
+	h = h - 65 -- Discount height for the top application bar on desktop
+	if x * scale.x + (self.line_width * scale.x) > w then
+		h_orientation = ORIENTATION.LEFT
+	end
+	if y * scale.y + (self.line_height * scale.y) * #self.menu > h then
+		v_orientation = ORIENTATION.DOWN
+	end
+	
+	return h_orientation, v_orientation
+end
+
 function final(self)
 	clear_context_menu(self)
 end
@@ -102,18 +124,8 @@ function on_message(self, message_id, message, sender)
 		end
 		
 		clear_context_menu(self)
-
-		local v_orientation = ORIENTATION.UP
-		local h_orientation = ORIENTATION.RIGHT
-		local w, h = window.get_size()
-		h = h - 65 -- Discount height for the top application bar on desktop
-		if message.x + self.line_width > w then
-			h_orientation = ORIENTATION.LEFT
-		end
-		if message.y + self.line_height * #self.menu > h then
-			v_orientation = ORIENTATION.DOWN
-		end
-
+		local h_orientation, v_orientation = get_orientation(self, message.x, message.y)
+		
 		for i, entry in ipairs(entries) do
 			local line_x = message.x + (self.line_width / 2 * h_orientation)
 			local line_y = message.y + (self.line_height / 2 * v_orientation)

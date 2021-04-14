@@ -165,13 +165,19 @@ local function get_orientation(pos, balloon)
 	local balloon_top = pos.y + balloon.height + balloon.offset.y
 
 	local w, h = window.get_size()
+	
+	-- The coordinates received internaly are still of the base resolution
+	-- but the window size we received is the scaled size so we need to 
+	-- adapt the other coordinates to match the scale
+	local scale = vmath.vector3(w / 1024, h / 576, 1)
+	
 	local h_orientation = ORIENTATION.RIGHT
-	if balloon_right >= w then
+	if balloon_right * scale.x >= w then
 		h_orientation = ORIENTATION.LEFT
 	end
 
 	local v_orientation = ORIENTATION.UP
-	if balloon_top >= h then
+	if balloon_top * scale.y >= h then
 		v_orientation = ORIENTATION.DOWN
 	end
 
