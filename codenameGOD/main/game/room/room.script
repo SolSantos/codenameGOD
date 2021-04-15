@@ -322,9 +322,9 @@ function update(self, dt)
 
 	if update_time >= MOVE_AROUND_TIME then
 		update_time = 0
-		hint_count = hint_count + 1
 		if hint_count < 2 then
 			msg.post(".", "idle")
+			hint_count = hint_count + 1
 		else
 			msg.post(".", "hint")
 			hint_count = 0
@@ -388,8 +388,7 @@ function on_message(self, message_id, message, sender)
 		if game_state.in_gameplay and not game_state.awaiting_signal then
 			local r = math.random(1, #item_strings)
 			msg.post("/randall", "go_to", {
-				pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2),
-				duration=2
+				pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2)
 			})
 			msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text, character="/randall", sound="#Randall_3"})
 		end

@@ -1,3 +1,6 @@
+local utils = require("main.game.randall.utils")
+local movement_duration = utils.movement_duration
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.current_animation = hash("idle")
@@ -24,7 +27,7 @@ function on_message(self, message_id, message, sender)
 		else
 			self.new_animation = hash("walking_left")
 		end
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration, 0, function()
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration or movement_duration(message.duration), 0, function()
 			if self.current_animation == hash("walking_right") or self.current_animation == hash("walking_left") then
 				self.new_animation = hash("idle")
 			end

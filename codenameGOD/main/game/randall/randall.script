@@ -1,3 +1,6 @@
+local utils = require("main.game.randall.utils")
+local movement_duration = utils.movement_duration
+
 RANDALL_STATE = {
 	LYING_DOWN=1,
 	SHOELESS=2,
@@ -90,7 +93,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 		if message.pos.x > go.get_position().x then
 			self.direction = DIRECTION.RIGHT
 		end
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration, 0, function()
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.pos, go.EASING_LINEAR, message.duration or movement_duration(message.pos), 0, function()
 			if self.action == ACTION.WALK then
 				set_action(self, ACTION.IDLE)
 			elseif self.action == ACTION.WALK_TALK then

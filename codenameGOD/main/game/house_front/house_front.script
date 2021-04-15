@@ -75,11 +75,10 @@ function update(self,dt)
 	update_time = update_time + dt
 	
 	if update_time >= MOVE_AROUND_TIME then
-		msg.post(door_sound_url, "play_sound")
 		update_time = 0
-		hint_count = hint_count + 1 
 		if hint_count < 2 then
 			msg.post(".", "idle")
+			hint_count = hint_count + 1
 		else
 			msg.post(".", "hint")
 			hint_count = 0
@@ -93,8 +92,7 @@ function on_message(self, message_id, message, sender)
 		math.random();
 		local r = math.random(1,#item_strings)
 		msg.post("/randall", "go_to", {
-			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2), 
-			duration=2
+			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2),
 		})
 		msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text, character = "randall", sound="#Randall_6"})
 	end
