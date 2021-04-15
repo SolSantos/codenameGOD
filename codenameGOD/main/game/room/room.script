@@ -223,7 +223,6 @@ local cutscenes = {
 			msg.post("/collections#main", "stop_game")
 		end)
 		event_manager:register_event(3, function(_, id)
-			msg.post(room_url, "acquire_input_focus")
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			game_state.intro_done = true
@@ -234,9 +233,6 @@ local cutscenes = {
 	ready_for_tournament=function(self)
 		event_manager:register_event(1, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Alright! Time to bounce out of here!", character = "/randall", sound="#Randall_1"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post(room_url, "acquire_input_focus")
 		end)
 	end,
 	back_from_bullies=function(self)
