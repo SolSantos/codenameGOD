@@ -3,6 +3,14 @@ event_manager.elapsed_time = 0
 event_manager.events = {}
 event_manager.selected_event = nil
 
+function event_manager:clear_events()
+	self.selected_event = nil
+	self.elapsed_time = 0
+	for i=1, #self.events do
+		table.remove(self.events, 1)
+	end
+end
+
 function event_manager:execute_event()
 	if self.selected_event then
 		self.selected_event.callback()
