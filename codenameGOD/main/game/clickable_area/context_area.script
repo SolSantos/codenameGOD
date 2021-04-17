@@ -20,9 +20,13 @@ function init(self)
 	msg.post("/clickable_area_manager", "register_area")
 end
 
-function final(self)
+local function unregister(self)
 	msg.post("/clickable_area_manager", "unregister_area")
 	goput.remove(self.sprite_url)
+end
+
+function final(self)
+	unregister(self)
 end
 
 function on_message(self, message_id, message, sender)
@@ -32,5 +36,9 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("restart_game") then
 		goput.add(self.sprite_url, self.offset, handle_input, self.context_key)
+	end
+
+	if message_id == hash("deactivate") then
+		unregister(self)
 	end
 end

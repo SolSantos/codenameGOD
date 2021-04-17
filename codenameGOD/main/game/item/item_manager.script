@@ -177,12 +177,10 @@ function on_message(self, message_id, message, sender)
 			end
 
 			local item_url = msg.url(item.go)
-			go.delete(item.go)
 			item.status = "hide"
 			item.scenario = "none"
 			update_visible_items(self)
 			
-
 			if item.in_inventory then
 				item.in_inventory = false
 				msg.post("/inventory", "remove_item", {url=item_url})
