@@ -103,19 +103,14 @@ update_context_entries = function()
 	context_data[hash("room_door")] = {
 		{text="Inspect", click=inspect_show_text("Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard.")},
 		{text="Go Out", click=function(x, y)
-			if door_hint_timer <= DOOR_HINT_DELAY or not game_state.in_gameplay then
-				return
-			end
-			
 			if game_state.allowed_leave then
-				msg.post("/collections#main", "load_screen", {
+				msg.post("/collections#main", "load_screen",{
 					name = "house_front",
 					pos = vmath.vector3(222,211,0.4)
 				})
 				msg.post(door_sound_url, "play_sound")
 				return
 			end
-
 			if not game_state.awaiting_signal then
 				if items.ticket.in_inventory then
 					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
