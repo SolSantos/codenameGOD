@@ -19,38 +19,37 @@ local item_strings = {
 context_data[hash("broke_bike")] = {
 	{text="Inspect", click=function()
 		if bike_inspect == 0 then
-			msg.post("/dialogue#dialogue", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
+			msg.post("/balloon", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
 			bike_inspect = bike_inspect + 1 
 		elseif bike_inspect == 1 then
-			msg.post("/dialogue#dialogue", "show_text", {text = "Seriously, it doesn't even have pedals.", character="randall"})
+			msg.post("/balloon", "show_text", {text = "Seriously, it doesn't even have pedals.", character="randall"})
 			bike_inspect = bike_inspect + 1 
 		elseif bike_inspect == 2 then
-			msg.post("/dialogue#dialogue", "show_text", {text = "The wheels aren't even made of rubber. What is this... are they made of plastic?!", character="randall"})
+			msg.post("/balloon", "show_text", {text = "The wheels aren't even made of rubber. What is this... are they made of plastic?!", character="randall"})
 			bike_inspect = bike_inspect + 1 
 		else
-			msg.post("/dialogue#dialogue", "show_text", {text = "Who owns this??!", character="randall"})
+			msg.post("/balloon", "show_text", {text = "Who owns this??!", character="randall"})
 			bike_inspect = 0
 		end
-		
 		update_time = 0
 	end}
 }
 context_data[hash("trash")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "Trash can, not trash cannot.\n Heh.", character="randall"})
+		msg.post("/balloon", "show_text", {text = "Trash can, not trash cannot.\n Heh.", character="randall"})
 		update_time = 0
 	end}
 	
 }
 context_data[hash("sky")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "Beautiful sky today. Somehow always clear.", character="randall"})
+		msg.post("/balloon", "show_text", {text = "Beautiful sky today. Somehow always clear.", character="randall"})
 		update_time = 0
 	end}
 }
 context_data[hash("back_to_room_door")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "The front entrance to my headquarters.", character="randall"})
+		msg.post("/balloon", "show_text", {text = "The front entrance to my headquarters.", character="randall"})
 		update_time = 0
 	end},
 	{text="Go", click=function()
@@ -64,7 +63,7 @@ context_data[hash("back_to_room_door")] = {
 
 context_data[hash("city_street_arrow")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "This road leads to the city. Not the city of Rome, no.", character="randall"})
+		msg.post("/balloon", "show_text", {text = "This road leads to the city. Not the city of Rome, no.", character="randall"})
 		update_time = 0
 	end},
 	{text="Go", click=function()
@@ -108,12 +107,12 @@ function on_message(self, message_id, message, sender)
 		msg.post("/randall", "go_to", {
 			pos=vmath.vector3(item_strings[r].position.x, item_strings[r].position.y, 0.2),
 		})
-		msg.post("/dialogue#dialogue", "show_text", {text=item_strings[r].text, character = "randall", sound="#Randall_6"})
+		msg.post("/balloon", "show_text", {text=item_strings[r].text, character = "randall", sound="#Randall_6"})
 	end
 
 	if message_id == hash("hint") then
 		if game_state.in_gameplay then
-			msg.post("/dialogue#dialogue", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
+			msg.post("/balloon", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
 		end
 		msg.post(".", "moved")
 	end
