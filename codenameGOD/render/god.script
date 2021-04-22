@@ -1,0 +1,40 @@
+local DARK_COLOR = vmath.vector4(0.2, 0.2, 0.2, 1)
+local LIGHT_COLOR = vmath.vector4(1, 1, 1, 1)
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.elapsed = 0
+end
+
+function update(self, dt)
+	self.elapsed = self.elapsed + dt
+	if self.elapsed > 0.1 then
+		go.set("#model", "random", vmath.vector4((math.random() - 0.5) * 2, 0, 0, 0))
+		self.elapsed = 0
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("turn_dark") then
+		go.animate("#model", "multiplier", go.PLAYBACK_ONCE_FORWARD, DARK_COLOR, go.EASING_LINEAR, 1, 0)
+		go.set("#model", "light_pos", vmath.vector4(0, 0, 0, 0))
+	elseif message_id == hash("show_light") then
+		go.animate("#model", "multiplier", go.PLAYBACK_ONCE_FORWARD, DARK_COLOR, go.EASING_LINEAR, 1, 0)
+		go.set("#model", "light_pos", vmath.vector4(message.x, message.y, 0, 0))
+		go.animate("#model", "radius", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(message.radius or 0.05, 0, 0, 0), go.EASING_LINEAR, 1, 0)
+	elseif message_id == hash("back_to_day") then
+		go.animate("#model", "multiplier", go.PLAYBACK_ONCE_FORWARD, LIGHT_COLOR, go.EASING_LINEAR, 1, 0)
+		go.set("#model", "light_pos", vmath.vector4(0, 0, 0, 0))
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("m") and action.pressed then
+		if not self.first then
+			msg.post(".", "turn_dark")
+			self.first = true
+		else
+			msg.post(".", "show_light", {x=0.7, y=0.4, radius=0.02})
+		end
+	end
+end
