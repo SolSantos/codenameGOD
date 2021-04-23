@@ -47,7 +47,7 @@ end
 local function clear_highlight(self)
 	for _, line in ipairs(self.menu) do
 		local line_url = get_sprite_url(line.item)
-		go.set(line_url, "tint", vmath.vector4(1, 1, 1, 1))
+		go.set(line_url, "tint", vmath.vector4(0.8, 0.8, 0.8, 1))
 	end
 end
 
@@ -94,10 +94,10 @@ function update(self, dt)
 	local hovered_line = get_hovered_line(self)
 	if hovered_line then
 		local line_url = get_sprite_url(hovered_line.item)
-		go.set(line_url, "tint", vmath.vector4(0.5, 0.5, 0.5, 1))
+		go.set(line_url, "tint", vmath.vector4(1, 1, 1, 1))
 
 		if hovered_line ~= self.last_hovered then
-			msg.post("/sound#context_hover_line", "play_sound", {gain = 0.02})
+			msg.post("/sound#context_hover_line", "play_sound", {gain = 0.04})
 		end
 	end
 	self.last_hovered = hovered_line
