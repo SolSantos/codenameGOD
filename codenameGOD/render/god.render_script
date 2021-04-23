@@ -1,3 +1,5 @@
+WIDTH = 0
+HEIGHT = 0
 --
 -- projection that centers content with maintained aspect ratio and optional zoom
 --
@@ -62,6 +64,9 @@ function init(self)
 
     local target_params = {[render.BUFFER_COLOR_BIT] = color_params}
     self.target = render.render_target("original", target_params)
+
+    WIDTH = render.get_width()
+    HEIGHT = render.get_height()
 end
 
 function update(self)
