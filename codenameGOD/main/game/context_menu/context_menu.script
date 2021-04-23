@@ -47,7 +47,7 @@ end
 local function clear_highlight(self)
 	for _, line in ipairs(self.menu) do
 		local line_url = get_sprite_url(line.item)
-		go.set(line_url, "tint", vmath.vector4(0.8, 0.8, 0.8, 1))
+		go.set(line_url, "tint", vmath.vector4(0.7, 0.7, 0.7, 1))
 	end
 end
 
