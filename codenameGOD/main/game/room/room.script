@@ -57,20 +57,13 @@ local item_strings = {
 	}
 }
 
-local inspect_show_text = function(text)
-	return function()
-		msg.post("/balloon", "show_text", {text = text, character="randall"})
-		update_time = 0
-	end
-end
-
 local update_context_entries
 update_context_entries = function()
 	context_data[hash("telescope")] = {
-		{text="Inspect", click=inspect_show_text("My telescope! Many nights spent looking\nat girl--stars. Yes, indeed.")}
+		{text="Inspect", click="My telescope! Many nights spent looking\nat girl--stars. Yes, indeed."}
 	}
 	context_data[hash("drawer")] = {
-		{text="Inspect", click=inspect_show_text("I like to hide my change under my socks. It's rewarding to find a nickel between my toes every now and then!")}
+		{text="Inspect", click="I like to hide my change under my socks. It's rewarding to find a nickel between my toes every now and then!"}
 	}
 	if drawer_open then
 		table.insert(context_data[hash("drawer")], {text="Close", click=function(x, y)
@@ -102,7 +95,7 @@ update_context_entries = function()
 		end})
 	end
 	context_data[hash("room_door")] = {
-		{text="Inspect", click=inspect_show_text("Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard.")},
+		{text="Inspect", click="Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard."},
 		{text="Go Out", click=function(x, y)
 			if game_state.allowed_leave then
 				msg.post("/collections#main", "load_screen",{
@@ -131,17 +124,16 @@ update_context_entries = function()
 			else
 				msg.post("/balloon", "show_text", {delay = 4, text="Not leaving here until I'm touched by the divine.", character = "/randall", sound="#Randall_2"})
 			end
-			update_time = 0
 		end}
 	}
 	context_data[hash("nes")] = {
-		{text="Inspect", click=inspect_show_text("It's a Nintendo. \nTop of the line gaming technology!")}
+		{text="Inspect", click="It's a Nintendo. \nTop of the line gaming technology!"}
 	}
 	context_data[hash("tv")] = {
-		{text="Inspect", click=inspect_show_text("My TV. Yea, it's 480p. The future is here baby!")}
+		{text="Inspect", click="My TV. Yea, it's 480p. The future is here baby!"}
 	}
 	context_data[hash("books")] = {
-		{text="Inspect", click=inspect_show_text("I hope the Dark Tower series ends soon, I hate waiting!")},
+		{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
 		{text="Move",    click=function()
 			msg.post(room_url, "show_ticket")
 			items.ticket.movable = true

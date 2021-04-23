@@ -31,27 +31,16 @@ context_data[hash("broke_bike")] = {
 			msg.post("/balloon", "show_text", {text = "Who owns this??!", character="randall"})
 			bike_inspect = 0
 		end
-		update_time = 0
 	end}
 }
 context_data[hash("trash")] = {
-	{text="Inspect", click=function()
-		msg.post("/balloon", "show_text", {text = "Trash can, not trash cannot.\n Heh.", character="randall"})
-		update_time = 0
-	end}
-	
+	{text="Inspect", click="Trash can, not trash cannot.\n Heh."}
 }
 context_data[hash("sky")] = {
-	{text="Inspect", click=function()
-		msg.post("/balloon", "show_text", {text = "Beautiful sky today. Somehow always clear.", character="randall"})
-		update_time = 0
-	end}
+	{text="Inspect", click="Beautiful sky today. Somehow always clear."}
 }
 context_data[hash("back_to_room_door")] = {
-	{text="Inspect", click=function()
-		msg.post("/balloon", "show_text", {text = "The front entrance to my headquarters.", character="randall"})
-		update_time = 0
-	end},
+	{text="Inspect", click="The front entrance to my headquarters."},
 	{text="Go", click=function()
 		msg.post(door_sound_url, "play_sound")
 		msg.post("/collections#main", "load_screen", {
@@ -62,10 +51,7 @@ context_data[hash("back_to_room_door")] = {
 }
 
 context_data[hash("city_street_arrow")] = {
-	{text="Inspect", click=function()
-		msg.post("/balloon", "show_text", {text = "This road leads to the city. Not the city of Rome, no.", character="randall"})
-		update_time = 0
-	end},
+	{text="Inspect", click="This road leads to the city. Not the city of Rome, no."},
 	{text="Go", click=function()
 		msg.post("/collections#main", "load_screen", {
 			name = "city_street_day",
