@@ -2,6 +2,7 @@ local update_time = 0
 local MOVE_AROUND_TIME = 10
 local context_data = require("main.context_data")
 local game_state = require("main.game_state")
+local items = require("main.game.item.items")
 local door_sound_url = nil
 local bike_inspect = 0
 
@@ -53,10 +54,14 @@ context_data[hash("back_to_room_door")] = {
 context_data[hash("city_street_arrow")] = {
 	{text="Inspect", click="This road leads to the city. Not the city of Rome, no."},
 	{text="Go", click=function()
-		msg.post("/collections#main", "load_screen", {
-			name = "city_street_day",
-			pos = vmath.vector3(200,211,0.4)
-		})
+		if items.ticket.in_inventory then
+			msg.post("/collections#main", "load_screen", {
+				name = "city_street_day",
+				pos = vmath.vector3(200,211,0.4)
+			})
+		else
+			msg.post("/balloon", "show_text", {text="I can't go to the tournament without the ticket.", character = "randall", sound="#Randall_6"})
+		end
 	end}
 }
 
