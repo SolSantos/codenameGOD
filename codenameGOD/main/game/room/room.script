@@ -388,6 +388,8 @@ function init(self)
 	end
 
 	books_context_url = msg.url("books_clickable")
+
+	msg.post("candle", "disable")
 end
 
 function final(self)

@@ -34,7 +34,7 @@ function on_input(self, action_id, action)
 			msg.post(".", "turn_dark")
 			self.first = true
 		else
-			msg.post(".", "show_light", {x=0.7, y=0.4, radius=0.02})
+			msg.post(".", "show_light", {x=976 / WIDTH, y=202 / HEIGHT, radius=0.1})
 		end
 	end
 end
