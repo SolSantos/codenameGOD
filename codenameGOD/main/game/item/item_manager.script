@@ -1,6 +1,7 @@
 local goput = require "main.clickinput"
 local items = require("main.game.item.items")
 local context_data = require("main.context_data")
+local utils = require("main.utils")
 local mouse_x, mouse_y
 local current_item = nil
 
@@ -28,14 +29,11 @@ local function handle_click(url, action_id, action, gameobject)
 				return
 			end
 			
-			current_item = pressed_item
-
-			msg.post("/dialogue#dialogue", "show_text", {text=current_item.label, delay=3})
-					
+			current_item = pressed_item					
 			if current_item.found == 0 and current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
 				current_item.found = 1
 				msg.post(
-					"/dialogue#dialogue",
+					"/balloon",
 					"show_text",
 					{text=current_item.text, delay=4, character="/randall", sound="#Randall_2"}
 				)
@@ -111,9 +109,11 @@ end
 
 function update(self, dt)
 	if current_item then
-		go.set_position(vmath.vector3(mouse_x, mouse_y, 0.6), current_item.go)
-		current_item.position.x = mouse_x
-		current_item.position.y = mouse_y
+		local item_x = clamp(mouse_x, 0, WIDTH)
+		local item_y = clamp(mouse_y, 0, HEIGHT)
+		go.set_position(vmath.vector3(item_x, item_y, 0.6), current_item.go)
+		current_item.position.x = item_x
+		current_item.position.y = item_y
 	end
 end
 

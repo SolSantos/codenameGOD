@@ -1,9 +1,6 @@
-local utils = require("main.game.dialogue.utils")
-local get_visible_text = utils.get_visible_text
 local inside_gameobject = require("main.inside_gameobject")
 
-local LETTERS_PER_SECOND = utils.LETTERS_PER_SECOND
-
+local LETTERS_PER_SECOND = 20
 local SMALL_BALLOON_SPACE = 30 -- letters
 local SMALL_BALLOON_MAX_LINES = 4
 local BIG_BALLOON_SPACE = 49
@@ -39,6 +36,11 @@ local BALLOONS = {
 		offset=vmath.vector3(0, 0, 0)
 	}
 }
+
+local get_visible_text = function(text, elapsed)
+	local visible_count = math.min(text:len(), elapsed * LETTERS_PER_SECOND)
+	return text:sub(0, visible_count)
+end
 
 -- When text is being displayed letter by letter and reaches the end of the line,
 -- the word in the limit jumps to the next line. This function adds line breaks
@@ -169,7 +171,7 @@ local function get_orientation(pos, balloon)
 	-- The coordinates received internaly are still of the base resolution
 	-- but the window size we received is the scaled size so we need to 
 	-- adapt the other coordinates to match the scale
-	local scale = vmath.vector3(w / 1024, h / 576, 1)
+	local scale = vmath.vector3(w / WIDTH, h / HEIGHT, 1)
 	
 	local h_orientation = ORIENTATION.RIGHT
 	if balloon_right * scale.x >= w then
@@ -257,11 +259,11 @@ function on_message(self, message_id, message, sender)
 		end)
 
 		if message.sound then
-			local sound_url = "/dialogue"..message.sound
+			local sound_url = "/balloon"..message.sound
 			msg.post(sound_url, "play_sound")
 
 			local current_sound = self.last_sound
-			timer.delay(0.5, false, function()	
+			timer.delay(0.5, false, function()
 				if current_sound and current_sound ~= self.last_sound then
 					msg.post(current_sound, "stop_sound")
 				end
