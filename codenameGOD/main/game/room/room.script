@@ -113,11 +113,20 @@ update_context_entries = function()
 				return
 			end
 			if not game_state.awaiting_signal then
+				local r = math.random(2)
 				if items.ticket.in_inventory then
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
+					if r == 1 then
+						msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
+					else
+						msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="What am I doing? I can't go barefoot!", character = "/randall", sound="#Randall_panic1"})
+					end
 				else
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Not going anywhere without my ticket!", character = "/randall", sound="#Randall_1"})
-				end
+					if r == 1 then
+						msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
+					else
+						msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Shoot, almost forgot my ticket!", character = "/randall", sound="#Randall_4"})
+					end
+				end			
 				door_hint_timer = 0
 			else
 				msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="Not leaving here until I'm touched by the divine.", character = "/randall", sound="#Randall_2"})
@@ -253,15 +262,18 @@ local cutscenes = {
 			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Even earlier with my shoes... and then my ticket...", character = "/randall", sound="#Randall_5", skip=true})
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Could it be!? I'm not alone!?", character = "/randall", sound="#Randall_panic1", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="Could it be!? Perhaps I'm not alone!?", character = "/randall", sound="#Randall_panic1", skip=true})
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="This can only be explained by the works of...", character = "/randall", sound="#Randall_4", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="Something feels off. All these seemingly well-timed events... I didn't even get wedgied! My boys were finally sparred for once!", character = "/randall", sound="#Randall_3", skip=true})
+		end)
+		event_manager:register_event(9, function(self, id)
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="This can only be explained by the works of... of...", character = "/randall", sound="#Randall_4", skip=true})
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="A GOD!!!!!!!!!!", character = "/randall", sound="#Randall_panic2", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="A GOD!!!!!!!!!!", character = "/randall", sound="#Randall_panic2", skip=true})
 		end)
-		event_manager:register_event(4, function(self, id)
+		event_manager:register_event(5, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="... I think.", character = "/randall", sound="#Randall_short4", skip=true})
 		end)
 		event_manager:register_event(4, function(self, id)
@@ -271,13 +283,13 @@ local cutscenes = {
 			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="It will definitely be at the local club...", character = "/randall", sound="#Randall_2", skip=true})
 		end)
 		event_manager:register_event(5, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="If God really is beside me, then I'm sure to finally win Becky's heart and show Chad's gang who's boss!", character = "/randall", sound="#Randall_3", skip=true})
+			msg.post("/dialogue#dialogue", "show_text", {delay=8, text="If God really is beside me, then I'm sure to finally win Becky's heart and show Scott's gang who's boss!", character = "/randall", sound="#Randall_3", skip=true})
 		end)
 		event_manager:register_event(8, function(self, id)
 			msg.post("/dialogue#dialogue", "show_text", {delay=4, text="Oh, mighty god!", character = "/randall", sound="#Randall_panic1", skip=true})
 		end)
 		event_manager:register_event(4, function(self, id)
-			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please give me a sign!", character = "/randall", sound="#Randall_4"})
+			msg.post("/dialogue#dialogue", "show_text", {delay=5, text="If you truly are there, please, PLEASE give me a sign!", character = "/randall", sound="#Randall_4"})
 			msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING})
 		end)
 		event_manager:register_event(5, function(_, id)
@@ -461,7 +473,7 @@ function on_message(self, message_id, message, sender)
 	-- A divine message is triggered
 	if message_id == hash("divine_sign") then
 		if divine_signs == 1 then
-			msg.post("/dialogue#dialogue", "show_text", {text = "It's really happening! Ok. One more totally unique interaction to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
+			msg.post("/dialogue#dialogue", "show_text", {text = "Holy cow! It's really happening! Ok. One more totally unique interaction to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
 		elseif divine_signs == 2 then
 			game_state.awaiting_signal = false
 			cutscenes.ouija_cutscene(self)
@@ -478,19 +490,6 @@ function on_message(self, message_id, message, sender)
 				end)
 			end
 		end)
-	end
-
-	if message_id == hash("cant_leave") then
-		if door_hint_timer > DOOR_HINT_DELAY then
-			if game_state.in_gameplay and not game_state.got_shoes then
-				if items.ticket.in_inventory then
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
-				else
-					msg.post("/dialogue#dialogue", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
-				end
-				door_hint_timer = 0
-			end
-		end
 	end
 
 	if message_id == hash("inventory_arrow") then

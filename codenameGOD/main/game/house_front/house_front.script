@@ -3,6 +3,7 @@ local MOVE_AROUND_TIME = 10
 local context_data = require("main.context_data")
 local game_state = require("main.game_state")
 local door_sound_url = nil
+local bike_inspect = 0
 
 local item_strings = {
 	[1] = {
@@ -17,7 +18,20 @@ local item_strings = {
 
 context_data[hash("broke_bike")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
+		if bike_inspect == 0 then
+			msg.post("/dialogue#dialogue", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
+			bike_inspect = bike_inspect + 1 
+		elseif bike_inspect == 1 then
+			msg.post("/dialogue#dialogue", "show_text", {text = "Seriously, it doesn't even have pedals.", character="randall"})
+			bike_inspect = bike_inspect + 1 
+		elseif bike_inspect == 2 then
+			msg.post("/dialogue#dialogue", "show_text", {text = "The wheels aren't even made of rubber. What is this... are they made of plastic?!", character="randall"})
+			bike_inspect = bike_inspect + 1 
+		else
+			msg.post("/dialogue#dialogue", "show_text", {text = "Who owns this??!", character="randall"})
+			bike_inspect = 0
+		end
+		
 		update_time = 0
 	end}
 }
@@ -30,7 +44,7 @@ context_data[hash("trash")] = {
 }
 context_data[hash("sky")] = {
 	{text="Inspect", click=function()
-		msg.post("/dialogue#dialogue", "show_text", {text = "Beautiful sky today.", character="randall"})
+		msg.post("/dialogue#dialogue", "show_text", {text = "Beautiful sky today. Somehow always clear.", character="randall"})
 		update_time = 0
 	end}
 }
