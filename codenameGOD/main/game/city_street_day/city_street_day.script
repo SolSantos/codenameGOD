@@ -22,9 +22,16 @@ context_data[hash("city_street_trash")] = {
 	{text="Hit", click=function()
 		msg.post(metal_hit_url, "play_sound")
 		trash_hit = trash_hit + 1 
+
 		if trash_hit < 3 then
 			msg.post(city_url, "bully_trash_warning")
+			if trash_hit == 1 then
+				msg.post(trash_url, "play_animation", {id = hash("street_junk5")})
+			elseif trash_hit == 2 then
+				msg.post(trash_url, "play_animation", {id = hash("street_junk6")})
+			end
 		else 
+			msg.post(trash_url, "play_animation", {id = hash("street_junk7")})
 			cutscenes.bullies_escape()
 		end
 	end}
@@ -170,6 +177,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("sound#ambiance", "play_sound")
 	city_url = msg.url()
+	trash_url = msg.url("trash#sprite")
 	bully1_url = msg.url("bully1")
 	bully2_url = msg.url("bully2")
 	bully3_url = msg.url("bully3")
