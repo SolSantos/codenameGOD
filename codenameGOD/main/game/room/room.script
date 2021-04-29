@@ -1,30 +1,11 @@
-local update_time = 0
-local MOVE_AROUND_TIME = 10
-local shoe_count = 0
 local inside_gameobject = require "main.inside_gameobject"
-local puzzle_sound = false
-local room_url
-local inv_arrow_url
-local door_sound_url = nil
-local books_context_url = nil
-local drawer_url = nil
-local window_url = nil
-local bro_url = nil
-local tv_sound_url = nil
-local window_sound_url = nil
-local zipper_sound_url = nil
-local door_hint_timer = 0
-local DOOR_HINT_DELAY = 4
 local game_state = require("main.game_state")
-local context_data = require("main.context_data")
 local items = require("main.game.item.items")
-local drawer_open = false
-local sign_tv = false
-local sign_drawer = false
-local sign_window = false
-local sign_trousers = false
-local divine_signs = 0
-local show_hints = false
+local cutscenes = require("main.game.room.cutscenes")
+local update_context_entries = require("main.game.room.context_data")
+
+local MOVE_AROUND_TIME = 10
+local DOOR_HINT_DELAY = 4
 
 local item_strings = {
 	[1] = {
@@ -57,334 +38,25 @@ local item_strings = {
 	}
 }
 
-local update_context_entries
-update_context_entries = function()
-	context_data[hash("telescope")] = {
-		{text="Inspect", click="My telescope! Many nights spent looking\nat girl--stars. Yes, indeed."}
-	}
-	context_data[hash("drawer")] = {
-		{text="Inspect", click="I like to hide my change under my socks. It's rewarding to find a nickel between my toes every now and then!"}
-	}
-	if drawer_open then
-		table.insert(context_data[hash("drawer")], {text="Close", click=function(x, y)
-			drawer_open = false
-			msg.post("/sound#6-drawer_opening", "play_sound")
-			msg.post(drawer_url, "play_animation", {id = hash("close_drawer")})
-			update_context_entries()
-		end})
-	else
-		table.insert(context_data[hash("drawer")], {text="Open", click=function(x, y)
-			drawer_open = true
-			msg.post("/sound#6-drawer_opening", "play_sound")
-			msg.post(drawer_url, "play_animation", {id = hash("open_drawer")})
-
-			if not game_state.coins_shown then
-				game_state.coins_shown = true
-				local coins = items["coins"]
-				coins.status = "show"
-				coins.position.x = x
-				coins.position.y = y
-				msg.post("/item_manager#item_manager", "update_visible_items")
-			end
-			if game_state.awaiting_signal and not sign_drawer then
-				sign_drawer = true
-				msg.post(room_url, "divine_sign")
-				divine_signs = divine_signs + 1
-			end
-			update_context_entries()
-		end})
-	end
-	context_data[hash("room_door")] = {
-		{text="Inspect", click="Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard."},
-		{text="Go Out", click=function(x, y)
-			if game_state.allowed_leave then
-				msg.post("/collections#main", "load_screen",{
-					name = "house_front",
-					pos = vmath.vector3(222,211,0.4)
-				})
-				msg.post(door_sound_url, "play_sound")
-				return
-			end
-			if not game_state.awaiting_signal then
-				local r = math.random(2)
-				if items.ticket.in_inventory then
-					if r == 1 then
-						msg.post("/balloon", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
-					else
-						msg.post("/balloon", "show_text", {delay = 4, text="What am I doing? I can't go barefoot!", character = "/randall", sound="#Randall_panic1"})
-					end
-				else
-					if r == 1 then
-						msg.post("/balloon", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
-					else
-						msg.post("/balloon", "show_text", {delay = 4, text="Shoot, almost forgot my ticket!", character = "/randall", sound="#Randall_4"})
-					end
-				end			
-				door_hint_timer = 0
-			else
-				msg.post("/balloon", "show_text", {delay = 4, text="Not leaving here until I'm touched by the divine.", character = "/randall", sound="#Randall_2"})
-			end
-		end}
-	}
-	context_data[hash("nes")] = {
-		{text="Inspect", click="It's a Nintendo. \nTop of the line gaming technology!"}
-	}
-	context_data[hash("tv")] = {
-		{text="Inspect", click="My TV. Yea, it's 480p. The future is here baby!"}
-	}
-	context_data[hash("books")] = {
-		{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
-		{text="Move",    click=function()
-			msg.post(room_url, "show_ticket")
-			items.ticket.movable = true
-			game_state.ticket_moved = true
-			msg.post(books_context_url, "deactivate")
-		end}
-	}
-
-	context_data[hash("room_window")] = {}
-	context_data[hash("randall_trousers")] = {}
-	if game_state.awaiting_signal then
-		if not sign_tv then
-			table.insert(context_data[hash("tv")], {text="Turn On", click=function(x, y)
-				sign_tv = true
-				divine_signs = divine_signs + 1
-				msg.post(room_url, "divine_sign")
-				msg.post(tv_sound_url, "play_sound")
-				update_context_entries()
-			end})
-		end
-		if not sign_window then
-			table.insert(context_data[hash("room_window")], {text="Pull", click=function()
-				sign_window = true
-				msg.post(window_url, "play_animation", {id = hash("room_window3")})
-				divine_signs = divine_signs + 1
-				msg.post(room_url, "divine_sign")
-				msg.post(window_sound_url, "play_sound")
-				update_context_entries()
-			end})
-		end
-		if not sign_trousers then
-			table.insert(context_data[hash("randall_trousers")], {text="Pull", click=function()
-				show_hints = false
-				sign_trousers = true
-				msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING_NO_PANTS})
-				msg.post(zipper_sound_url, "play_sound")
-				event_manager:register_event(4, function()
-					divine_signs = divine_signs + 1
-					msg.post(room_url, "divine_sign")
-					update_context_entries()
-					show_hints = true
-				end)
-			end})
-		end
-	end
-end
-
-local cutscenes = {
-	intro=function(self)
-		msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
-		msg.post("/collections#main", "stop_game")
-		msg.post("/cutscene#cutscene", "cutscene_start")
-		msg.post("/randall", "sleep")
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = bro_url, sound="#Bullies_4", skip=true})
-			msg.post("/randall", "wakeup")
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="It's Saturday! I'm not falling for that again Travis!", character="/randall", sound="#Randall_1", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=2.5, text="Whatever, turd!", character = bro_url, sound="#Bullies_2", skip=true})
-		end)
-
-		event_manager:register_event(2.5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=4, text="Sigh...\nHe's such a douche...", character="/randall", sound="#Randall_short2", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=1.5, text="Oh no!", sound="#Randall_panic1", character="/randall", skip=true})
-		end)
-
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="I'm gonna be late for the annual \nSorcery: The congregation annual tournament!", character="/randall", skip=true})
-		end)
-
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="Gotta find my shoes before I leave...\nAnd my ticket!", character="/randall", sound="#Randall_4"})
-		end)
-
-		event_manager:register_event(4.5, function(self, id)
-			msg.post("/transition", "play_transition")
-		end)
-		event_manager:register_event(1.25, function(self, id)
-			go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.SHOELESS})
-			msg.post("/collections#main", "stop_game")
-		end)
-		event_manager:register_event(3, function(_, id)
-			msg.post("/collections#main", "restart_game")
-			msg.post("/cutscene#cutscene", "cutscene_end")
-			game_state.intro_done = true
-			game_state.in_gameplay = true
-			show_hints = true
-		end)
-	end,
-	ready_for_tournament=function(self)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/balloon", "show_text", {delay = 4, text="Alright! Time to bounce out of here!", character = "/randall", sound="#Randall_1"})
-		end)
-	end,
-	back_from_bullies=function(self)
-		msg.post("/collections#main", "stop_game")
-		msg.post("/cutscene#cutscene", "cutscene_start")
-		local door_pos = vmath.vector3(922, 400, 0.2)
-		event_manager:register_event(0, function(self, id)
-			go.set_position(door_pos, "/randall")
-			msg.post("/randall", "go_to", {pos=vmath.vector3(850, 280, 0.2), duration=3})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/randall", "go_to", {pos=vmath.vector3(540, 280, 0.2), duration=5})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/randall#sprite", "play_animation", {id=hash("sad_start")})
-		end)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/randall#sprite", "play_animation", {id=hash("sad_idle")})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/randall#sprite", "play_animation", {id=hash("sad_end")})
-		end)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="That was just so weird, what just happened...", character = "/randall", sound="#Randall_6", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="Even earlier with my shoes... and then my ticket...", character = "/randall", sound="#Randall_5", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="Could it be!? Perhaps I'm not alone!?", character = "/randall", sound="#Randall_panic1", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=8, text="Something feels off. All these seemingly well-timed events... I didn't even get wedgied! My boys were finally sparred for once!", character = "/randall", sound="#Randall_3", skip=true})
-		end)
-		event_manager:register_event(9, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="This can only be explained by the works of... of...", character = "/randall", sound="#Randall_4", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="A GOD!!!!!!!!!!", character = "/randall", sound="#Randall_panic2", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay=4, text="... I think.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/balloon", "show_text", {delay=4, text="Oh, mighty god!", character = "/randall", sound="#Randall_panic1", skip=true})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/balloon", "show_text", {delay=5, text="If you truly are there, please, PLEASE give me a sign!", character = "/randall", sound="#Randall_4"})
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING})
-		end)
-		event_manager:register_event(5, function(_, id)
-			msg.post("/cutscene#cutscene", "cutscene_end")
-			msg.post("/collections#main", "restart_game")
-			show_hints = true
-			game_state.comming_from_bullies = false
-			game_state.awaiting_signal = true
-			update_context_entries()
-		end)
-	end,
-	ouija_cutscene=function(self)
-		game_state.in_gameplay = false
-		msg.post("/collections#main", "stop_game")
-		msg.post("/cutscene#cutscene", "cutscene_start")
-		event_manager:register_event(2, function(self, id)
-			msg.post("/balloon", "show_text", {delay = 2, text="Dude.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 2, text="Oh.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 1, text="My.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(1, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 1, text="God.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 2, text="Literally.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 3, text="This is great! You're like the Yoda to my Luke.", character = "/randall", sound="#Randall_3", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 2, text="The E.T. to my Elliot.", character = "/randall", sound="#Randall_short1", skip=true})
-		end)
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 1.5, text="Spock to my Kirk.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 1.5, text="Gandalf to my Frodo.", character = "/randall", sound="#Randall_short2", skip=true})
-		end)
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 3, text="The Doctor to my...whichever assistant is on TV now.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon", "show_text", {delay = 1.5, text="The old man to my Link.", character = "/randall", sound="#Randall_short4", skip=true})
-		end)
-		event_manager:register_event(1.5, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 3, text="...Ok, I'll shut up now.", character = "/randall", sound="#Randall_short3", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 3, text="But wait, I can't keep calling you God.", character = "/randall", sound="#Randall_1", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon", "show_text", {delay = 3, text="What if you have an actual name? Like Rob?", character = "/randall", sound="#Randall_2", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 3, text="Are you named Robert? Should I call you Robbie?", character = "/randall", sound="#Randall_3", skip=true})
-		end)
-		event_manager:register_event(3, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 7, text="I know! This is the perfect time to bring out the ol' Ouija Board for some assistance!", character = "/randall", sound="#Randall_panic1", skip=true})
-		end)
-		event_manager:register_event(7, function(self, id)
-			msg.post("/balloon",  "show_text", {delay = 5, text="Finally, a reason to put the Wija board to good use...", character = "/randall", sound="#Randall_1", skip=true})
-		end)
-		event_manager:register_event(5, function(self, id)
-			msg.post("/balloon", "show_text", {delay = 4, text="Now, first we gotta do some setup...", character = "/randall", sound="#Randall_panic2"})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/transition", "play_transition")
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
-			msg.post("/god", "turn_dark")
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/randall", "go_to", {pos=vmath.vector3(900, 300, 0.2), duration=2})
-		end)
-		event_manager:register_event(4, function(self, id)
-			msg.post("/god", "show_light", {x=976 / WIDTH, y=202 / HEIGHT, radius=0.1})
-		end)
-	end
-}
-
 function update(self, dt)
-	if show_hints then
-		update_time = update_time + dt
-		door_hint_timer = door_hint_timer + dt
+	if self.show_hints then
+		self.update_time = self.update_time + dt
 	end
 
-	if update_time >= MOVE_AROUND_TIME then
-		update_time = 0
-		if hint_count < 2 then
+	if self.update_time >= MOVE_AROUND_TIME then
+		self.update_time = 0
+		if self.hint_count < 2 then
 			msg.post(".", "idle")
-			hint_count = hint_count + 1
+			self.hint_count = self.hint_count + 1
 		else
 			msg.post(".", "hint")
-			hint_count = 0
+			self.hint_count = 0
 		end
 	end
 
 	-- Puzzle solved (puzzle_solved so it only plays once)
-	if not game_state.allowed_leave and items.ticket.in_inventory and game_state.both_shoes and not puzzle_sound then
-		puzzle_sound = true
+	if not game_state.allowed_leave and items.ticket.in_inventory and game_state.both_shoes and not self.puzzle_sound then
+		self.puzzle_sound = true
 		game_state.allowed_leave = true
 		msg.post("/sound#2-puzzle_solve", "play_sound")
 		event_manager:register_event(2, function(_, id)
@@ -394,40 +66,64 @@ function update(self, dt)
 end
 
 function init(self)
-	show_hints = false
+	self.show_hints = false
+	self.update_time = 0
+	self.hint_count = 0
+
+	self.inv_arrow_url = msg.url("inventory_arrow")
+	msg.post(self.inv_arrow_url, "disable")
+	self.room_url = msg.url()
+	self.door_sound_url = msg.url("sound#8-door_knob")
+	self.drawer_url = msg.url("drawer#sprite")
+	self.window_url = msg.url("window#sprite")
+	self.bro_url = msg.url("randall_bro")
+	self.nintendo_url = msg.url("nintendo")
+	self.telescope_url = msg.url("telescope")
+	self.tv_url = msg.url("tv")
+	self.tv_sound_url = msg.url("sound#16-tv_news")
+	self.window_sound_url = msg.url("sound#18-open_window")
+	self.zipper_sound_url = msg.url("sound#19-zipper")
+	self.books_context_url = msg.url("books_clickable")
+
+	self.candle_url = msg.url("candle")
+	self.ouija_url = msg.url("ouija")
+	self.big_ouija_url = msg.url("big_ouija")
+	self.randall_arms_url = msg.url("randall_arms")
+
+	msg.post(self.candle_url, "disable")
+	msg.post(self.ouija_url, "disable")
+	msg.post(self.big_ouija_url, "disable")
+	
+	self.puzzle_sound = false
+	self.drawer_open = false
+	self.sign_drawer = false
+	self.sign_tv = false
+	self.sign_window = false
+	self.sign_trousers = false
+
+	self.shoe_count = 0
+	self.divine_signs = 0
 	
 	-- Run the intro cutscene
 	if not game_state.intro_done then
 		cutscenes.intro(self)
 	elseif game_state.comming_from_bullies then
+		msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 		cutscenes.back_from_bullies(self)
 	else
 		msg.post(".", "moved")
 	end
-	inv_arrow_url = msg.url("inventory_arrow")
-	msg.post(inv_arrow_url, "disable")
+
 	msg.post("sound#ambiance", "play_sound")
-	room_url = msg.url()
-	door_sound_url = msg.url("sound#8-door_knob")
-	drawer_url = msg.url("drawer#sprite")
-	window_url = msg.url("window#sprite")
-	bro_url = msg.url("randall_bro")
-	tv_sound_url = msg.url("sound#16-tv_news")
-	window_sound_url = msg.url("sound#18-open_window")
-	zipper_sound_url = msg.url("sound#19-zipper")
 	
 	if items.ticket.found == 0 then
 		msg.post("", "disable")
 	end
 	
-	update_context_entries()
+	update_context_entries(self)
 	if not game_state.ticket_moved then
 		items.ticket.movable = false
 	end
-
-	books_context_url = msg.url("books_clickable")
-
-	msg.post("candle", "disable")
 end
 
 function final(self)
@@ -475,16 +171,16 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post(".", "moved")
 
-	elseif message_id == hash("shoe_found") and shoe_count < 2 then
+	elseif message_id == hash("shoe_found") and self.shoe_count < 2 then
 		local randall_pos = go.get_position("/randall")
 		if not game_state.both_shoes and inside_gameobject(msg.url("/randall#sprite"), message.x, message.y) then
-			shoe_count = shoe_count + 1
+			self.shoe_count = self.shoe_count + 1
 			msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
-			if shoe_count == 1 then
+			if self.shoe_count == 1 then
 				msg.post("/randall", "set_state", {state=RANDALL_STATE.ONE_SHOE})
 				msg.post("/balloon", "show_text", {text="That's one shoe!", character = "/randall", sound="#Randall_short1"})
 			end
-			if shoe_count == 2 then
+			if self.shoe_count == 2 then
 				msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 				msg.post("/balloon", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
 				game_state.both_shoes = true
@@ -508,14 +204,14 @@ function on_message(self, message_id, message, sender)
 		msg.post("/balloon", "show_text", {delay=3.5, text="All safe for later!", character = "/randall", sound="#Randall_5"})
 	end
 	if message_id == hash("moved") then
-		update_time = 0
+		self.update_time = 0
 	end
 
 	-- A divine message is triggered
 	if message_id == hash("divine_sign") then
-		if divine_signs == 1 then
+		if self.divine_signs == 1 then
 			msg.post("/balloon", "show_text", {text = "Holy cow! It's really happening! Ok. One more totally unique interaction to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
-		elseif divine_signs == 2 then
+		elseif self.divine_signs == 2 then
 			game_state.awaiting_signal = false
 			cutscenes.ouija_cutscene(self)
 		end
@@ -538,22 +234,22 @@ function on_message(self, message_id, message, sender)
 			game_state.first_item_picked = true
 
 			timer.delay(2, false, function(self, id)
-				msg.post(inv_arrow_url, "enable")
+				msg.post(self.inv_arrow_url, "enable")
 			end)
 			timer.delay(2.5, false, function(self, id)
-				msg.post(inv_arrow_url, "disable")
+				msg.post(self.inv_arrow_url, "disable")
 			end)
 			timer.delay(2.8, false, function(self, id)
-				msg.post(inv_arrow_url, "enable")
+				msg.post(self.inv_arrow_url, "enable")
 			end)
 			timer.delay(3.3, false, function(self, id)
-				msg.post(inv_arrow_url, "disable")
+				msg.post(self.inv_arrow_url, "disable")
 			end)
 			timer.delay(3.6, false, function(self, id)
-				msg.post(inv_arrow_url, "enable")
+				msg.post(self.inv_arrow_url, "enable")
 			end)
 			timer.delay(4, false, function(self, id)
-				msg.post(inv_arrow_url, "disable")
+				msg.post(self.inv_arrow_url, "disable")
 			end)
 		end
 	end

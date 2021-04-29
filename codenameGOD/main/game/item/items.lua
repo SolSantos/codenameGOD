@@ -5,7 +5,7 @@ return {
 	petrock = {
 		name = "petrock",
 		text = "Pet rock!",
-		position = {x=984, y=224},
+		position = {x=984, y=274},
 		image = "items1",
 		scenario = "room",
 		status = "show",

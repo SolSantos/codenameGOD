@@ -10,7 +10,7 @@ uniform lowp vec4 radius;
 void main(){
 	vec4 mu = vec4(multiplier.xyz, 1);
 	if(light_pos.x != 0.0 || light_pos.y != 0.0){
-		float main_radius = radius.x + 0.002f * random.x;
+		float main_radius = radius.x + 0.005f * random.x;
 		float transition_radius = main_radius + 0.03f;
 		
 		// Pre-multiply alpha since all runtime textures already are
