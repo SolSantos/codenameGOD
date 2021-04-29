@@ -199,6 +199,8 @@ return {
 		event_manager:register_event(1, function(_, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
+			msg.post("/context_menu", "disable_context_menu")
+			msg.post("/inventory", "disable")
 		end)
 	end
 }
