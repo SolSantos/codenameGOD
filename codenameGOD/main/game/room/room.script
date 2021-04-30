@@ -3,6 +3,7 @@ local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local cutscenes = require("main.game.room.cutscenes")
 local update_context_entries = require("main.game.room.context_data")
+local ouija = require("main.game.room.ouija")
 
 local MOVE_AROUND_TIME = 10
 local DOOR_HINT_DELAY = 4
@@ -39,6 +40,11 @@ local item_strings = {
 }
 
 function update(self, dt)
+	if self.ouija_in_use then
+		ouija.update(self, dt)
+		return
+	end
+
 	if self.show_hints then
 		self.update_time = self.update_time + dt
 	end
@@ -66,10 +72,13 @@ function update(self, dt)
 end
 
 function init(self)
+	msg.post(".", "acquire_input_focus")
+	
 	self.show_hints = false
 	self.update_time = 0
 	self.hint_count = 0
-
+	self.ouija_in_use = false
+	
 	self.inv_arrow_url = msg.url("inventory_arrow")
 	msg.post(self.inv_arrow_url, "disable")
 	self.room_url = msg.url()
@@ -84,12 +93,13 @@ function init(self)
 	self.window_sound_url = msg.url("sound#18-open_window")
 	self.zipper_sound_url = msg.url("sound#19-zipper")
 	self.books_context_url = msg.url("books_clickable")
-
+	
 	self.candle_url = msg.url("candle")
 	self.ouija_url = msg.url("ouija")
 	self.big_ouija_url = msg.url("big_ouija")
 	self.randall_arms_url = msg.url("randall_arms")
-
+	self.arms_hitbox_url = msg.url("randall_arms#hit_box")
+	
 	msg.post(self.candle_url, "disable")
 	msg.post(self.ouija_url, "disable")
 	msg.post(self.big_ouija_url, "disable")
@@ -128,6 +138,12 @@ end
 
 function final(self)
 	msg.post("sound#ambiance", "stop_sound")
+end
+
+function on_input(self, action_id, action)
+	if self.ouija_in_use then
+		ouija.on_input(self, action_id, action)
+	end
 end
 
 function on_message(self, message_id, message, sender)

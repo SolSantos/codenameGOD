@@ -1,5 +1,6 @@
 local game_state = require("main.game_state")
 local update_context_entries = require("main.game.room.context_data")
+local ouija = require("main.game.room.ouija")
 
 return {
 	intro=function(self)
@@ -180,6 +181,7 @@ return {
 			msg.post(self.telescope_url, "disable")
 			msg.post(self.tv_url, "disable")
 			msg.post(self.nintendo_url, "disable")
+			msg.post("/inventory", "disable")
 			msg.post(self.ouija_url, "enable")
 		end)
 		event_manager:register_event(3, function(_, id)
@@ -193,14 +195,15 @@ return {
 			msg.post("/randall", "go_to", {pos=vmath.vector3(850, 250, 0.2), duration=0.5})
 		end)
 		event_manager:register_event(1, function(_, id)
-			msg.post(self.big_ouija_url, "enable")
-			go.animate(self.randall_arms_url, "position.y", go.PLAYBACK_ONCE_FORWARD, 30, go.EASING_LINEAR, 1)
+			ouija.init(self)
 		end)
 		event_manager:register_event(1, function(_, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
+
+			-- Disable other possible interactions 
 			msg.post("/context_menu", "disable_context_menu")
-			msg.post("/inventory", "disable")
+			msg.post("/item_manager", "stop_game")
 		end)
 	end
 }

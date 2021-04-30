@@ -106,7 +106,7 @@ function update(self)
     render.disable_texture(0, self.target)
 
     -- Elements over god light
-    render.set_viewport(0, 0, render.get_width(), render.get_height())
+    render.set_viewport(0, 0, render.get_window_width(), render.get_window_height())
     render.set_view(self.view)
     render.set_projection(get_projection(self))
     render.draw(self.over_pred)
