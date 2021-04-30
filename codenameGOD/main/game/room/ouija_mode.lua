@@ -1,6 +1,11 @@
 local inside_gameobject = require("main.inside_gameobject")
+local game_state = require("main.game_state")
 local SHAKE = 1
 local SHAKE_SLEEP = 0.1
+local LETTER_WAIT_TIME = 2
+local MAGNIFIER_OFFSET = vmath.vector3(-6 , 100, 0)
+local OUIJA_SIZE = vmath.vector3(732, 480, 0)
+local BALLOON_POS = vmath.vector3(1030, 260, 1)
 
 local ouija_mapping =  {
 	A =     {x=90,  y=289, width=30,  height=50},
@@ -44,9 +49,6 @@ local ouija_mapping =  {
 	DONE =  {x=299, y=30,  width=121, height=40}
 }
 
-local magnifier_offset = vmath.vector3(-6 , 100, 0)
-local ouija_size = vmath.vector3(732, 480, 0)
-
 local inside_rect = function(rect, x, y)
 	local inside_x = x >= rect.x and x <= rect.x + rect.width
 	local inside_y = y >= rect.y and y <= rect.y + rect.height
@@ -54,7 +56,7 @@ local inside_rect = function(rect, x, y)
 end
 
 local get_hovered_letter = function(room, x, y)
-	local ouija_offset = go.get_position(room.big_ouija_url) - (ouija_size / 2)
+	local ouija_offset = go.get_position(room.big_ouija_url) - (OUIJA_SIZE / 2)
 	x = x - ouija_offset.x
 	y = y - ouija_offset.y
 	
@@ -66,6 +68,50 @@ local get_hovered_letter = function(room, x, y)
 	return nil
 end
 
+local end_ouija_mode = function(room)
+	game_state.god_name = room.god_name
+	room.ouija_in_use = false
+	msg.post(room.big_ouija_url, "disable")
+	msg.post(room.randall_arms_url, "disable")
+end
+
+-- letter here may be nil, [A-Z0-9], or the words YES, NO and DONE
+local handle_selected_letter = function(room, dt, letter)
+	if not letter then
+		return
+	end
+	
+	room.hover_elapsed = room.hover_elapsed + dt
+	if not room.moved_after_selection or room.hover_elapsed < LETTER_WAIT_TIME then
+		return
+	end
+	
+	if letter == "YES" then
+		if room.ouija_name_done then
+			end_ouija_mode(room)
+		else
+			msg.post("/balloon", "show_text", {delay=20, text = "First confirm that the name is done.", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})	
+		end
+	elseif letter == "NO" then
+		msg.post("/balloon", "show_text", {delay=20, text = "If "..room.god_name.." isn't your name which one is?", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
+		room.god_name = ""
+		room.ouija_name_done = false
+	elseif letter == "DONE" then
+		msg.post("/balloon", "show_text", {delay=20, text = "Is "..room.god_name.." your name??", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
+		room.ouija_name_done = true
+	else
+		room.god_name = room.god_name..letter
+		local display_text = ""
+		for letter in room.god_name:gmatch(".") do
+			display_text = display_text..".."..letter.." "
+		end
+		msg.post("/balloon", "show_text", {delay=20, text=display_text, character="/randall", no_arrow=true, pos=BALLOON_POS, sound="#Randall_4"})
+	end
+
+	room.moved_after_selection = false
+	room.hover_elapsed = 0
+end
+
 return {
 	init = function(room)
 		msg.post(room.big_ouija_url, "enable")
@@ -75,17 +121,21 @@ return {
 		end)
 		room.shake_elapsed = 0
 		room.moved_hands = false
+		room.hover_elapsed = 0
+		room.god_name = ""
+		room.moved_after_selection = true
+		room.ouija_name_done = false
 	end,
 	update = function(room, dt)
-		if moved_hands then
+		if room.moved_hands then
 			go.set_position(room.arms_position, room.randall_arms_url)
-			moved_hands = false
+			room.moved_hands = false
+			room.hover_elapsed = 0
+			room.moved_after_selection = true
 		else
-			local magnifier_pos = room.arms_position + magnifier_offset
+			local magnifier_pos = room.arms_position + MAGNIFIER_OFFSET
 			local letter = get_hovered_letter(room, magnifier_pos.x, magnifier_pos.y)
-			if letter then
-				print(letter)
-			end
+			handle_selected_letter(room, dt, letter)
 		end
 		
 		room.shake_elapsed = room.shake_elapsed + dt
@@ -100,10 +150,8 @@ return {
 			local in_same_pos = action.x == room.arms_position.x and action.y == room.arms_position.y
 			if not in_same_pos and inside_gameobject(room.arms_hitbox_url, action.x, action.y) then
 				room.arms_position = vmath.vector3(action.x, action.y, room.arms_position.z)
-				moved_hands = true
+				room.moved_hands = true
 			end
 		end
-	end,
-	final = function(room)
 	end
 }
