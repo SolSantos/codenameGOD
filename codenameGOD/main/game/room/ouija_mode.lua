@@ -2,7 +2,7 @@ local inside_gameobject = require("main.inside_gameobject")
 local game_state = require("main.game_state")
 local SHAKE = 1
 local SHAKE_SLEEP = 0.1
-local LETTER_WAIT_TIME = 2
+local LETTER_WAIT_TIME = 1.6
 local MAGNIFIER_OFFSET = vmath.vector3(-6 , 100, 0)
 local OUIJA_SIZE = vmath.vector3(732, 480, 0)
 local BALLOON_POS = vmath.vector3(1030, 260, 1)
@@ -71,8 +71,7 @@ end
 local end_ouija_mode = function(room)
 	game_state.god_name = room.god_name
 	room.ouija_in_use = false
-	msg.post(room.big_ouija_url, "disable")
-	msg.post(room.randall_arms_url, "disable")
+	room.cutscenes.god_name_selected(room)
 end
 
 -- letter here may be nil, [A-Z0-9], or the words YES, NO and DONE
