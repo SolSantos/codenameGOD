@@ -3,7 +3,7 @@ local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local cutscenes = require("main.game.room.cutscenes")
 local update_context_entries = require("main.game.room.context_data")
-local ouija = require("main.game.room.ouija")
+local ouija_mode = require("main.game.room.ouija_mode")
 
 local MOVE_AROUND_TIME = 10
 local DOOR_HINT_DELAY = 4
@@ -41,7 +41,7 @@ local item_strings = {
 
 function update(self, dt)
 	if self.ouija_in_use then
-		ouija.update(self, dt)
+		ouija_mode.update(self, dt)
 		return
 	end
 
@@ -97,6 +97,7 @@ function init(self)
 	self.candle_url = msg.url("candle")
 	self.ouija_url = msg.url("ouija")
 	self.big_ouija_url = msg.url("big_ouija")
+	self.big_ouija_hitbox_url = msg.url("big_ouija#sprite")
 	self.randall_arms_url = msg.url("randall_arms")
 	self.arms_hitbox_url = msg.url("randall_arms#hit_box")
 	
@@ -142,7 +143,7 @@ end
 
 function on_input(self, action_id, action)
 	if self.ouija_in_use then
-		ouija.on_input(self, action_id, action)
+		ouija_mode.on_input(self, action_id, action)
 	end
 end
 

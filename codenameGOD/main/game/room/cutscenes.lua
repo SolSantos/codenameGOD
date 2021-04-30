@@ -1,6 +1,6 @@
 local game_state = require("main.game_state")
 local update_context_entries = require("main.game.room.context_data")
-local ouija = require("main.game.room.ouija")
+local ouija_mode = require("main.game.room.ouija_mode")
 
 return {
 	intro=function(self)
@@ -195,7 +195,7 @@ return {
 			msg.post("/randall", "go_to", {pos=vmath.vector3(850, 250, 0.2), duration=0.5})
 		end)
 		event_manager:register_event(1, function(_, id)
-			ouija.init(self)
+			ouija_mode.init(self)
 		end)
 		event_manager:register_event(1, function(_, id)
 			msg.post("/cutscene#cutscene", "cutscene_end")
