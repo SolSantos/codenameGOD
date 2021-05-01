@@ -1,6 +1,8 @@
 local inside_gameobject = require("main.inside_gameobject")
 local game_state = require("main.game_state")
 local SHAKE = 1
+local SHAKE_MOVING = 3
+local SHAKE_MOVING_SLEEP = 0.02
 local SHAKE_SLEEP = 0.1
 local LETTER_WAIT_TIME = 1.6
 local MAGNIFIER_OFFSET = vmath.vector3(-6 , 100, 0)
@@ -126,11 +128,15 @@ return {
 		room.ouija_name_done = false
 	end,
 	update = function(room, dt)
+		local shake = SHAKE
+		local shake_sleep = SHAKE_SLEEP
 		if room.moved_hands then
 			go.set_position(room.arms_position, room.randall_arms_url)
 			room.moved_hands = false
 			room.hover_elapsed = 0
 			room.moved_after_selection = true
+			shake = SHAKE_MOVING
+			shake_sleep = SHAKE_MOVING_SLEEP
 		else
 			local magnifier_pos = room.arms_position + MAGNIFIER_OFFSET
 			local letter = get_hovered_letter(room, magnifier_pos.x, magnifier_pos.y)
@@ -138,8 +144,8 @@ return {
 		end
 		
 		room.shake_elapsed = room.shake_elapsed + dt
-		if room.shake_elapsed > SHAKE_SLEEP then
-			local offset = vmath.vector3(math.random(-SHAKE, SHAKE), math.random(-SHAKE, SHAKE), 0)
+		if room.shake_elapsed > shake_sleep then
+			local offset = vmath.vector3(math.random(-shake, shake), math.random(-shake, shake), 0)
 			go.set_position(room.arms_position + offset, room.randall_arms_url)
 			room.shake_elapsed = 0
 		end
