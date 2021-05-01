@@ -218,12 +218,15 @@ function on_message(self, message_id, message, sender)
 		self.last_message_id = self.last_message_id + 1
 		local message_id = self.last_message_id
 
-		local pos = go.get_position(message.character)
+		local pos = message.pos or go.get_position(message.character)
 		local balloon_id = get_balloon_to_use(text)
 		if balloon_id == BIG_BALLOON then
 			text = break_limit_words(message.text, BIG_BALLOON_SPACE) or ""
 		end
-		
+
+		if message.no_arrow then
+			balloon_id = balloon_id + 2
+		end
 		local balloon = BALLOONS[balloon_id]
 		self.current_balloon = balloon_id
 		self.current_character = msg.url(message.character)

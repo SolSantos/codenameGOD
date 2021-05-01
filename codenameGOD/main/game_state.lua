@@ -7,6 +7,7 @@ return {
 	both_shoes = false,
 	-- Check if first puzzle is completed
 	allowed_leave = false,
+	-- First item picked in the game will display an arrow to the inventory
 	first_item_picked = false,
 	-- Tells if we already opened the drawer in the room and saw the coins
 	coins_shown = false,
@@ -14,5 +15,7 @@ return {
 	-- The player came back to room after the bullies steal his ticket
 	comming_from_bullies = false,
 	-- Randall is waiting for a sign from god
-	awaiting_signal = false
+	awaiting_signal = false,
+	-- Name of the player
+	god_name = nil
 }

@@ -1,3 +1,11 @@
+images {
+  image: "/assets/images/characters/randall_arms.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/characters/randall_head.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "idle"
   images {
@@ -689,5 +697,5 @@ animations {
   flip_vertical: 0
 }
 margin: 0
-extrude_borders: 0
+extrude_borders: 1
 inner_padding: 0

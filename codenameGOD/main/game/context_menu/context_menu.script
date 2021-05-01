@@ -28,6 +28,8 @@ function init(self)
 	-- Object to which the menu is attached to
 	self.attached_to = nil
 	self.menu = {}
+
+	self.enabled = true
 end
 
 function get_sprite_url(obj)
@@ -104,7 +106,15 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("display_context_menu") then
+	if message_id == hash("enable_context_menu") then
+		self.enabled = true
+	end
+	
+	if message_id == hash("disable_context_menu") then
+		self.enabled = false
+	end
+
+	if self.enabled and message_id == hash("display_context_menu") then
 		if self.click_elapsed < self.min_interval then
 			return
 		end
