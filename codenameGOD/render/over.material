@@ -1,7 +1,7 @@
 name: "over"
 tags: "over"
 vertex_program: "/render/god.vp"
-fragment_program: "/builtins/materials/sprite.fp"
+fragment_program: "/render/over.fp"
 vertex_space: VERTEX_SPACE_WORLD
 vertex_constants {
   name: "view_proj"
