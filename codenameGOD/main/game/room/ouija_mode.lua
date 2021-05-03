@@ -5,7 +5,9 @@ local SHAKE_MOVING = 3
 local SHAKE_MOVING_SLEEP = 0.02
 local SHAKE_SLEEP = 0.1
 local LETTER_WAIT_TIME = 1.6
-local MAGNIFIER_OFFSET = vmath.vector3(-6 , 100, 0)
+local SCARED_DEACTIVATION_TIME = 0.7
+local LETTER_TALK_TIME = 1.5
+local MAGNIFIER_OFFSET = vmath.vector3(2, 90, 0)
 local OUIJA_SIZE = vmath.vector3(732, 480, 0)
 local BALLOON_POS = vmath.vector3(1030, 260, 1)
 
@@ -120,12 +122,15 @@ return {
 			room.arms_position = go.get_position(room.randall_arms_url)
 			room.ouija_in_use = true
 		end)
+		
 		room.shake_elapsed = 0
 		room.moved_hands = false
 		room.hover_elapsed = 0
 		room.god_name = ""
 		room.moved_after_selection = true
 		room.ouija_name_done = false
+		room.scared_elapsed = 0
+		room.talking_elapsed = 0
 	end,
 	update = function(room, dt)
 		local shake = SHAKE
@@ -137,10 +142,27 @@ return {
 			room.moved_after_selection = true
 			shake = SHAKE_MOVING
 			shake_sleep = SHAKE_MOVING_SLEEP
+			msg.post("/randall", "get_scared")
+			room.scared_elapsed = 0
 		else
 			local magnifier_pos = room.arms_position + MAGNIFIER_OFFSET
 			local letter = get_hovered_letter(room, magnifier_pos.x, magnifier_pos.y)
 			handle_selected_letter(room, dt, letter)
+
+			room.scared_elapsed = room.scared_elapsed + dt
+			if room.scared_elapsed > SCARED_DEACTIVATION_TIME then
+				msg.post("/randall", "idle")
+			end
+		end
+
+		-- Since we keep the balloon in display for a big time we want to manually 
+		-- tell randall to stop talking earlier.
+		if not room.moved_after_selection then
+			room.talking_elapsed = room.talking_elapsed + dt
+			if room.talking_elapsed > LETTER_TALK_TIME then
+				msg.post("/randall", "stop_talking")
+				room.talking_elapsed = 0
+			end
 		end
 		
 		room.shake_elapsed = room.shake_elapsed + dt
