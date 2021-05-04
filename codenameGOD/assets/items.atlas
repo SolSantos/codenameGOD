@@ -39,10 +39,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/images/items/arrow_placehold.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/images/rectangle.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }

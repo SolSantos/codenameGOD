@@ -199,7 +199,9 @@ function on_input(self, action_id, action)
 		mouse_y = action.y
 		if current_item then
 			msg.post("/inventory", "item_drag", {x=action.x, y=action.y})
-			msg.post("/collections","send_collection", {name = "inventory_arrow"})
+			if current_item ~= items["shoe1"] and current_item ~= items["shoe2"] then
+				msg.post("/collections","send_collection", {name = "inventory_arrow"})
+			end
 		end
 	end
 

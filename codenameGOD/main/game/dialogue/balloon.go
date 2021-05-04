@@ -405,7 +405,7 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 125.0
+    x: 122.0
     y: -2.0
     z: 0.1
   }
