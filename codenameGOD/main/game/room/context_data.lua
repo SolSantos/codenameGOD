@@ -94,6 +94,7 @@ update_context_entries = function(self)
 				self.sign_tv = true
 				self.divine_signs = self.divine_signs + 1
 				msg.post(self.room_url, "divine_sign")
+				msg.post(self.tv_url, "play_animation", {id = hash("room_tv_on")})
 				msg.post(self.tv_sound_url, "play_sound")
 				update_context_entries(self)
 			end})

@@ -262,7 +262,7 @@ embedded_instances {
   position {
     x: 512.0
     y: 288.0
-    z: -0.1
+    z: -1.0
   }
   rotation {
     x: 0.0
@@ -316,7 +316,7 @@ embedded_instances {
   data: "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"tile_set: \\\"/assets/books.atlas\\\"\\n"
+  "  data: \"tile_set: \\\"/assets/bg_assets.atlas\\\"\\n"
   "default_animation: \\\"books\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
@@ -486,7 +486,7 @@ embedded_instances {
   ""
   position {
     x: 784.0
-    y: 252.0
+    y: 253.0
     z: 0.0
   }
   rotation {
@@ -547,7 +547,7 @@ embedded_instances {
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
   "  data: \"tile_set: \\\"/assets/bg_assets.atlas\\\"\\n"
-  "default_animation: \\\"room_tv1\\\"\\n"
+  "default_animation: \\\"room_tv\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "\"\n"
@@ -567,7 +567,7 @@ embedded_instances {
   position {
     x: 800.0
     y: 128.0
-    z: 0.0
+    z: 0.3
   }
   rotation {
     x: 0.0
@@ -645,7 +645,7 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 553.0
+    x: 536.0
     y: 446.0
     z: 0.0
   }
@@ -868,6 +868,86 @@ embedded_instances {
     x: 843.0
     y: 131.0
     z: 0.3
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "poster1"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"tile_set: \\\"/assets/bg_assets.atlas\\\"\\n"
+  "default_animation: \\\"room_poster1\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 819.0\n"
+  "    y: 447.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -7.0
+    y: 32.0
+    z: -0.2
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "poster2"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"tile_set: \\\"/assets/bg_assets.atlas\\\"\\n"
+  "default_animation: \\\"room_poster2\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 840.0
+    y: 351.0
+    z: -0.1
   }
   rotation {
     x: 0.0

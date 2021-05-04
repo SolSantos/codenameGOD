@@ -22,7 +22,7 @@ local item_strings = {
 		position = {x=450, y=300}
 	},
 	[4] = {
-		text = "That sure is a nice place for a poster. Hmm.",
+		text = "I wonder if they'll still be making these in 30 years... Nah, no way.",
 		position = {x=800, y=280}
 	},
 	[5] = {
