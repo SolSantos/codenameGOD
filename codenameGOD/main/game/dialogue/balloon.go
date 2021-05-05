@@ -308,7 +308,7 @@ embedded_components {
   "line_break: true\n"
   "text: \"Default\"\n"
   "font: \"/builtins/fonts/system_font.font\"\n"
-  "material: \"/builtins/fonts/label.material\"\n"
+  "material: \"/render/over_label.material\"\n"
   ""
   position {
     x: -129.0
@@ -327,7 +327,7 @@ embedded_components {
   type: "sprite"
   data: "tile_set: \"/assets/balloon.atlas\"\n"
   "default_animation: \"balloon2\"\n"
-  "material: \"/builtins/materials/sprite.material\"\n"
+  "material: \"/render/over.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
@@ -382,7 +382,7 @@ embedded_components {
   "line_break: true\n"
   "text: \"Default\"\n"
   "font: \"/builtins/fonts/system_font.font\"\n"
-  "material: \"/builtins/fonts/label.material\"\n"
+  "material: \"/render/over_label.material\"\n"
   ""
   position {
     x: -215.0
@@ -401,7 +401,7 @@ embedded_components {
   type: "sprite"
   data: "tile_set: \"/assets/items.atlas\"\n"
   "default_animation: \"skip_dialogue_small_dark\"\n"
-  "material: \"/builtins/materials/sprite.material\"\n"
+  "material: \"/render/over.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
@@ -421,7 +421,7 @@ embedded_components {
   type: "sprite"
   data: "tile_set: \"/assets/items.atlas\"\n"
   "default_animation: \"skip_dialogue_small_dark\"\n"
-  "material: \"/builtins/materials/sprite.material\"\n"
+  "material: \"/render/over.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {

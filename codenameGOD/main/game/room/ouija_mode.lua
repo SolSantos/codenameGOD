@@ -10,7 +10,7 @@ local SCARED_DEACTIVATION_TIME = 0.7
 local LETTER_TALK_TIME = 1.5
 local MAGNIFIER_OFFSET = vmath.vector3(2, 90, 0)
 local OUIJA_SIZE = vmath.vector3(732, 480, 0)
-local BALLOON_POS = vmath.vector3(1030, 260, 1)
+local BALLOON_POS = vmath.vector3(1010, 260, 1)
 
 local ouija_mapping =  {
 	A =     {x=90,  y=289, width=30,  height=50},
