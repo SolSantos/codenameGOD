@@ -347,7 +347,27 @@ embedded_instances {
 }
 embedded_instances {
   id: "doggo"
-  data: "embedded_components {\n"
+  data: "components {\n"
+  "  id: \"context_area\"\n"
+  "  component: \"/main/game/clickable_area/context_area.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"context_key\"\n"
+  "    value: \"doggo\"\n"
+  "    type: PROPERTY_TYPE_HASH\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
   "  data: \"tile_set: \\\"/assets/doggo.atlas\\\"\\n"
@@ -369,7 +389,7 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 144.0
+    x: 122.0
     y: 260.0
     z: 0.0
   }

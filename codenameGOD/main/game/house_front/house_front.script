@@ -14,6 +14,10 @@ local item_strings = {
 	[2] = {
 		text = "That's a bike. A useless, poorly designed bike.",
 		position = {x=550, y=250}
+	},
+	[3] = {
+		text = "Friendly neighborhood dog. I think his name is MJ? Good doggie.",
+		position = {x=200, y=150}
 	}
 }
 
@@ -39,6 +43,9 @@ context_data[hash("trash")] = {
 }
 context_data[hash("sky")] = {
 	{text="Inspect", click="Beautiful sky today. Somehow always clear."}
+}
+context_data[hash("doggo")] = {
+	{text="Inspect", click="Must. Fight. Urge. To. Pet."}
 }
 context_data[hash("back_to_room_door")] = {
 	{text="Inspect", click="The front entrance to my headquarters."},

@@ -2,7 +2,8 @@ local inside_gameobject = require "main.inside_gameobject"
 local metal_hit_url
 local trash_hit = 0
 local city_url
-
+local MOVE_AROUND_TIME = 15
+local update_time = 0
 local bully1_url
 local bully2_url
 local bully3_url
@@ -41,6 +42,7 @@ cutscenes = {
 	bullies_attack = function(self)
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
+		game_state.in_gameplay = false
 		msg.post(bullies_intro_sound_url, "play_sound",{delay = 2,  gain = 0.15})
 		msg.post(bullies_verse_sound_url, "play_sound",{delay = 11.3, gain = 0.15})
 		event_manager:register_event(1.5, function(self, id)
@@ -116,10 +118,12 @@ cutscenes = {
 			msg.post(city_url, "acquire_input_focus")
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
+			game_state.in_gameplay = true
 
 		end)
 	end,
 	bullies_escape = function(self)
+		game_state.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		msg.post(bullies_verse_sound_url, "stop_sound")
@@ -190,6 +194,16 @@ function init(self)
 	end
 end
 
+function update(self,dt)
+	update_time = update_time + dt
+	if update_time >= MOVE_AROUND_TIME then
+		update_time = 0
+		msg.post(".", "hint")
+		hint_count = 0
+	end
+
+end
+
 function final(self)
 	msg.post("sound#ambiance", "stop_sound")
 end
@@ -221,5 +235,13 @@ function on_message(self, message_id, message, sender)
 				msg.post("/balloon", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4"})
 			end)
 		end
+	elseif message_id == hash("hint") then
+		if game_state.in_gameplay then
+			msg.post("/balloon", "show_text", {text = "If there's a God now's a good time to act!", character = "randall", sound="#Randall_panic1", event="scream"})			
+		end
+		msg.post(".", "moved")
+	end
+	if message_id == hash("moved") then
+		update_time = 0
 	end
 end
