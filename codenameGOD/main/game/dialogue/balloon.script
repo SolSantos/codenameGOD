@@ -1,4 +1,5 @@
 local inside_gameobject = require("main.inside_gameobject")
+local utils = require("main.utils")
 
 local LETTERS_PER_SECOND = 20
 local SMALL_BALLOON_SPACE = 30 -- letters
@@ -121,7 +122,7 @@ end
 
 function update(self, dt)
 	if self.balloon_text then
-		self.show_elapsed = self.show_elapsed + dt
+		self.show_elapsed = utils.clamp(self.show_elapsed + dt, 0, self.balloon_text:len() / LETTERS_PER_SECOND)
 		local visible_text = get_visible_text(self.balloon_text, self.show_elapsed)
 		label.set_text(self.current_label, visible_text)
 	end
@@ -186,11 +187,61 @@ local function get_orientation(pos, balloon)
 	return h_orientation, v_orientation
 end
 
-function on_message(self, message_id, message, sender)
-	if message_id == hash("hide") then
-		hide_balloon(self)
+local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip)
+	local text = break_limit_words(raw_text, SMALL_BALLOON_SPACE) or ""
+
+	local pos = user_pos or go.get_position(character)
+	local balloon_id = get_balloon_to_use(text)
+	if balloon_id == BIG_BALLOON then
+		text = break_limit_words(raw_text, BIG_BALLOON_SPACE) or ""
 	end
 
+	if no_arrow then
+		balloon_id = balloon_id + 2
+	end
+	local balloon = BALLOONS[balloon_id]
+	self.current_balloon = balloon_id
+	self.current_character = msg.url(character)
+
+	local h_orientation, v_orientation = get_orientation(pos, balloon)
+	sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
+	sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
+
+	local offset_x = balloon.width / 2 + balloon.offset.x
+	local offset_y = balloon.height / 2 + balloon.offset.y
+	pos.x = pos.x + (offset_x * h_orientation)
+	pos.y = pos.y + (offset_y * v_orientation)
+	pos.z = 0.9
+
+	go.set_position(pos, ".")
+	msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
+
+	self.balloon_text = text
+	self.show_elapsed = 0
+
+	msg.post(".", "enable")
+	self.balloon_visible = true
+	self.can_skip = allow_skip or false
+	set_active_elements(self, balloon_id)
+	label.set_text(self.current_label, "")
+end
+
+local function balloon_play_sound(self, sound)
+	local sound_url = "/balloon"..sound
+	msg.post(sound_url, "play_sound")
+
+	-- Stop old sound after 0.5s so it doesnt sound so weird when skipping dialog
+	local current_sound = self.last_sound
+	timer.delay(0.5, false, function()
+		if current_sound and current_sound ~= self.last_sound then
+			msg.post(current_sound, "stop_sound")
+		end
+	end)
+
+	self.last_sound = sound_url
+end
+
+function on_message(self, message_id, message, sender)
 	if message_id == hash("character_moved") then
 		sender.fragment = nil
 		if self.current_character ~= sender then
@@ -208,77 +259,48 @@ function on_message(self, message_id, message, sender)
 		local balloon = BALLOONS[self.current_balloon]
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 	end
-	
+
 	if message_id == hash("show_text") then
 		if not message.character then
 			return
 		end
-		local text = break_limit_words(message.text, SMALL_BALLOON_SPACE) or ""
-		
+		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip)
+
 		self.last_message_id = self.last_message_id + 1
-		local message_id = self.last_message_id
-
-		local pos = message.pos or go.get_position(message.character)
-		local balloon_id = get_balloon_to_use(text)
-		if balloon_id == BIG_BALLOON then
-			text = break_limit_words(message.text, BIG_BALLOON_SPACE) or ""
-		end
-
-		if message.no_arrow then
-			balloon_id = balloon_id + 2
-		end
-		local balloon = BALLOONS[balloon_id]
-		self.current_balloon = balloon_id
-		self.current_character = msg.url(message.character)
+		local msg_id = self.last_message_id
 		
-		local h_orientation, v_orientation = get_orientation(pos, balloon)
-		sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
-		sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
-
-		local offset_x = balloon.width / 2 + balloon.offset.x
-		local offset_y = balloon.height / 2 + balloon.offset.y
-		pos.x = pos.x + (offset_x * h_orientation)
-		pos.y = pos.y + (offset_y * v_orientation)
-		pos.z = 0.9
-
-		go.set_position(pos, ".")
-		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
-
-		self.balloon_text = text
-		self.show_elapsed = 0
-
-		msg.post(".", "enable")
-		self.balloon_visible = true
-		self.can_skip = message.skip or false
-		set_active_elements(self, balloon_id)
-		label.set_text(self.current_label, "")
-	
 		msg.post(message.character, message.event or "start_talking")	
-		timer.delay(message.delay or ((text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
-			if message_id == self.last_message_id then
+		timer.delay(message.delay or ((self.balloon_text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
+			if msg_id == self.last_message_id then
 				hide_balloon(self)
 			end
 			msg.post(message.character, "stop_talking")	
 		end)
 
 		if message.sound then
-			local sound_url = "/balloon"..message.sound
-			msg.post(sound_url, "play_sound")
-
-			local current_sound = self.last_sound
-			timer.delay(0.5, false, function()
-				if current_sound and current_sound ~= self.last_sound then
-					msg.post(current_sound, "stop_sound")
-				end
-			end)
-
-			self.last_sound = sound_url
+			balloon_play_sound(self, message.sound)
 		end
 	end
+
+	-- Manual balloon control
+	if message_id == hash("hide") then
+		hide_balloon(self)
+	end
+
+	if message_id == hash("show") then
+		show_balloon(self, message.character, "", message.pos, message.no_arrow, false)
+	end
+
+	if message_id == hash("add_text") then
+		self.balloon_text = self.balloon_text..message.text
+		if message.sound then
+			balloon_play_sound(self, message.sound)
+		end
+	end	
 end
 
 local function skip_balloon(self)
-	local total_duration = self.balloon_text:len() / LETTERS_PER_SECOND * 1000
+	local total_duration = self.balloon_text:len() / LETTERS_PER_SECOND
 	if self.show_elapsed < total_duration then
 		self.show_elapsed = total_duration
 	else

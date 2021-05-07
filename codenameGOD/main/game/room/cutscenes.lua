@@ -202,7 +202,7 @@ return {
 		end)
 	end,
 	god_name_selected = function(self)
-		local balloon_pos = vmath.vector3(1030, 260, 1)
+		local balloon_pos = vmath.vector3(1010, 260, 1)
 		game_state.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")

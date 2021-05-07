@@ -103,21 +103,30 @@ local handle_selected_letter = function(room, dt, letter)
 			end_ouija_mode(room)
 		else
 			msg.post("/balloon", "show_text", {delay=20, text = "First confirm that the name is done.", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})	
+			room.name_hidden = true
 		end
 	elseif letter == "NO" then
 		msg.post("/balloon", "show_text", {delay=20, text = "If "..room.god_name.." isn't your name which one is?", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
 		room.god_name = ""
 		room.ouija_name_done = false
 	elseif letter == "DONE" then
-		msg.post("/balloon", "show_text", {delay=20, text = "Is "..room.god_name.." your name??", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
-		room.ouija_name_done = true
-	else
-		room.god_name = room.god_name..letter
-		local display_text = ""
-		for letter in room.god_name:gmatch(".") do
-			display_text = display_text..".."..letter.." "
+		if room.god_name:len() == 0 then
+			msg.post("/balloon", "show_text", {delay=20, text = "I bet you have a name.", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
+		else
+			msg.post("/balloon", "show_text", {delay=20, text = "Is "..room.god_name.." your name??", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
+			room.ouija_name_done = true
 		end
-		msg.post("/balloon", "show_text", {delay=20, text=display_text, character="/randall", no_arrow=true, pos=BALLOON_POS, sound="#Randall_4"})
+		room.name_hidden = true
+	else
+		if room.god_name:len() == 0 then
+			msg.post("/balloon", "show", {no_arrow=true, pos=BALLOON_POS})
+		elseif room.name_hidden then
+			msg.post("/balloon", "show", {no_arrow=true, pos=BALLOON_POS})
+			msg.post("/balloon", "add_text", {text=room.god_name, sound="#Randall_4"})
+			room.name_hidden = false
+		end
+		room.god_name = room.god_name..letter
+		msg.post("/balloon", "add_text", {text=".."..letter.." ", sound="#Randall_short4"})
 	end
 
 	room.moved_after_selection = false
@@ -152,6 +161,7 @@ return {
 		room.talking_elapsed = 0
 		room.letter = nil
 		room.leave_letter = true
+		room.name_hidden = false
 	end,
 	update = function(room, dt)
 		local shake = SHAKE
