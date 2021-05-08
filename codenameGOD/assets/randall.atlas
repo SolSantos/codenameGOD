@@ -576,6 +576,14 @@ animations {
     image: "/assets/images/characters/special/special16.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
+  images {
+    image: "/assets/images/characters/special/special18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/special/special20.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 6
   flip_horizontal: 0
