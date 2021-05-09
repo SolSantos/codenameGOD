@@ -188,38 +188,6 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		msg.post(".", "moved")
-
-	elseif message_id == hash("shoe_found") and self.shoe_count < 2 then
-		local randall_pos = go.get_position("/randall")
-		if not game_state.both_shoes and inside_gameobject(msg.url("/randall#hit_box"), message.x, message.y, vmath.vector3(-4, -63, 0)) then
-			self.shoe_count = self.shoe_count + 1
-			msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
-			if self.shoe_count == 1 then
-				msg.post("/randall", "set_state", {state=RANDALL_STATE.ONE_SHOE})
-				msg.post("/balloon", "show_text", {text="That's one shoe!", character = "/randall", sound="#Randall_short1"})
-			end
-			if self.shoe_count == 2 then
-				msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
-				msg.post("/balloon", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
-				game_state.both_shoes = true
-			end
-		end
-		msg.post(".", "moved")
-
-	elseif message_id == hash("find_shoes") then
-		event_manager:register_event(4, function(self, id)
-			msg.post("/balloon", "show_text", {text="Ok, gotta find my shoes now...", character = "/randall", sound="#Randall_6"})
-		end)
-		msg.post(".", "moved")
-
-	elseif message_id == hash("find_ticket") then
-		event_manager:register_event(4, function(self, id)
-			msg.post("/balloon", "show_text", {text="Now, the ticket has to be somewhere...", character = "/randall", sound="#Randall_6"})
-		end)
-		msg.post(".", "moved")
-
-	elseif message_id == hash("ticket_found") and not items.ticket.in_inventory then
-		msg.post("/balloon", "show_text", {delay=3.5, text="All safe for later!", character = "/randall", sound="#Randall_5"})
 	end
 	if message_id == hash("moved") then
 		self.update_time = 0
@@ -257,6 +225,38 @@ function on_message(self, message_id, message, sender)
 			timer.delay(4, false, function(self, id)
 				msg.post(self.inv_arrow_url, "disable")
 			end)
+		end
+	end
+	
+	if message_id == hash("item_dropped_in_inventory") then
+		if message.item_name == "ticket" then
+			msg.post("/balloon", "show_text", {delay=3.5, text="All safe for later!", character = "/randall", sound="#Randall_5"})
+		end
+	end
+	
+	if message_id == hash("item_dropped_in_scene") then
+		if (message.item_name == "shoe1" or message.item_name == "shoe2") and self.shoe_count < 2 then	
+			local randall_pos = go.get_position("/randall")
+			if not game_state.both_shoes and inside_gameobject(msg.url("/randall#hit_box"), message.x, message.y, vmath.vector3(-4, -63, 0)) then
+				self.shoe_count = self.shoe_count + 1
+				msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
+				if self.shoe_count == 1 then
+					msg.post("/randall", "set_state", {state=RANDALL_STATE.ONE_SHOE})
+					msg.post("/balloon", "show_text", {text="That's one shoe!", character = "/randall", sound="#Randall_short1"})
+				end
+				if self.shoe_count == 2 then
+					msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
+					msg.post("/balloon", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
+					game_state.both_shoes = true
+				end
+			end
+			msg.post(".", "moved")
+		end
+	end
+
+	if message_id == hash("item_dragged") then
+		if message.item_name ~= "shoe1" and message.item_name ~= "shoe2" then
+			msg.post(".", "inventory_arrow")
 		end
 	end
 end
