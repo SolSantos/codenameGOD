@@ -31,10 +31,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/images/arrow_inventory.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/images/skip_dialogue.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
@@ -45,6 +41,29 @@ images {
 images {
   image: "/assets/images/skip_dialogue_small_dark.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+animations {
+  id: "arrow_inventory"
+  images {
+    image: "/assets/images/arrow_inventory1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/arrow_inventory2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/arrow_inventory3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/arrow_inventory4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
 }
 margin: 0
 extrude_borders: 0
