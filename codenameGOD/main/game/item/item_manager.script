@@ -29,16 +29,13 @@ local function handle_click(url, action_id, action, gameobject)
 				return
 			end
 			
-			current_item = pressed_item					
+			current_item = pressed_item
+
+			-- Show item description the first time we interact with it
 			if current_item.found == 0 and current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
 				current_item.found = 1
-				msg.post(
-					"/balloon",
-					"show_text",
-					{text=current_item.text, delay=4, character="/randall", sound="#Randall_2"}
-				)
+				msg.post("/balloon", "show_text", {text=current_item.text, delay=4, character="/randall", sound="#Randall_2"})
 			end
-						
 		elseif action.released then
 			if current_item then
 				go.set_position(vmath.vector3(mouse_x, mouse_y, 0), current_item.go)
@@ -133,24 +130,17 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("dropped_inside_inventory") then
 		local dropped_item = items[message.item_name]
-		if message.item_name == "ticket" and self.current_scenario == "room" then
-			msg.post("/collections", "send_collection", {name = "ticket_found"})
-		end
 		dropped_item.in_inventory = true
 		dropped_item.scenario = nil
+		msg.post("/collections", "send_collection", {name = "item_dropped_in_inventory", params={item_name=message.item_name, x=mouse_x, y=mouse_y}})
 	end
 
 	if message_id == hash("dropped_outside_inventory") then
 		local dropped_item = items[message.item_name]
-		if (message.item_name == "shoe1" or  message.item_name == "shoe2") and self.current_scenario == "room" then	
-			msg.post("/collections", "send_collection", {name = "shoe_found", params = {x = mouse_x, y = mouse_y, item_name = message.item_name}})
-		end
-		if message.item_name == "petrock" and self.current_scenario == "city_street_day" then	
-			msg.post("/collections", "send_collection", {name = "pet_rock_drop", params = {x = mouse_x, y = mouse_y, item_name = message.item_name}})
-		end
 		dropped_item.in_inventory = false
 		dropped_item.scenario = self.current_scenario
 		go.set_position(vmath.vector3(mouse_x, mouse_y, 0), dropped_item.go)
+		msg.post("/collections", "send_collection", {name = "item_dropped_in_scene", params={item_name=message.item_name, x=mouse_x, y=mouse_y}})
 	end
 
 	if message_id == hash("inventory_opened") then
@@ -199,9 +189,7 @@ function on_input(self, action_id, action)
 		mouse_y = action.y
 		if current_item then
 			msg.post("/inventory", "item_drag", {x=action.x, y=action.y})
-			if current_item ~= items["shoe1"] and current_item ~= items["shoe2"] then
-				msg.post("/collections","send_collection", {name = "inventory_arrow"})
-			end
+			msg.post("/collections","send_collection", {name = "item_dragged", params={item_name=current_item.name, x=mouse_x, y=mouse_y}})
 		end
 	end
 

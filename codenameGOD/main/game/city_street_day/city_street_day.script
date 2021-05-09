@@ -209,16 +209,7 @@ function final(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("pet_rock_drop") then
-		local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
-		local hit_bully2 = inside_gameobject(msg.url("bully2#sprite"), message.x, message.y)
-		local hit_bully3 = inside_gameobject(msg.url("bully3#sprite"), message.x, message.y)
-	
-		if hit_bully1 or hit_bully2 or hit_bully3 then
-			msg.post("sound#10-hit", "play_sound")
-			cutscenes.bullies_escape(self)
-		end
-	elseif message_id == hash("bully_trash_warning") then
+	if message_id == hash("bully_trash_warning") then
 		math.random()
 		local r = math.random(3)
 		if r == 1 then
@@ -241,7 +232,18 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post(".", "moved")
 	end
-	if message_id == hash("moved") then
+	elseif message_id == hash("moved") then
 		update_time = 0
+	elseif message_id == hash("item_dropped_in_scene") then
+		if message.item_name == "petrock" then	
+			local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
+			local hit_bully2 = inside_gameobject(msg.url("bully2#sprite"), message.x, message.y)
+			local hit_bully3 = inside_gameobject(msg.url("bully3#sprite"), message.x, message.y)
+
+			if hit_bully1 or hit_bully2 or hit_bully3 then
+				msg.post("sound#10-hit", "play_sound")
+				cutscenes.bullies_escape(self)
+			end
+		end
 	end
 end

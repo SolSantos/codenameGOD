@@ -7,7 +7,8 @@ RANDALL_STATE = {
 	ONE_SHOE=3,
 	NORMAL=4,
 	PRAISING=5,
-	PRAISING_NO_PANTS=6
+	PRAISING_NO_PANTS=6,
+	WIZARD_HAT=7
 }
 
 local ACTION = {
@@ -17,7 +18,8 @@ local ACTION = {
 	WALK_TALK=4,
 	SLEEP=5,
 	SCREAM=6,
-	PANTS_FALL=7
+	PANTS_FALL=7,
+	SCARED=8
 }
 
 local DIRECTION = {
@@ -53,6 +55,8 @@ local update_animation = function(self, mapping)
 			self.new_animation = hash(mapping.scream)
 		elseif self.action == ACTION.PANTS_FALL then
 			self.new_animation = hash(mapping.pants_fall)
+		elseif self.action == ACTION.SCARED then
+			self.new_animation = hash(mapping.scared)
 		end
 	end
 end
@@ -132,6 +136,19 @@ local praise_message = function(mapping, self, message_id, message)
 	update_animation(self, mapping)
 end
 
+local wizard_hat_message = function(mapping, self, message_id, message)
+	if message_id == hash("start_talking") then
+		set_action(self, ACTION.TALK)
+	elseif message_id == hash("stop_talking") and self.action == ACTION.TALK then
+		set_action(self, ACTION.IDLE)
+	elseif message_id == hash("get_scared") then
+		set_action(self, ACTION.SCARED)
+	elseif message_id == hash("idle") and self.action ~= ACTION.TALK then
+		set_action(self, ACTION.IDLE)
+	end
+	update_animation(self, mapping)
+end
+
 local state_on_message = {
 	[RANDALL_STATE.LYING_DOWN] = function(self, message_id, message, sender)
 		local anims_mapping = {
@@ -183,6 +200,14 @@ local state_on_message = {
 			pants_fall="praising_no_pants_lose_pants"
 		}
 		praise_message(anims_mapping, self, message_id, message, sender)
+	end,
+	[RANDALL_STATE.WIZARD_HAT] = function(self, message_id, message, sender)
+		local anims_mapping = {
+			idle="wizard_idle",
+			talk="wizard_talk",
+			scared="wizard_scared"
+		}
+		wizard_hat_message(anims_mapping, self, message_id, message, sender)
 	end
 }
 

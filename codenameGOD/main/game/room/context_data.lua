@@ -115,7 +115,7 @@ update_context_entries = function(self)
 				self.sign_trousers = true
 				msg.post("/randall", "set_state", {state=RANDALL_STATE.PRAISING_NO_PANTS})
 				msg.post(self.zipper_sound_url, "play_sound")
-				event_manager:register_event(4, function()
+				event_manager:register_event(3, function()
 					self.divine_signs = self.divine_signs + 1
 					msg.post(self.room_url, "divine_sign")
 					update_context_entries(self)
