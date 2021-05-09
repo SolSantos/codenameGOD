@@ -232,7 +232,7 @@ function on_message(self, message_id, message, sender)
 		end
 		msg.post(".", "moved")
 	end
-	elseif message_id == hash("moved") then
+	if message_id == hash("moved") then
 		update_time = 0
 	elseif message_id == hash("item_dropped_in_scene") then
 		if message.item_name == "petrock" then	
