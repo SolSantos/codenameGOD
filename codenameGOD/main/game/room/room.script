@@ -14,7 +14,7 @@ local item_strings = {
 		position = {x=210, y=200}
 	},
 	[2] = {
-		text = "I don't care what anyone says, the books are much\nbetter than the TV Series. Suck it Game Of Thrones.",
+		text = "I don't care what anyone says, the books are much\nbetter than the TV Series.",
 		position = {x=220, y=260}
 	},
 	[3] = {
@@ -26,14 +26,10 @@ local item_strings = {
 		position = {x=800, y=280}
 	},
 	[5] = {
-		text = "Wow, I really need to fill\nmy wall up with something.",
-		position = {x=840, y=280}
-	},
-	[6] = {
 		text = "I love stepping on my NES\ncontroller when no one is watching!",
 		position = {x=600, y=200}
 	},
-	[7] = {
+	[6] = {
 		text = "A weird Pepsi commercial is on screen.",
 		position = {x=800, y=200}
 	}
@@ -175,7 +171,7 @@ function on_message(self, message_id, message, sender)
 		-- Triggers when the player can leave the house but is yet to do so
 		elseif items.ticket.in_inventory and game_state.both_shoes then
 			msg.post("/balloon", "show_text", {text = "I really need to go now.\n I'm gonna be late!", character = "/randall", sound="#Randall_1"})
-
+			
 		-- Triggers when the player is waiting for a sign from God
 		elseif game_state.awaiting_signal and game_state.in_gameplay then
 			local r = math.random(3)

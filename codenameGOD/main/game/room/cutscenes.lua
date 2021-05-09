@@ -111,6 +111,7 @@ return {
 			self.show_hints = true
 			game_state.comming_from_bullies = false
 			game_state.awaiting_signal = true
+			game_state.in_gameplay = true
 			update_context_entries(self)
 		end)
 	end,
@@ -181,6 +182,7 @@ return {
 			msg.post(self.telescope_url, "disable")
 			msg.post(self.tv_url, "disable")
 			msg.post(self.nintendo_url, "disable")
+			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
 			msg.post("/inventory", "disable")
 			msg.post(self.ouija_url, "enable")
 
