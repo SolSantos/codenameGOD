@@ -53,6 +53,10 @@ local function handle_click(url, action_id, action, gameobject)
 
 	if action_id == hash("right_click") and action.pressed then
 		local pressed_item = items[gameobject]
+		if not pressed_item.movable then
+			return
+		end
+		
 		local key = "item_"..pressed_item.name
 		local url = msg.url(pressed_item.go)
 		url.fragment = "sprite"
