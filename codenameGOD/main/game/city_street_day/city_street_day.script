@@ -235,7 +235,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("moved") then
 		update_time = 0
 	elseif message_id == hash("item_dropped_in_scene") then
-		if message.item_name == "petrock" then	
+		if message.item_name == "petrock" then
 			local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
 			local hit_bully2 = inside_gameobject(msg.url("bully2#sprite"), message.x, message.y)
 			local hit_bully3 = inside_gameobject(msg.url("bully3#sprite"), message.x, message.y)

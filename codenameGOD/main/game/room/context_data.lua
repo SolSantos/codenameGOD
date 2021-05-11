@@ -76,15 +76,19 @@ update_context_entries = function(self)
 	context_data[hash("tv")] = {
 		{text="Inspect", click="My TV. Yea, it's 480p. The future is here baby!"}
 	}
-	context_data[hash("books")] = {
-		{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
-		{text="Move",    click=function()
-			msg.post(self.room_url, "show_ticket")
-			items.ticket.movable = true
-			game_state.ticket_moved = true
-			msg.post(self.books_context_url, "deactivate")
-		end}
-	}
+
+	context_data[hash("books")] = {}
+	local ticket_moved = items.ticket.found == 1
+	if not ticket_moved then
+		context_data[hash("books")] = {
+			{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
+			{text="Move",    click=function()
+				msg.post(self.room_url, "show_ticket")
+				items.ticket.movable = true
+				msg.post(self.books_context_url, "deactivate")
+			end}
+		}
+	end
 
 	context_data[hash("room_window")] = {}
 	context_data[hash("randall_trousers")] = {}

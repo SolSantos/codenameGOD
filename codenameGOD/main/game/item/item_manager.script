@@ -32,9 +32,11 @@ local function handle_click(url, action_id, action, gameobject)
 			current_item = pressed_item
 
 			-- Show item description the first time we interact with it
-			if current_item.found == 0 and current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
+			if current_item.found == 0 then
 				current_item.found = 1
-				msg.post("/balloon", "show_text", {text=current_item.text, delay=4, character="/randall", sound="#Randall_2"})
+				if current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
+					msg.post("/balloon", "show_text", {text=current_item.text, delay=4, character="/randall", sound="#Randall_2"})
+				end
 			end
 		elseif action.released then
 			if current_item then

@@ -124,12 +124,12 @@ function init(self)
 
 	msg.post("sound#ambiance", "play_sound")
 	
-	if items.ticket.found == 0 then
-		msg.post("", "disable")
-	end
-	
 	update_context_entries(self)
-	if not game_state.ticket_moved then
+	local ticket_moved = items.ticket.found == 1
+	if ticket_moved then
+		go.set_position(vmath.vector3(252,212,0.1), "books")
+		go.set_rotation(vmath.quat_rotation_z(math.rad(-90)), "books")
+	else
 		items.ticket.movable = false
 	end
 end
@@ -202,7 +202,8 @@ function on_message(self, message_id, message, sender)
 		go.animate("books", "position", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(252,212,0.1), go.EASING_LINEAR, 0.4)
 		go.animate("books", "rotation", go.PLAYBACK_ONCE_FORWARD, vmath.quat_rotation_z(math.rad(-90)), go.EASING_LINEAR, 0.4, 0, function(self, url, property)
 			msg.post("sound#7-books_falling", "play_sound")
-			if not game_state.ticket_moved then
+			local ticket_not_touched = items.ticket.found == 0
+			if ticket_not_touched then
 				msg.post("/balloon", "show_text", {delay = 4, text="There's the ticket! \nNow, where to put it...", character = "/randall", sound="#Randall_4"})
 				timer.delay(4, false, function(self, id)
 					msg.post("/balloon", "show_text", {delay = 2, text="Oh.", character = "/randall"})

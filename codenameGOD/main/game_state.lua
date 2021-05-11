@@ -11,7 +11,6 @@ return {
 	first_item_picked = false,
 	-- Tells if we already opened the drawer in the room and saw the coins
 	coins_shown = false,
-	ticket_moved = false,
 	-- The player came back to room after the bullies steal his ticket
 	comming_from_bullies = false,
 	-- Randall is waiting for a sign from god
