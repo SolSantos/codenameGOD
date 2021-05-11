@@ -27,8 +27,8 @@ update_context_entries = function(self)
 				game_state.coins_shown = true
 				local coins = items["coins"]
 				coins.status = "show"
-				coins.position.x = x
-				coins.position.y = y
+				coins.position.x = 784
+				coins.position.y = 253
 				msg.post("/item_manager#item_manager", "update_visible_items")
 			end
 			if game_state.awaiting_signal and not self.sign_drawer then
