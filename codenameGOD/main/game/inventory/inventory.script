@@ -1,4 +1,5 @@
 local inside_gameobject = require("main.inside_gameobject")
+local all_items = require("main.game.item.items")
 local is_open = false
 local items_space = 60
 
@@ -8,15 +9,18 @@ function reorder_items(items)
 		start_pos.y = -40
 	end
 	
-	for i, item in ipairs(items) do
+	for i, item_name in ipairs(items) do
+		local item = all_items.data[item_name]
 		local pos = start_pos + vmath.vector3(items_space*(i-1), 0, 0)
-		go.set_position(pos, item)
+		go.set_position(pos, item.go)
+		item.position.x = pos.x
+		item.position.y = pos.y
 	end
 end
 
-function remove_item(items, item_url)
+function remove_item(items, item_name)
 	for i, item in ipairs(items) do
-		if item == item_url then
+		if item == item_name then
 			table.remove(items, i)
 			break
 		end
@@ -57,10 +61,6 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("restart_game") then
 		msg.post(".", "acquire_input_focus")
 	end
-
-	if message_id == hash("reorder_items") then
-		reorder_items(self.items)
-	end
 	
 	if message_id == hash("item_released") then
 		if inside_gameobject("#inventory_area", message.x, message.y, vmath.vector3(0, -105, 0)) then
@@ -70,18 +70,18 @@ function on_message(self, message_id, message, sender)
 				local exists = false
 				
 				for i, item in ipairs(self.items) do
-					if item == message.url then
+					if item == message.item_name then
 						exists = true
 					end
 				end
 
 				if not exists then
-					table.insert(self.items, message.url)
+					table.insert(self.items, message.item_name)
 				end
 				reorder_items(self.items)
 			end
 		else
-			remove_item(self.items, message.url)
+			remove_item(self.items, message.item_name)
 			msg.post("/item_manager", "dropped_outside_inventory", {item_name=message.item_name})
 			if is_open then
 				reorder_items(self.items)
@@ -91,7 +91,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("remove_item") then
-		remove_item(self.items, message.url)
+		remove_item(self.items, message.item_name)
 		reorder_items(self.items)
 	end
 

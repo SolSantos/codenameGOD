@@ -80,7 +80,9 @@ function init(self)
 	if not game_state.data.leaved_house_once then
 		game_state.data.leaved_house_once = true
 		msg.post("/collections#main", "checkpoint")
-	end 
+	end
+
+	msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 end
 
 function final(self)

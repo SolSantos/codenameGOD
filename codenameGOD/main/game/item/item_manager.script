@@ -41,7 +41,9 @@ local function handle_click(url, action_id, action, gameobject)
 		elseif action.released then
 			if current_item then
 				go.set_position(vmath.vector3(mouse_x, mouse_y, 0), current_item.go)
-
+				current_item.position.x = mouse_x
+				current_item.position.y = mouse_y
+				
 				msg.post(
 					"/inventory",
 					"item_released",
@@ -75,12 +77,11 @@ function update_visible_items(self)
 		if item.status == "show" and (item.in_inventory or item.scenario == self.current_scenario) then
 			-- No need to reinitialize an already existing object
 			if not item.go then
-				local new_item = factory.create(
-					self.item_factory,
-					vmath.vector3(item.position.x, item.position.y, 0.1),
-					nil,
-					{image = hash(item.image)}
-				)
+				local pos = vmath.vector3(item.position.x, item.position.y, 0.1)
+				if item.in_inventory then
+					pos.z = 0.6
+				end
+				local new_item = factory.create(self.item_factory, pos, nil, {image = hash(item.image)})
 				local url = msg.url(new_item)
 				url.fragment = "sprite"
 				goput.add(url, nil, handle_click, name)
@@ -153,6 +154,7 @@ function on_message(self, message_id, message, sender)
 		for name, item in pairs(items.data) do
 			if item.in_inventory then
 				go.animate(item.go, "position.y", go.PLAYBACK_ONCE_FORWARD, 46, go.EASING_LINEAR, 0.3)
+				item.position.y = 46
 			end
 		end
 	end
@@ -161,6 +163,7 @@ function on_message(self, message_id, message, sender)
 		for name, item in pairs(items.data) do
 			if item.in_inventory then
 				go.animate(item.go, "position.y", go.PLAYBACK_ONCE_FORWARD, -40, go.EASING_LINEAR, 0.3)
+				item.position.y = -40
 			end
 		end
 	end
