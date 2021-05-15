@@ -23,15 +23,15 @@ update_context_entries = function(self)
 			msg.post("/sound#6-drawer_opening", "play_sound")
 			msg.post(self.drawer_url, "play_animation", {id = hash("open_drawer")})
 
-			if not game_state.coins_shown then
-				game_state.coins_shown = true
-				local coins = items["coins"]
+			if not game_state.data.coins_shown then
+				game_state.data.coins_shown = true
+				local coins = items.data["coins"]
 				coins.status = "show"
 				coins.position.x = 784
 				coins.position.y = 253
 				msg.post("/item_manager#item_manager", "update_visible_items")
 			end
-			if game_state.awaiting_signal and not self.sign_drawer then
+			if game_state.data.awaiting_signal and not self.sign_drawer then
 				self.sign_drawer = true
 				msg.post(self.room_url, "divine_sign")
 				self.divine_signs = self.divine_signs + 1
@@ -42,7 +42,7 @@ update_context_entries = function(self)
 	context_data[hash("room_door")] = {
 		{text="Inspect", click="Door to the outside.\nThe wild urban jungle. The big adventure. The great unknown.\n....My frontyard."},
 		{text="Go Out", click=function(x, y)
-			if game_state.allowed_leave then
+			if game_state.data.allowed_leave then
 				msg.post("/collections#main", "load_screen",{
 					name = "house_front",
 					pos = vmath.vector3(222,211,0.4)
@@ -50,9 +50,9 @@ update_context_entries = function(self)
 				msg.post(self.door_sound_url, "play_sound")
 				return
 			end
-			if not game_state.awaiting_signal then
+			if not game_state.data.awaiting_signal then
 				local r = math.random(2)
-				if items.ticket.in_inventory then
+				if items.data.ticket.in_inventory then
 					if r == 1 then
 						msg.post("/balloon", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
 					else
@@ -78,13 +78,13 @@ update_context_entries = function(self)
 	}
 
 	context_data[hash("books")] = {}
-	local ticket_moved = items.ticket.found == 1
+	local ticket_moved = items.data.ticket.found == 1
 	if not ticket_moved then
 		context_data[hash("books")] = {
 			{text="Inspect", click="I hope the Dark Tower series ends soon, I hate waiting!"},
 			{text="Move",    click=function()
 				msg.post(self.room_url, "show_ticket")
-				items.ticket.movable = true
+				items.data.ticket.movable = true
 				msg.post(self.books_context_url, "deactivate")
 			end}
 		}
@@ -92,7 +92,7 @@ update_context_entries = function(self)
 
 	context_data[hash("room_window")] = {}
 	context_data[hash("randall_trousers")] = {}
-	if game_state.awaiting_signal then
+	if game_state.data.awaiting_signal then
 		if not self.sign_tv then
 			table.insert(context_data[hash("tv")], {text="Turn On", click=function(x, y)
 				self.sign_tv = true

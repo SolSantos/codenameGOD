@@ -47,8 +47,8 @@ return {
 		event_manager:register_event(3, function(_, id)
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
-			game_state.intro_done = true
-			game_state.in_gameplay = true
+			game_state.data.intro_done = true
+			game_state.data.in_gameplay = true
 			self.show_hints = true
 		end)
 	end,
@@ -109,14 +109,14 @@ return {
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
 			self.show_hints = true
-			game_state.comming_from_bullies = false
-			game_state.awaiting_signal = true
-			game_state.in_gameplay = true
+			game_state.data.comming_from_bullies = false
+			game_state.data.awaiting_signal = true
+			game_state.data.in_gameplay = true
 			update_context_entries(self)
 		end)
 	end,
 	ouija_cutscene=function(self)
-		game_state.in_gameplay = false
+		game_state.data.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		event_manager:register_event(2, function(_, id)
@@ -205,11 +205,11 @@ return {
 	end,
 	god_name_selected = function(self)
 		local balloon_pos = vmath.vector3(1010, 260, 1)
-		game_state.in_gameplay = false
+		game_state.data.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		event_manager:register_event(2, function(_, id)
-			msg.post("/balloon", "show_text", {delay = 6, text="Wow! I never would have thought that a God could have such a name as "..game_state.god_name..".", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
+			msg.post("/balloon", "show_text", {delay = 6, text="Wow! I never would have thought that a God could have such a name as "..game_state.data.god_name..".", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(6, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 5, text="Goes to show how little we know about the world still.", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
@@ -230,7 +230,7 @@ return {
 			msg.post("/balloon", "show_text", {delay = 6, text="Anyway, it seems she's throwing a party tonight! And it will definitely be at the local club.", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(6, function(_, id)
-			msg.post("/balloon", "show_text", {delay = 4, text="If a God called "..game_state.god_name.." really is beside me...", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
+			msg.post("/balloon", "show_text", {delay = 4, text="If a God called "..game_state.data.god_name.." really is beside me...", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(4, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 6, text="Then with his assistance I'm sure to finally win Becky's heart and show Scott's gang who's boss!", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})

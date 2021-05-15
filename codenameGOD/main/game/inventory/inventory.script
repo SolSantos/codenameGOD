@@ -57,6 +57,10 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("restart_game") then
 		msg.post(".", "acquire_input_focus")
 	end
+
+	if message_id == hash("reorder_items") then
+		reorder_items(self.items)
+	end
 	
 	if message_id == hash("item_released") then
 		if inside_gameobject("#inventory_area", message.x, message.y, vmath.vector3(0, -105, 0)) then

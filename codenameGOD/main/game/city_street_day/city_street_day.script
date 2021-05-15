@@ -42,7 +42,7 @@ cutscenes = {
 	bullies_attack = function(self)
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
-		game_state.in_gameplay = false
+		game_state.data.in_gameplay = false
 		msg.post(bullies_intro_sound_url, "play_sound",{delay = 2,  gain = 0.15})
 		msg.post(bullies_verse_sound_url, "play_sound",{delay = 11.3, gain = 0.15})
 		event_manager:register_event(1.5, function(self, id)
@@ -93,7 +93,7 @@ cutscenes = {
 				msg.post("/balloon#Bullies_3", "play_sound")
 			end)
 		end)
-		game_state.allowed_leave = false
+		game_state.data.allowed_leave = false
 
 		event_manager:register_event(4, function(self, id)
 			msg.post("/balloon", "show_text", {delay=2, text="Please, don't!!!", character = "randall", sound="#Randall_panic1", skip=true})
@@ -118,12 +118,12 @@ cutscenes = {
 			msg.post(city_url, "acquire_input_focus")
 			msg.post("/collections#main", "restart_game")
 			msg.post("/cutscene#cutscene", "cutscene_end")
-			game_state.in_gameplay = true
+			game_state.data.in_gameplay = true
 
 		end)
 	end,
 	bullies_escape = function(self)
-		game_state.in_gameplay = false
+		game_state.data.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		msg.post(bullies_verse_sound_url, "stop_sound")
@@ -167,7 +167,7 @@ cutscenes = {
 			msg.post("/balloon", "show_text", {delay=2.5, text="Is someone here with me?", character = "randall", sound="#Randall_2"})
 		end)
 		event_manager:register_event(4, function(self, id)
-			game_state.comming_from_bullies = true
+			game_state.data.comming_from_bullies = true
 			msg.post("/transition", "play_transition")
 		end)
 		event_manager:register_event(1.25, function(self, id)
@@ -189,7 +189,7 @@ function init(self)
 	metal_hit_url = msg.url("sound#11-metal_hit")
 	bullies_intro_sound_url = msg.url("sound#Bullies_Theme_intro")
 	bullies_verse_sound_url = msg.url("sound#Bullies_Theme_verse")
-	if game_state.allowed_leave then
+	if game_state.data.allowed_leave then
 		cutscenes.bullies_attack(self)
 	end
 end
@@ -227,7 +227,7 @@ function on_message(self, message_id, message, sender)
 			end)
 		end
 	elseif message_id == hash("hint") then
-		if game_state.in_gameplay then
+		if game_state.data.in_gameplay then
 			msg.post("/balloon", "show_text", {text = "If there's a God now's a good time to act!", character = "randall", sound="#Randall_panic1", event="scream"})			
 		end
 		msg.post(".", "moved")

@@ -222,6 +222,7 @@ function init(self)
 end
 
 function update(self, dt)
+
 	if self.new_animation ~= self.current_animation then
 		msg.post("#sprite", "play_animation", {id = self.new_animation})
 		self.current_animation = self.new_animation

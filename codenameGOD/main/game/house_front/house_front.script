@@ -61,7 +61,7 @@ context_data[hash("back_to_room_door")] = {
 context_data[hash("city_street_arrow")] = {
 	{text="Inspect", click="This road leads to the city. Not the city of Rome, no."},
 	{text="Go", click=function()
-		if items.ticket.in_inventory then
+		if items.data.ticket.in_inventory then
 			msg.post("/collections#main", "load_screen", {
 				name = "city_street_day",
 				pos = vmath.vector3(200,211,0.4)
@@ -76,6 +76,11 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("sound#ambiance", "play_sound")
 	door_sound_url = msg.url("sound#8-door_knob")
+
+	if not game_state.data.leaved_house_once then
+		game_state.data.leaved_house_once = true
+		msg.post("/collections#main", "checkpoint")
+	end 
 end
 
 function final(self)
@@ -109,7 +114,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("hint") then
-		if game_state.in_gameplay then
+		if game_state.data.in_gameplay then
 			msg.post("/balloon", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
 		end
 		msg.post(".", "moved")
