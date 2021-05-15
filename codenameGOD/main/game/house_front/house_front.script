@@ -83,6 +83,7 @@ function init(self)
 	end
 
 	msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
+	STARTING_FROM_CHECKPOINT = false
 end
 
 function final(self)
