@@ -11,7 +11,7 @@ function init(self)
 	self.current_scenario = "menu"
 
 	-- No item starts inside the inventory
-	for name, item in pairs(items) do
+	for name, item in pairs(items.data) do
 		item.in_inventory = false
 
 		-- Register context menu for each item
@@ -24,7 +24,7 @@ end
 local function handle_click(url, action_id, action, gameobject)
 	if action_id == hash("click") then
 		if action.pressed then
-			local pressed_item = items[gameobject]
+			local pressed_item = items.data[gameobject]
 			if not pressed_item.movable then
 				return
 			end
@@ -32,14 +32,18 @@ local function handle_click(url, action_id, action, gameobject)
 			current_item = pressed_item
 
 			-- Show item description the first time we interact with it
-			if current_item.found == 0 and current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
+			if current_item.found == 0 then
 				current_item.found = 1
-				msg.post("/balloon", "show_text", {text=current_item.text, delay=4, character="/randall", sound="#Randall_2"})
+				if current_item.name ~="shoe1" and current_item.name ~="shoe2" and current_item.name ~="ticket" then
+					msg.post("/balloon", "show_text", {text=current_item.text, delay=4, character="/randall", sound="#Randall_2"})
+				end
 			end
 		elseif action.released then
 			if current_item then
 				go.set_position(vmath.vector3(mouse_x, mouse_y, 0), current_item.go)
-
+				current_item.position.x = mouse_x
+				current_item.position.y = mouse_y
+				
 				msg.post(
 					"/inventory",
 					"item_released",
@@ -52,7 +56,11 @@ local function handle_click(url, action_id, action, gameobject)
 	end
 
 	if action_id == hash("right_click") and action.pressed then
-		local pressed_item = items[gameobject]
+		local pressed_item = items.data[gameobject]
+		if not pressed_item.movable then
+			return
+		end
+		
 		local key = "item_"..pressed_item.name
 		local url = msg.url(pressed_item.go)
 		url.fragment = "sprite"
@@ -65,16 +73,15 @@ local function handle_click(url, action_id, action, gameobject)
 end
 
 function update_visible_items(self)
-	for name, item in pairs(items) do
+	for name, item in pairs(items.data) do
 		if item.status == "show" and (item.in_inventory or item.scenario == self.current_scenario) then
 			-- No need to reinitialize an already existing object
 			if not item.go then
-				local new_item = factory.create(
-					self.item_factory,
-					vmath.vector3(item.position.x, item.position.y, 0.1),
-					nil,
-					{image = hash(item.image)}
-				)
+				local pos = vmath.vector3(item.position.x, item.position.y, 0.1)
+				if item.in_inventory then
+					pos.z = 0.6
+				end
+				local new_item = factory.create(self.item_factory, pos, nil, {image = hash(item.image)})
 				local url = msg.url(new_item)
 				url.fragment = "sprite"
 				goput.add(url, nil, handle_click, name)
@@ -93,7 +100,7 @@ function update_visible_items(self)
 end
 
 function final(self)
-	for name, item in pairs(items) do
+	for name, item in pairs(items.data) do
 		if item.go then
 			local url = msg.url(item.go)
 			url.fragment = "sprite"
@@ -129,14 +136,14 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("dropped_inside_inventory") then
-		local dropped_item = items[message.item_name]
+		local dropped_item = items.data[message.item_name]
 		dropped_item.in_inventory = true
 		dropped_item.scenario = nil
 		msg.post("/collections", "send_collection", {name = "item_dropped_in_inventory", params={item_name=message.item_name, x=mouse_x, y=mouse_y}})
 	end
 
 	if message_id == hash("dropped_outside_inventory") then
-		local dropped_item = items[message.item_name]
+		local dropped_item = items.data[message.item_name]
 		dropped_item.in_inventory = false
 		dropped_item.scenario = self.current_scenario
 		go.set_position(vmath.vector3(mouse_x, mouse_y, 0), dropped_item.go)
@@ -144,36 +151,37 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("inventory_opened") then
-		for name, item in pairs(items) do
+		for name, item in pairs(items.data) do
 			if item.in_inventory then
 				go.animate(item.go, "position.y", go.PLAYBACK_ONCE_FORWARD, 46, go.EASING_LINEAR, 0.3)
+				item.position.y = 46
 			end
 		end
 	end
 
 	if message_id == hash("inventory_closed") then
-		for name, item in pairs(items) do
+		for name, item in pairs(items.data) do
 			if item.in_inventory then
 				go.animate(item.go, "position.y", go.PLAYBACK_ONCE_FORWARD, -40, go.EASING_LINEAR, 0.3)
+				item.position.y = -40
 			end
 		end
 	end
 	
 	if message_id == hash("destroy_item") then
-		local item = items[message.text]
+		local item = items.data[message.text]
 		if item.go then
 			if current_item == item then
 				current_item = nil
 			end
 
-			local item_url = msg.url(item.go)
 			item.status = "hide"
 			item.scenario = "none"
 			update_visible_items(self)
 			
 			if item.in_inventory then
 				item.in_inventory = false
-				msg.post("/inventory", "remove_item", {url=item_url})
+				msg.post("/inventory", "remove_item", {item_name=item.name})
 			end
 		end
 	end

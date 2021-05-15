@@ -74,7 +74,7 @@ local get_hovered_letter = function(room, x, y)
 end
 
 local end_ouija_mode = function(room)
-	game_state.god_name = room.god_name
+	game_state.data.god_name = room.god_name
 	room.ouija_in_use = false
 	room.cutscenes.god_name_selected(room)
 end

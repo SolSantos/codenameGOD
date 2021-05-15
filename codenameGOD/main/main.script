@@ -1,8 +1,12 @@
 hint_count = 0
 event_manager = require "main.event_manager"
+persistence = require "main.persistence"
+game_state = require "main.game_state"
+items = require "main.game.item.items"
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	self.current_map = "menu"
 	self.current_factory = collectionfactory.create("#factory_menu")
 	math.randomseed(os.time())
 	self.is_game_stopped = false
@@ -27,7 +31,8 @@ function on_message(self, message_id, message, sender)
 		if self.current_factory ~= nil then
 			go.delete(self.current_factory)
 		end
-		
+
+		self.current_map = message.name
 		self.current_factory = collectionfactory.create("#factory_"..message.name)
 		if message.pos then
 			go.set_position(message.pos, "/randall")
@@ -55,4 +60,13 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("send_collection") then
 		msg.post(self.current_factory[hash("/main")], message.name, message.params or {})
 	end
+
+	if message_id == hash("checkpoint") then
+		local pos = go.get_position("/randall")
+		game_state.data.randall_pos = {x=pos.x, y=pos.y}
+		game_state.data.current_map = self.current_map
+		
+		persistence.save_table("state.save", game_state.data)
+		persistence.save_table("items.save", items.data)
+	end	
 end

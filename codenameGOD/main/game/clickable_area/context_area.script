@@ -5,7 +5,7 @@ go.property("sprite_url", msg.url("#sprite"))
 go.property("offset", vmath.vector3())
 
 function handle_input(url, action_id, action, key)
-	if action_id == hash("click") and action.pressed then
+	if action_id == hash("right_click") and action.pressed then
 		msg.post(
 			"/context_menu#context_menu", 
 			"display_context_menu", 
