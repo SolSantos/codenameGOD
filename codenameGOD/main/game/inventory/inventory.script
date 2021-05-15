@@ -108,4 +108,14 @@ function on_message(self, message_id, message, sender)
 			toggle_inventory()
 		end
 	end
+
+	-- New items were loaded from a save so update the inventory to match them
+	if message_id == hash("refresh_inventory") then
+		self.items = {}
+		for key, item in pairs(all_items.data) do
+			if item.in_inventory then
+				table.insert(self.items, key)
+			end
+		end
+	end
 end
