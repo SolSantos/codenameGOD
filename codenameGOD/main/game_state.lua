@@ -1,6 +1,6 @@
 local game_state = {
 	data = {
-		-- Start position in the game
+		-- Starting place in the game
 		current_map = "room",
 		randall_pos = {x=590, y=356},
 		-- Check if the game has cleared the introductory cutscene
@@ -22,7 +22,9 @@ local game_state = {
 		-- Randall is waiting for a sign from god
 		awaiting_signal = false,
 		-- Name of the player
-		god_name = nil
+		god_name = nil,
+		-- State of the day ("day" or "night")
+		day_state = "day"
 	}
 }
 

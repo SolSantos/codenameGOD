@@ -70,12 +70,13 @@ end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	
+
 	self.show_hints = false
 	self.update_time = 0
 	self.hint_count = 0
 	self.ouija_in_use = false
 	self.cutscenes = cutscenes
+	self.window_closed = true
 	
 	self.inv_arrow_url = msg.url("inventory_arrow")
 	msg.post(self.inv_arrow_url, "disable")
@@ -138,6 +139,12 @@ function init(self)
 		items.data.ticket.movable = false
 	end
 
+	if game_state.data.day_state == "day" then
+		msg.post(self.window_url, "play_animation", {id = hash("room_window1")})
+	else
+		msg.post(self.window_url, "play_animation", {id = hash("room_window2")})
+	end
+	
 	STARTING_FROM_CHECKPOINT = false
 end
 

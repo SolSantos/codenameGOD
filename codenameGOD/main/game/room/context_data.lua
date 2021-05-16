@@ -2,6 +2,24 @@ local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local context_data = require("main.context_data")
 
+local toggle_window = function(self)
+	if self.window_closed then
+		if game_state.data.day_state == "day" then
+			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
+		else
+			msg.post(self.window_url, "play_animation", {id = hash("room_window4")})
+		end
+	else
+		if game_state.data.day_state == "day" then
+			msg.post(self.window_url, "play_animation", {id = hash("room_window1")})
+		else
+			msg.post(self.window_url, "play_animation", {id = hash("room_window2")})
+		end
+	end
+	
+	self.window_closed = not self.window_closed
+end
+
 local update_context_entries
 update_context_entries = function(self)
 	context_data[hash("telescope")] = {
@@ -90,7 +108,22 @@ update_context_entries = function(self)
 		}
 	end
 
-	context_data[hash("room_window")] = {}
+	if self.window_closed then
+		context_data[hash("room_window")] = {
+			{text="Open", click=function()
+				toggle_window(self)
+				update_context_entries(self)
+			end}
+		}
+	else
+		context_data[hash("room_window")] = {
+			{text="Close", click=function()
+				toggle_window(self)
+				update_context_entries(self)
+			end}
+		}
+	end
+	
 	context_data[hash("randall_trousers")] = {}
 	if game_state.data.awaiting_signal then
 		if not self.sign_tv then
@@ -103,15 +136,17 @@ update_context_entries = function(self)
 				update_context_entries(self)
 			end})
 		end
-		if not self.sign_window then
-			table.insert(context_data[hash("room_window")], {text="Pull", click=function()
-				self.sign_window = true
-				msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
-				self.divine_signs = self.divine_signs + 1
-				msg.post(self.room_url, "divine_sign")
-				msg.post(self.window_sound_url, "play_sound")
-				update_context_entries(self)
-			end})
+		if not self.sign_window and self.window_closed then
+			context_data[hash("room_window")] = {
+				{text="Pull", click=function()
+					self.sign_window = true
+					toggle_window(self)
+					self.divine_signs = self.divine_signs + 1
+					msg.post(self.room_url, "divine_sign")
+					msg.post(self.window_sound_url, "play_sound")
+					update_context_entries(self)
+				end}
+			}
 		end
 		if not self.sign_trousers then
 			table.insert(context_data[hash("randall_trousers")], {text="Pull", click=function()
