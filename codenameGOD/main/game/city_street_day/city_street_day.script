@@ -1,4 +1,5 @@
 local inside_gameobject = require "main.inside_gameobject"
+local randall_utils = require("main.game.randall.utils")
 local metal_hit_url
 local trash_hit = 0
 local city_url
@@ -171,7 +172,7 @@ cutscenes = {
 			msg.post("/transition", "play_transition")
 		end)
 		event_manager:register_event(1.25, function(self, id)
-			local door_pos = vmath.vector3(822, 311, 0.4)
+			local door_pos = vmath.vector3(822, 311, 0.2)
 			msg.post("/collections#main", "load_screen", {name="room", pos=door_pos})
 		end)
 	end
@@ -237,20 +238,25 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("moved") then
 		update_time = 0
 	elseif message_id == hash("item_dropped_in_scene") then
-		if message.item_name == "petrock" then
-			local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
-			local hit_bully2 = inside_gameobject(msg.url("bully2#sprite"), message.x, message.y)
-			local hit_bully3 = inside_gameobject(msg.url("bully3#sprite"), message.x, message.y)
+		if randall_utils.was_hit(message.x, message.y) then
+			randall_utils.default_item_ignore()
+			msg.post(".", "moved")
+		else
+			if message.item_name == "petrock" then
+				local hit_bully1 = inside_gameobject(msg.url("bully1#sprite"), message.x, message.y)
+				local hit_bully2 = inside_gameobject(msg.url("bully2#sprite"), message.x, message.y)
+				local hit_bully3 = inside_gameobject(msg.url("bully3#sprite"), message.x, message.y)
 
-			if hit_bully1 or hit_bully2 or hit_bully3 then
-				msg.post("sound#10-hit", "play_sound")
-				cutscenes.bullies_escape(self)
-				sprite.play_flipbook(pow_url, "pow", function()
-					msg.post(pow_url, "disable")	
-				end)
-				go.set_position(vmath.vector3(message.x, message.y, 1), pow_url)
-				msg.post(pow_url, "enable")
-				msg.post("/item_manager#item_manager", "destroy_item",{text = "petrock"})
+				if hit_bully1 or hit_bully2 or hit_bully3 then
+					msg.post("sound#10-hit", "play_sound")
+					cutscenes.bullies_escape(self)
+					sprite.play_flipbook(pow_url, "pow", function()
+						msg.post(pow_url, "disable")
+					end)
+					go.set_position(vmath.vector3(message.x, message.y, 1), pow_url)
+					msg.post(pow_url, "enable")
+					msg.post("/item_manager#item_manager", "destroy_item",{text = "petrock"})
+				end
 			end
 		end
 	end

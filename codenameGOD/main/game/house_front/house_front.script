@@ -3,6 +3,7 @@ local MOVE_AROUND_TIME = 10
 local context_data = require("main.context_data")
 local game_state = require("main.game_state")
 local items = require("main.game.item.items")
+local randall_utils = require("main.game.randall.utils")
 local door_sound_url = nil
 local bike_inspect = 0
 
@@ -53,7 +54,7 @@ context_data[hash("back_to_room_door")] = {
 		msg.post(door_sound_url, "play_sound")
 		msg.post("/collections#main", "load_screen", {
 			name = "room",
-			pos = vmath.vector3(422,311,0.4)
+			pos = vmath.vector3(422,311,0.2)
 		})
 	end}
 }
@@ -64,7 +65,7 @@ context_data[hash("city_street_arrow")] = {
 		if items.data.ticket.in_inventory then
 			msg.post("/collections#main", "load_screen", {
 				name = "city_street_day",
-				pos = vmath.vector3(200,211,0.4)
+				pos = vmath.vector3(200,211,0.2)
 			})
 		else
 			msg.post("/balloon", "show_text", {text="I can't go to the tournament without the ticket.", character = "randall", sound="#Randall_6"})
@@ -121,6 +122,13 @@ function on_message(self, message_id, message, sender)
 			msg.post("/balloon", "show_text", {text = "I REALLY need to get going\nor I'm gonna be late!", character = "randall", sound="#Randall_1"})			
 		end
 		msg.post(".", "moved")
+	end
+
+	if message_id == hash("item_dropped_in_scene") then
+		if randall_utils.was_hit(message.x, message.y) then
+			randall_utils.default_item_ignore()
+			msg.post(".", "moved")
+		end
 	end
 	
 	if message_id == hash("moved") then

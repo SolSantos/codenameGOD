@@ -45,7 +45,7 @@ update_context_entries = function(self)
 			if game_state.data.allowed_leave then
 				msg.post("/collections#main", "load_screen",{
 					name = "house_front",
-					pos = vmath.vector3(222,211,0.4)
+					pos = vmath.vector3(222,211,0.2)
 				})
 				msg.post(self.door_sound_url, "play_sound")
 				return

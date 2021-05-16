@@ -4,6 +4,7 @@ local items = require("main.game.item.items")
 local cutscenes = require("main.game.room.cutscenes")
 local update_context_entries = require("main.game.room.context_data")
 local ouija_mode = require("main.game.room.ouija_mode")
+local randall_utils = require("main.game.randall.utils")
 
 local MOVE_AROUND_TIME = 10
 local DOOR_HINT_DELAY = 4
@@ -238,9 +239,8 @@ function on_message(self, message_id, message, sender)
 	end
 	
 	if message_id == hash("item_dropped_in_scene") then
-		if (message.item_name == "shoe1" or message.item_name == "shoe2") and self.shoe_count < 2 then	
-			local randall_pos = go.get_position("/randall")
-			if not game_state.data.both_shoes and inside_gameobject(msg.url("/randall#hit_box"), message.x, message.y, vmath.vector3(-4, -63, 0)) then
+		if randall_utils.was_hit(message.x, message.y) then
+			if (message.item_name == "shoe1" or message.item_name == "shoe2") and self.shoe_count < 2 and not game_state.data.both_shoes then	
 				self.shoe_count = self.shoe_count + 1
 				msg.post("/item_manager#item_manager", "destroy_item",{text = message.item_name})
 				if self.shoe_count == 1 then
@@ -252,7 +252,10 @@ function on_message(self, message_id, message, sender)
 					msg.post("/balloon", "show_text", {text="Aaaand ready to go!", character = "/randall", sound="#Randall_short2"})
 					game_state.data.both_shoes = true
 				end
+			else
+				randall_utils.default_item_ignore()
 			end
+			
 			msg.post(".", "moved")
 		end
 	end
