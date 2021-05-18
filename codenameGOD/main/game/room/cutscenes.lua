@@ -182,10 +182,11 @@ return {
 			msg.post(self.telescope_url, "disable")
 			msg.post(self.tv_url, "disable")
 			msg.post(self.nintendo_url, "disable")
-			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
 			msg.post("/inventory", "disable")
 			msg.post(self.ouija_url, "enable")
-
+			self.window_closed = true
+			self.refresh_window(self)
+			
 			go.set_position(vmath.vector3(850, 250, 0.2), "/randall")
 			msg.post("/randall", "set_state", {state=RANDALL_STATE.WIZARD_HAT})
 			msg.post("/god", "show_light", {x=976 / WIDTH, y=202 / HEIGHT, radius=0.1})
@@ -258,7 +259,21 @@ return {
 			msg.post("/context_menu", "enable_context_menu")
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
+
+			game_state.data.awaiting_signal = false
+			game_state.data.waiting_for_night = true
+			update_context_entries(self)
 		end)
-		
+	end,
+	prolog_end = function(self)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1, function(_, id)
+			go.set_position(vmath.vector3(590,356,0.2), "/randall")
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+			game_state.data.day_state = "night"
+			self.refresh_window(self)
+		end)
 	end
 }

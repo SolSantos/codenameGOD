@@ -24,7 +24,9 @@ local game_state = {
 		-- Name of the player
 		god_name = nil,
 		-- State of the day ("day" or "night")
-		day_state = "day"
+		day_state = "day",
+		-- Tells us if the player is in the waiting for night puzzle
+		waiting_for_night = false
 	}
 }
 

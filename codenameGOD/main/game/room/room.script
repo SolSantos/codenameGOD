@@ -36,6 +36,22 @@ local item_strings = {
 	}
 }
 
+local refresh_window = function(self)
+	if self.window_closed then
+		if game_state.data.day_state == "day" then
+			msg.post(self.window_url, "play_animation", {id = hash("room_window1")})
+		else
+			msg.post(self.window_url, "play_animation", {id = hash("room_window2")})
+		end
+	else
+		if game_state.data.day_state == "day" then
+			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
+		else
+			msg.post(self.window_url, "play_animation", {id = hash("room_window4")})
+		end
+	end
+end
+
 function update(self, dt)
 	if self.ouija_in_use then
 		ouija_mode.update(self, dt)
@@ -69,6 +85,8 @@ function update(self, dt)
 end
 
 function init(self)
+	self.refresh_window = refresh_window
+	
 	msg.post(".", "acquire_input_focus")
 
 	self.show_hints = false
@@ -139,11 +157,7 @@ function init(self)
 		items.data.ticket.movable = false
 	end
 
-	if game_state.data.day_state == "day" then
-		msg.post(self.window_url, "play_animation", {id = hash("room_window1")})
-	else
-		msg.post(self.window_url, "play_animation", {id = hash("room_window2")})
-	end
+	refresh_window(self)
 	
 	STARTING_FROM_CHECKPOINT = false
 end
