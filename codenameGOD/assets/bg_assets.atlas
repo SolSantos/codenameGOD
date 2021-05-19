@@ -94,6 +94,30 @@ images {
   image: "/assets/images/background assets/room_tv.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/images/background assets/room_clothes.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_clothes_underwear.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_cyberman_toy.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_heman.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_magz.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/background assets/room_rubix.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "open_drawer"
   images {
@@ -260,6 +284,25 @@ animations {
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 8
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "pow"
+  images {
+    image: "/assets/images/background assets/effect_pow1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/effect_pow2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/effect_pow3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_PINGPONG
+  fps: 6
   flip_horizontal: 0
   flip_vertical: 0
 }
