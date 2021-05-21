@@ -133,17 +133,22 @@ function init(self)
 	self.divine_signs = 0
 		
 	-- Run the intro cutscene
-	if not game_state.data.intro_done then
-		cutscenes.intro(self)
-	elseif game_state.data.comming_from_bullies then
-		if not STARTING_FROM_CHECKPOINT then
-			msg.post("/collections#main", "checkpoint")
+	if game_state.data.stage == game_state.stages.PROLOG then
+		if not game_state.data.intro_done then
+			cutscenes.intro(self)
+		elseif game_state.data.comming_from_bullies then
+			if not STARTING_FROM_CHECKPOINT then
+				msg.post("/collections#main", "checkpoint")
+			end
+			
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
+			cutscenes.back_from_bullies(self)
+		else
+			msg.post(".", "moved")
 		end
-		
-		msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
-		cutscenes.back_from_bullies(self)
-	else
-		msg.post(".", "moved")
+	elseif game_state.data.stage == game_state.stages.BECKY_PARTY then
+		msg.post("/cutscene#cutscene", "cutscene_start")
+		cutscenes.wakeup_at_night(self)
 	end
 
 	msg.post("sound#ambiance", "play_sound")
