@@ -3,6 +3,9 @@ local items = require("main.game.item.items")
 local context_data = require("main.context_data")
 local utils = require("main.utils")
 local mouse_x, mouse_y
+local ITEM_Z = 0.25
+local ITEM_INVENTORY_Z = 0.6
+
 local current_item = nil
 
 function init(self)
@@ -40,7 +43,7 @@ local function handle_click(url, action_id, action, gameobject)
 			end
 		elseif action.released then
 			if current_item then
-				go.set_position(vmath.vector3(mouse_x, mouse_y, 0), current_item.go)
+				go.set_position(vmath.vector3(mouse_x, mouse_y, ITEM_Z), current_item.go)
 				current_item.position.x = mouse_x
 				current_item.position.y = mouse_y
 				
@@ -77,9 +80,9 @@ function update_visible_items(self)
 		if item.status == "show" and (item.in_inventory or item.scenario == self.current_scenario) then
 			-- No need to reinitialize an already existing object
 			if not item.go then
-				local pos = vmath.vector3(item.position.x, item.position.y, 0.1)
+				local pos = vmath.vector3(item.position.x, item.position.y, ITEM_Z)
 				if item.in_inventory then
-					pos.z = 0.6
+					pos.z = ITEM_INVENTORY_Z
 				end
 				local new_item = factory.create(self.item_factory, pos, nil, {image = hash(item.image)})
 				local url = msg.url(new_item)
@@ -115,7 +118,7 @@ function update(self, dt)
 	if current_item then
 		local item_x = clamp(mouse_x, 0, WIDTH)
 		local item_y = clamp(mouse_y, 0, HEIGHT)
-		go.set_position(vmath.vector3(item_x, item_y, 0.6), current_item.go)
+		go.set_position(vmath.vector3(item_x, item_y, ITEM_INVENTORY_Z), current_item.go)
 		current_item.position.x = item_x
 		current_item.position.y = item_y
 	end
@@ -146,7 +149,7 @@ function on_message(self, message_id, message, sender)
 		local dropped_item = items.data[message.item_name]
 		dropped_item.in_inventory = false
 		dropped_item.scenario = self.current_scenario
-		go.set_position(vmath.vector3(mouse_x, mouse_y, 0), dropped_item.go)
+		go.set_position(vmath.vector3(mouse_x, mouse_y, ITEM_Z), dropped_item.go)
 		msg.post("/collections", "send_collection", {name = "item_dropped_in_scene", params={item_name=message.item_name, x=mouse_x, y=mouse_y}})
 	end
 

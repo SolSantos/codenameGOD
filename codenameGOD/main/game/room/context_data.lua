@@ -45,12 +45,16 @@ update_context_entries = function(self)
 			if game_state.data.allowed_leave then
 				msg.post("/collections#main", "load_screen",{
 					name = "house_front",
-					pos = vmath.vector3(222,211,0.4)
+					pos = vmath.vector3(222,211,0.2)
 				})
 				msg.post(self.door_sound_url, "play_sound")
 				return
 			end
-			if not game_state.data.awaiting_signal then
+			if game_state.data.awaiting_signal then
+				msg.post("/balloon", "show_text", {delay = 4, text="Not leaving here until I'm touched by the divine.", character = "/randall", sound="#Randall_2"})
+			elseif game_state.data.waiting_for_night then
+				msg.post("/balloon", "show_text", {delay = 4, text="The party only starts at night, so I have to wait until there.", character = "/randall", sound="#Randall_2"})
+			else
 				local r = math.random(2)
 				if items.data.ticket.in_inventory then
 					if r == 1 then
@@ -65,8 +69,6 @@ update_context_entries = function(self)
 						msg.post("/balloon", "show_text", {delay = 4, text="Shoot, almost forgot my ticket!", character = "/randall", sound="#Randall_4"})
 					end
 				end			
-			else
-				msg.post("/balloon", "show_text", {delay = 4, text="Not leaving here until I'm touched by the divine.", character = "/randall", sound="#Randall_2"})
 			end
 		end}
 	}
@@ -90,7 +92,24 @@ update_context_entries = function(self)
 		}
 	end
 
-	context_data[hash("room_window")] = {}
+	if self.window_closed then
+		context_data[hash("room_window")] = {
+			{text="Open", click=function()
+				self.window_closed = false
+				self.refresh_window(self)
+				update_context_entries(self)
+			end}
+		}
+	else
+		context_data[hash("room_window")] = {
+			{text="Close", click=function()
+				self.window_closed = true
+				self.refresh_window(self)
+				update_context_entries(self)
+			end}
+		}
+	end
+	
 	context_data[hash("randall_trousers")] = {}
 	if game_state.data.awaiting_signal then
 		if not self.sign_tv then
@@ -103,15 +122,18 @@ update_context_entries = function(self)
 				update_context_entries(self)
 			end})
 		end
-		if not self.sign_window then
-			table.insert(context_data[hash("room_window")], {text="Pull", click=function()
-				self.sign_window = true
-				msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
-				self.divine_signs = self.divine_signs + 1
-				msg.post(self.room_url, "divine_sign")
-				msg.post(self.window_sound_url, "play_sound")
-				update_context_entries(self)
-			end})
+		if not self.sign_window and self.window_closed then
+			context_data[hash("room_window")] = {
+				{text="Pull", click=function()
+					self.sign_window = true
+					self.window_closed = false
+					self.divine_signs = self.divine_signs + 1
+					msg.post(self.room_url, "divine_sign")
+					msg.post(self.window_sound_url, "play_sound")
+					self.refresh_window(self)
+					update_context_entries(self)
+				end}
+			}
 		end
 		if not self.sign_trousers then
 			table.insert(context_data[hash("randall_trousers")], {text="Pull", click=function()
@@ -127,6 +149,21 @@ update_context_entries = function(self)
 				end)
 			end})
 		end
+	end
+
+	context_data[hash("room_bed")] = {
+		{text="Inspect", click="My bed where I hide from this mean world!"}
+	}
+	if game_state.data.waiting_for_night then
+		table.insert(context_data[hash("room_bed")], {
+			text="Sleep", click=function()
+				if not self.window_closed then
+					msg.post("/balloon", "show_text", {delay = 4, text="I can't sleep with all this light comming from the outside.", character = "/randall", sound="#Randall_2"})
+				else
+					self.cutscenes.prolog_end(self)
+				end
+			end
+		})	
 	end
 end
 

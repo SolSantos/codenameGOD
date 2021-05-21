@@ -235,6 +235,34 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "bed_clickable"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 523.0
+    y: 282.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "room_bed"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 3.478
+    y: 0.962
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "background"
