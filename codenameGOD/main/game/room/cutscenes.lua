@@ -298,7 +298,7 @@ return {
 			msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
 		end)
 		event_manager:register_event(2, function(_, id)
-			msg.post("/balloon", "show_text", {delay = 3, text="Ok, it's night.", character = "/randall", sound="#Randall_short3"})
+			msg.post("/balloon", "show_text", {delay = 3, text="Ok, it's night.", character = "/randall", sound="#Randall_short3", skip=true})
 		end)
 		event_manager:register_event(3, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 3, text="Let's go to that party!", character = "/randall", sound="#Randall_short2"})
