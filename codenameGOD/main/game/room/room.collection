@@ -835,7 +835,7 @@ embedded_instances {
   "  id: \"hit_box\"\n"
   "  type: \"sprite\"\n"
   "  data: \"tile_set: \\\"/assets/hit_box.atlas\\\"\\n"
-  "default_animation: \\\"hit_box\\\"\\n"
+  "default_animation: \\\"hands_hit_box\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "\"\n"
