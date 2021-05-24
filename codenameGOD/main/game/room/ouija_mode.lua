@@ -114,7 +114,13 @@ local handle_selected_letter = function(room, dt, letter)
 			msg.post("/balloon", "show_text", {delay=20, text = "I bet you have a name.", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
 		else
 			msg.post("/balloon", "show_text", {delay=20, text = "Is "..room.god_name.." your name??", no_arrow=true, pos=BALLOON_POS, character = "/randall", sound="#Randall_4"})
-			room.ouija_name_done = true
+			if room.god_name == "FUCK" or room.god_name == "SHIT" or room.god_name ==  "HELL" or room.god_name ==  "BITCH"  or room.god_name ==  "CUNT" then
+				msg.post("/balloon", "show_text", {delay=7, text = "Gasp! That's a bad word, I c-can't say that! Pick something else!!!", character = "/randall", sound="#Randall_4", no_arrow=true, pos=BALLOON_POS})
+				room.god_name = ""
+			else
+				room.ouija_name_done = true
+			end	
+			
 		end
 		room.name_hidden = true
 	else

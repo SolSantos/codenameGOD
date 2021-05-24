@@ -182,11 +182,10 @@ return {
 			msg.post(self.telescope_url, "disable")
 			msg.post(self.tv_url, "disable")
 			msg.post(self.nintendo_url, "disable")
+			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
 			msg.post("/inventory", "disable")
 			msg.post(self.ouija_url, "enable")
-			self.window_closed = true
-			self.refresh_window(self)
-			
+
 			go.set_position(vmath.vector3(850, 250, 0.2), "/randall")
 			msg.post("/randall", "set_state", {state=RANDALL_STATE.WIZARD_HAT})
 			msg.post("/god", "show_light", {x=976 / WIDTH, y=202 / HEIGHT, radius=0.1})
@@ -209,7 +208,20 @@ return {
 		game_state.data.in_gameplay = false
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
-		event_manager:register_event(2, function(_, id)
+		if game_state.data.god_name == "ASS" or game_state.data.god_name == "DICK" or game_state.data.god_name == "PENIS" or game_state.data.god_name == "BALLS" or game_state.data.god_name == "FART"  then
+			event_manager:register_event(2, function(_, id)
+				msg.post("/balloon", "show_text", {delay=7, text = "...Wait... that name....you must be a 10 year with that sense of humor!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
+			end)
+		elseif game_state.data.god_name == "LINK" or game_state.data.god_name == "MARIO" or game_state.data.god_name == "SAMUS" or game_state.data.god_name == "METROID"  or game_state.data.god_name == "SONIC" or game_state.data.god_name == "CLOUD" then
+			event_manager:register_event(2, function(_, id)
+				msg.post("/balloon", "show_text", {delay=7, text = "...I feel like I know that name from somewhere. Huh.", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
+			end)
+		elseif game_state.data.god_name == "AAA" or game_state.data.god_name == "MAN" then
+			event_manager:register_event(2, function(_, id)
+				msg.post("/balloon", "show_text", {delay=4, text = "A classic directly from the arcades!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
+			end)
+		end
+		event_manager:register_event(7, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 6, text="Wow! I never would have thought that a God could have such a name as "..game_state.data.god_name..".", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(6, function(_, id)
@@ -259,50 +271,7 @@ return {
 			msg.post("/context_menu", "enable_context_menu")
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
-
-			game_state.data.awaiting_signal = false
-			game_state.data.waiting_for_night = true
-			update_context_entries(self)
 		end)
-	end,
-	prolog_end = function(self)
-		event_manager:register_event(1, function(_, id)
-			msg.post("/transition", "play_transition")
-		end)
-		event_manager:register_event(1, function(_, id)
-			go.set_position(vmath.vector3(590,356,0.2), "/randall")
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
-
-			game_state.data.day_state = "night"
-			game_state.data.stage = game_state.stages.BECKY_PARTY
-			game_state.data.waiting_for_night = false
-			
-			msg.post("/collections#main", "checkpoint")
-			self.refresh_window(self)
-			update_context_entries(self)
-
-			msg.post("/god", "turn_dark")
-			msg.post("/cutscene#cutscene", "cutscene_start")
-		end)
-		event_manager:register_event(4, function(_, id)
-			msg.post("/transition", "play_transition")
-		end)
-		event_manager:register_event(1, function(_, id)
-			msg.post("/god", "back_to_day")
-			self.cutscenes.wakeup_at_night(self)
-		end)
-	end,
-	wakeup_at_night = function(self)
-		event_manager:register_event(0, function(_, id)
-			go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
-		end)
-		event_manager:register_event(2, function(_, id)
-			msg.post("/balloon", "show_text", {delay = 3, text="Ok, it's night.", character = "/randall", sound="#Randall_short3", skip=true})
-		end)
-		event_manager:register_event(3, function(_, id)
-			msg.post("/balloon", "show_text", {delay = 3, text="Let's go to that party!", character = "/randall", sound="#Randall_short2"})
-			msg.post("/cutscene#cutscene", "cutscene_end")
-		end)
+		
 	end
 }
