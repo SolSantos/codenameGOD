@@ -5,7 +5,7 @@ local items = {
 		petrock = {
 			name = "petrock",
 			text = "Pet rock!",
-			position = {x=984, y=274},
+			position = {x=974, y=224},
 			image = "items1",
 			scenario = "room",
 			status = "show",

@@ -126,6 +126,10 @@ images {
   image: "/assets/images/background assets/room_window4.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/images/background assets/room_bed.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "open_drawer"
   images {
