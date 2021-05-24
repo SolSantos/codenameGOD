@@ -35,10 +35,21 @@ local items = {
 			label = "A ticket.",
 			movable = true
 		},
+		briefs = {
+			name = "briefs",
+			text = "Briefs",
+			position = {x=320, y=108},
+			image = "briefs",
+			scenario = "room",
+			status = "show",
+			found = 0,
+			label = "My briefs!",
+			movable = true
+		},
 		shoe1 = {
 			name = "shoe1",
 			text = "Shoe",
-			position = {x=262, y=98},
+			position = {x=343, y=98},
 			image = "items4",
 			scenario = "room",
 			status = "show",

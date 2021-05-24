@@ -3,7 +3,7 @@ local items = require("main.game.item.items")
 local context_data = require("main.context_data")
 local utils = require("main.utils")
 local mouse_x, mouse_y
-local ITEM_Z = 0.25
+local ITEM_Z = 0.15
 local ITEM_INVENTORY_Z = 0.6
 
 local current_item = nil

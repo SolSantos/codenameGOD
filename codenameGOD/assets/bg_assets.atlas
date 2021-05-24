@@ -99,10 +99,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/images/background assets/room_clothes_underwear.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/images/background assets/room_cyberman_toy.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }

@@ -38,6 +38,10 @@ images {
   image: "/assets/images/skip_dialogue_small_dark.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/images/items/briefs.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "arrow_inventory"
   images {
