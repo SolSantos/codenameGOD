@@ -1,6 +1,9 @@
 local inside_gameobject = require("main.inside_gameobject")
 local utils = require("main.utils")
 
+local BALLOON_SPACE_X = 476
+local BALLOON_SPACE_Y = 180
+
 local LETTERS_PER_SECOND = 20
 local SMALL_BALLOON_SPACE = 30 -- letters
 local SMALL_BALLOON_MAX_LINES = 4
@@ -8,9 +11,11 @@ local BIG_BALLOON_SPACE = 49
 
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
 local BIG_BALLOON = 1
-local SMALL_BALLOON = 2
-local NO_ARROW_BIG_BALLOON = 3
-local NO_ARROW_SMALL_BALLOON = 4
+local MIDDLE_BALLOON = 2
+local SMALL_BALLOON = 3
+local NO_ARROW_BIG_BALLOON = 4
+local NO_ARROW_MIDDLE_BALLOON = 5
+local NO_ARROW_SMALL_BALLOON = 6
 local BALLOONS = {
 	[BIG_BALLOON]={
 		width=476,
@@ -18,22 +23,34 @@ local BALLOONS = {
 		image="balloon1",
 		offset=vmath.vector3(-50, 0, 0)
 	},
-	[SMALL_BALLOON]={
+	[MIDDLE_BALLOON]={
 		width=296,
 		height=128,
 		image="balloon2",
 		offset=vmath.vector3(0, 0, 0)
 	},
+	[SMALL_BALLOON]={
+		width=296,
+		height=128,
+		image="balloon3",
+		offset=vmath.vector3(20, 15, 0)
+	},
 	[NO_ARROW_BIG_BALLOON]={
 		width=476,
 		height=176,
-		image="balloon3",
+		image="balloon4",
 		offset=vmath.vector3(-50, 0, 0)
+	},
+	[NO_ARROW_MIDDLE_BALLOON]={
+		width=296,
+		height=128,
+		image="balloon5",
+		offset=vmath.vector3(0, 0, 0)
 	},
 	[NO_ARROW_SMALL_BALLOON]={
 		width=296,
 		height=128,
-		image="balloon4",
+		image="balloon6",
 		offset=vmath.vector3(0, 0, 0)
 	}
 }
@@ -164,7 +181,7 @@ local function set_active_elements(self, balloon_id)
 end
 
 local function get_orientation(pos, balloon)
-	local balloon_right = pos.x + balloon.width + balloon.offset.x
+	local balloon_right = pos.x + balloon.width + balloon.offset.x 
 	local balloon_top = pos.y + balloon.height + balloon.offset.y
 
 	local w, h = window.get_size()
@@ -184,7 +201,7 @@ local function get_orientation(pos, balloon)
 		v_orientation = ORIENTATION.DOWN
 	end
 
-	return h_orientation, v_orientation
+	return h_orientation, ORIENTATION.UP--v_orientation
 end
 
 local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip)
@@ -197,7 +214,7 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	end
 
 	if no_arrow then
-		balloon_id = balloon_id + 2
+		balloon_id = balloon_id + 3
 	end
 	local balloon = BALLOONS[balloon_id]
 	self.current_balloon = balloon_id
@@ -207,10 +224,16 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
 	sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
 
-	local offset_x = balloon.width / 2 + balloon.offset.x
-	local offset_y = balloon.height / 2 + balloon.offset.y
-	pos.x = pos.x + (offset_x * h_orientation)
-	pos.y = pos.y + (offset_y * v_orientation)
+	--local offset_x = BALLOON_SPACE_X / 2 + balloon.width / 2 + balloon.offset.x
+	--local offset_y = balloon.height / 2 + balloon.offset.y
+	pos.x = pos.x + (BALLOON_SPACE_X / 2 + balloon.offset.x) * h_orientation
+	if h_orientation == ORIENTATION.RIGHT then
+		-- Create one label for each position
+	else
+		
+	end
+	pos.y = pos.y + balloon.offset.y-- + (offset_y * v_orientation)
+	print(pos)
 	pos.z = 0.9
 
 	go.set_position(pos, ".")

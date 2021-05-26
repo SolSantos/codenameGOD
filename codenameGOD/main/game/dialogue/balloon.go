@@ -311,8 +311,8 @@ embedded_components {
   "material: \"/render/over_label.material\"\n"
   ""
   position {
-    x: -129.0
-    y: 52.0
+    x: -222.0
+    y: 78.0
     z: 0.0
   }
   rotation {
@@ -326,7 +326,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/assets/balloon.atlas\"\n"
-  "default_animation: \"balloon2\"\n"
+  "default_animation: \"balloon3\"\n"
   "material: \"/render/over.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -405,8 +405,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 122.0
-    y: -2.0
+    x: 34.0
+    y: 25.0
     z: 0.1
   }
   rotation {
