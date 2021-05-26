@@ -6,7 +6,6 @@ function inside_gameobject(sprite_url, x, y, offset)
 	local sprite_scale = go.get(sprite_url, "scale")
 	local size = go.get(sprite_url, "size")
 	local pos = go.get_position(go_url)
-
 	pos.x = pos.x + offset.x * go_scale.x
 	pos.y = pos.y + offset.y * go_scale.y
 

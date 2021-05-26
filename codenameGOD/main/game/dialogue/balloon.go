@@ -425,8 +425,82 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 216.0
-    y: -28.0
+    x: 215.0
+    y: -26.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "label_inverted"
+  type: "label"
+  data: "size {\n"
+  "  x: 246.0\n"
+  "  y: 64.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/builtins/fonts/system_font.font\"\n"
+  "material: \"/render/over_label.material\"\n"
+  ""
+  position {
+    x: -43.0
+    y: 78.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "skip_inverted"
+  type: "sprite"
+  data: "tile_set: \"/assets/items.atlas\"\n"
+  "default_animation: \"skip_dialogue_small_dark\"\n"
+  "material: \"/render/over.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  ""
+  position {
+    x: 210.0
+    y: 23.0
     z: 0.1
   }
   rotation {
