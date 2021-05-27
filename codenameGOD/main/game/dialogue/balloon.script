@@ -6,7 +6,9 @@ local BALLOON_SPACE_Y = 180
 
 local LETTERS_PER_SECOND = 20
 local SMALL_BALLOON_SPACE = 30 -- letters
-local SMALL_BALLOON_MAX_LINES = 2
+local SMALL_BALLOON_MAX_LINES = 1
+local MIDDLE_BALLOON_SPACE = 38 -- letters
+local MIDDLE_BALLOON_MAX_LINES = 5
 local BIG_BALLOON_SPACE = 49
 
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
@@ -24,10 +26,10 @@ local BALLOONS = {
 		offset=vmath.vector3(-30, 60, 0)
 	},
 	[MIDDLE_BALLOON]={
-		width=296,
+		width=356,
 		height=128,
 		image="balloon2",
-		offset=vmath.vector3(0, 0, 0)
+		offset=vmath.vector3(0, 30, 0)
 	},
 	[SMALL_BALLOON]={
 		width=296,
@@ -39,19 +41,19 @@ local BALLOONS = {
 		width=476,
 		height=176,
 		image="balloon4",
-		offset=vmath.vector3(-50, 0, 0)
+		offset=vmath.vector3(-30, 60, 0)
 	},
 	[NO_ARROW_MIDDLE_BALLOON]={
-		width=296,
+		width=356,
 		height=128,
 		image="balloon5",
-		offset=vmath.vector3(0, 0, 0)
+		offset=vmath.vector3(0, 30, 0)
 	},
 	[NO_ARROW_SMALL_BALLOON]={
 		width=296,
 		height=128,
 		image="balloon6",
-		offset=vmath.vector3(0, 0, 0)
+		offset=vmath.vector3(20, 15, 0)
 	}
 }
 
@@ -100,16 +102,22 @@ local function break_limit_words(text, balloon_space)
 end
 
 local function get_balloon_to_use(text)
-	local lines = 0
+	local small_lines = 0
+	local middle_lines = 0
 	for line in text:gmatch("[^\n]+") do
-		lines = lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
+		small_lines = small_lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
+		middle_lines = middle_lines + math.ceil(line:len() / MIDDLE_BALLOON_SPACE)
 	end
 
-	if lines > SMALL_BALLOON_MAX_LINES then
-		return BIG_BALLOON
-	else
+	if small_lines <= SMALL_BALLOON_MAX_LINES then
 		return SMALL_BALLOON
 	end
+
+	if middle_lines <= MIDDLE_BALLOON_MAX_LINES then
+		return MIDDLE_BALLOON
+	end
+
+	return BIG_BALLOON
 end
 
 function init(self)
@@ -117,9 +125,13 @@ function init(self)
 
 	self.label = msg.url("#label")
 	self.label_inverted = msg.url("#label_inverted")
+	self.middle_label = msg.url("#middle_label")
+	self.middle_label_inverted = msg.url("#middle_label_inverted")
 	self.big_label = msg.url("#big_label")
 	self.skip = msg.url("#skip")
 	self.skip_inverted = msg.url("#skip_inverted")
+	self.middle_skip = msg.url("#middle_skip")
+	self.middle_skip_inverted = msg.url("#middle_skip_inverted")	
 	self.big_skip = msg.url("#big_skip")
 	self.current_label = self.label
 	self.current_skip = self.skip
@@ -133,9 +145,10 @@ function init(self)
 	self.skip_offset = {
 		[self.skip] = vmath.vector3(34, 25, 0),
 		[self.skip_inverted] = vmath.vector3(210, 20, 0),
+		[self.middle_skip] = vmath.vector3(96, -2, 0),
+		[self.middle_skip_inverted] = vmath.vector3(213, -2, 0),		
 		[self.big_skip] = vmath.vector3(216, -28, 0)
 	}
-		
 
 	msg.post(".", "disable")
 end
@@ -167,7 +180,11 @@ function get_balloon_label(self, balloon_id, h_orientation)
 	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
 		return self.big_label
 	else
-		return self.big_label
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.middle_label
+		else
+			return self.middle_label_inverted
+		end
 	end
 end
 
@@ -181,19 +198,27 @@ function get_balloon_skip(self, balloon_id, h_orientation)
 	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
 		return self.big_skip
 	else
-		return self.big_skip
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.middle_skip
+		else
+			return self.middle_skip_inverted
+		end
 	end
 end
 
 function disable_skips(self)
 	msg.post(self.skip, "disable")
 	msg.post(self.skip_inverted, "disable")
+	msg.post(self.middle_skip, "disable")
+	msg.post(self.middle_skip_inverted, "disable")	
 	msg.post(self.big_skip, "disable")
 end
 
 function disable_labels(self)
 	msg.post(self.label, "disable")
 	msg.post(self.label_inverted, "disable")
+	msg.post(self.middle_label, "disable")
+	msg.post(self.middle_label_inverted, "disable")	
 	msg.post(self.big_label, "disable")
 end
 
@@ -241,7 +266,9 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 
 	local pos = user_pos or go.get_position(character)
 	local balloon_id = get_balloon_to_use(text)
-	if balloon_id == BIG_BALLOON then
+	if balloon_id == MIDDLE_BALLOON then 
+		text = break_limit_words(raw_text, MIDDLE_BALLOON_SPACE) or ""
+	elseif balloon_id == BIG_BALLOON then
 		text = break_limit_words(raw_text, BIG_BALLOON_SPACE) or ""
 	end
 
