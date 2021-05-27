@@ -1,40 +1,59 @@
 local inside_gameobject = require("main.inside_gameobject")
 local utils = require("main.utils")
 
+local BALLOON_SPACE_X = 476
+local BALLOON_SPACE_Y = 180
+
 local LETTERS_PER_SECOND = 20
-local SMALL_BALLOON_SPACE = 30 -- letters
-local SMALL_BALLOON_MAX_LINES = 4
+local SMALL_BALLOON_SPACE = 31 -- letters
+local SMALL_BALLOON_MAX_LINES = 3
+local MIDDLE_BALLOON_SPACE = 39 -- letters
+local MIDDLE_BALLOON_MAX_LINES = 6
 local BIG_BALLOON_SPACE = 49
 
 local ORIENTATION = {UP=1, DOWN=-1, LEFT=-1, RIGHT=1}
 local BIG_BALLOON = 1
-local SMALL_BALLOON = 2
-local NO_ARROW_BIG_BALLOON = 3
-local NO_ARROW_SMALL_BALLOON = 4
+local MIDDLE_BALLOON = 2
+local SMALL_BALLOON = 3
+local NO_ARROW_BIG_BALLOON = 4
+local NO_ARROW_MIDDLE_BALLOON = 5
+local NO_ARROW_SMALL_BALLOON = 6
 local BALLOONS = {
 	[BIG_BALLOON]={
 		width=476,
 		height=176,
 		image="balloon1",
-		offset=vmath.vector3(-50, 0, 0)
+		offset=vmath.vector3(-30, 60, 0)
+	},
+	[MIDDLE_BALLOON]={
+		width=356,
+		height=128,
+		image="balloon2",
+		offset=vmath.vector3(0, 30, 0)
 	},
 	[SMALL_BALLOON]={
 		width=296,
 		height=128,
-		image="balloon2",
-		offset=vmath.vector3(0, 0, 0)
+		image="balloon3",
+		offset=vmath.vector3(20, 15, 0)
 	},
 	[NO_ARROW_BIG_BALLOON]={
 		width=476,
 		height=176,
-		image="balloon3",
-		offset=vmath.vector3(-50, 0, 0)
+		image="balloon4",
+		offset=vmath.vector3(-30, 60, 0)
+	},
+	[NO_ARROW_MIDDLE_BALLOON]={
+		width=356,
+		height=128,
+		image="balloon5",
+		offset=vmath.vector3(0, 30, 0)
 	},
 	[NO_ARROW_SMALL_BALLOON]={
 		width=296,
 		height=128,
-		image="balloon4",
-		offset=vmath.vector3(0, 0, 0)
+		image="balloon6",
+		offset=vmath.vector3(20, 15, 0)
 	}
 }
 
@@ -83,24 +102,36 @@ local function break_limit_words(text, balloon_space)
 end
 
 local function get_balloon_to_use(text)
-	local lines = 0
+	local small_lines = 0
+	local middle_lines = 0
 	for line in text:gmatch("[^\n]+") do
-		lines = lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
+		small_lines = small_lines + math.ceil(line:len() / SMALL_BALLOON_SPACE)
+		middle_lines = middle_lines + math.ceil(line:len() / MIDDLE_BALLOON_SPACE)
 	end
 
-	if lines > SMALL_BALLOON_MAX_LINES then
-		return BIG_BALLOON
-	else
+	if small_lines <= SMALL_BALLOON_MAX_LINES then
 		return SMALL_BALLOON
 	end
+
+	if middle_lines <= MIDDLE_BALLOON_MAX_LINES then
+		return MIDDLE_BALLOON
+	end
+
+	return BIG_BALLOON
 end
 
 function init(self)
 	msg.post(".","acquire_input_focus")
 
 	self.label = msg.url("#label")
+	self.label_inverted = msg.url("#label_inverted")
+	self.middle_label = msg.url("#middle_label")
+	self.middle_label_inverted = msg.url("#middle_label_inverted")
 	self.big_label = msg.url("#big_label")
 	self.skip = msg.url("#skip")
+	self.skip_inverted = msg.url("#skip_inverted")
+	self.middle_skip = msg.url("#middle_skip")
+	self.middle_skip_inverted = msg.url("#middle_skip_inverted")	
 	self.big_skip = msg.url("#big_skip")
 	self.current_label = self.label
 	self.current_skip = self.skip
@@ -111,9 +142,11 @@ function init(self)
 	self.current_balloon = SMALL_BALLOON
 	self.current_character = nil
 	self.balloon_visible = false
-	
 	self.skip_offset = {
-		[self.skip] = vmath.vector3(125, -2, 0),
+		[self.skip] = vmath.vector3(34, 25, 0),
+		[self.skip_inverted] = vmath.vector3(210, 20, 0),
+		[self.middle_skip] = vmath.vector3(96, -2, 0),
+		[self.middle_skip_inverted] = vmath.vector3(213, -2, 0),		
 		[self.big_skip] = vmath.vector3(216, -28, 0)
 	}
 
@@ -137,34 +170,75 @@ local function hide_balloon(self)
 	self.balloon_visible = false
 end
 
-local function set_active_elements(self, balloon_id)
-	msg.post(self.skip, "disable")
-	msg.post(self.big_skip, "disable")
-	
-	if balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
-		msg.post(self.big_label, "enable")
-		self.current_label = self.big_label
-		msg.post(self.label, "disable")
-		label.set_text(self.label, "")
-
-		self.current_skip = self.big_skip
-		if self.can_skip then
-			msg.post(self.big_skip, "enable")
+function get_balloon_label(self, balloon_id, h_orientation)
+	if balloon_id == SMALL_BALLOON or balloon_id == NO_ARROW_SMALL_BALLOON then
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.label
+		else
+			return self.label_inverted
 		end
+	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
+		return self.big_label
 	else
-		msg.post(self.label, "enable")
-		msg.post(self.big_label, "disable")
-		label.set_text(self.big_label, "")
-		self.current_label = self.label
-		self.current_skip = self.skip
-		if self.can_skip then
-			msg.post(self.skip, "enable")
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.middle_label
+		else
+			return self.middle_label_inverted
 		end
 	end
 end
 
+function get_balloon_skip(self, balloon_id, h_orientation)
+	if balloon_id == SMALL_BALLOON or balloon_id == NO_ARROW_SMALL_BALLOON then
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.skip
+		else
+			return self.skip_inverted
+		end
+	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
+		return self.big_skip
+	else
+		if h_orientation == ORIENTATION.RIGHT then
+			return self.middle_skip
+		else
+			return self.middle_skip_inverted
+		end
+	end
+end
+
+function disable_skips(self)
+	msg.post(self.skip, "disable")
+	msg.post(self.skip_inverted, "disable")
+	msg.post(self.middle_skip, "disable")
+	msg.post(self.middle_skip_inverted, "disable")	
+	msg.post(self.big_skip, "disable")
+end
+
+function disable_labels(self)
+	msg.post(self.label, "disable")
+	msg.post(self.label_inverted, "disable")
+	msg.post(self.middle_label, "disable")
+	msg.post(self.middle_label_inverted, "disable")	
+	msg.post(self.big_label, "disable")
+end
+
+local function set_active_elements(self, balloon_id, h_orientation)
+	-- Set active label
+	disable_labels(self)	
+	self.current_label = get_balloon_label(self, balloon_id, h_orientation)
+	msg.post(self.current_label, "enable")
+	label.set_text(self.current_label, "")
+
+	-- Set active skip button
+	disable_skips(self)
+	self.current_skip = get_balloon_skip(self, balloon_id, h_orientation)
+	if self.can_skip then
+		msg.post(self.current_skip, "enable")
+	end
+end
+
 local function get_orientation(pos, balloon)
-	local balloon_right = pos.x + balloon.width + balloon.offset.x
+	local balloon_right = pos.x + balloon.width + balloon.offset.x 
 	local balloon_top = pos.y + balloon.height + balloon.offset.y
 
 	local w, h = window.get_size()
@@ -184,7 +258,8 @@ local function get_orientation(pos, balloon)
 		v_orientation = ORIENTATION.DOWN
 	end
 
-	return h_orientation, v_orientation
+	-- NOTE: For now we don't have balloons touching the top so we are ignoring the y flip
+	return h_orientation, ORIENTATION.UP--v_orientation
 end
 
 local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip)
@@ -192,12 +267,14 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 
 	local pos = user_pos or go.get_position(character)
 	local balloon_id = get_balloon_to_use(text)
-	if balloon_id == BIG_BALLOON then
+	if balloon_id == MIDDLE_BALLOON then 
+		text = break_limit_words(raw_text, MIDDLE_BALLOON_SPACE) or ""
+	elseif balloon_id == BIG_BALLOON then
 		text = break_limit_words(raw_text, BIG_BALLOON_SPACE) or ""
 	end
 
 	if no_arrow then
-		balloon_id = balloon_id + 2
+		balloon_id = balloon_id + 3
 	end
 	local balloon = BALLOONS[balloon_id]
 	self.current_balloon = balloon_id
@@ -207,12 +284,10 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
 	sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
 
-	local offset_x = balloon.width / 2 + balloon.offset.x
-	local offset_y = balloon.height / 2 + balloon.offset.y
-	pos.x = pos.x + (offset_x * h_orientation)
-	pos.y = pos.y + (offset_y * v_orientation)
+	pos.x = pos.x + (BALLOON_SPACE_X / 2 + balloon.offset.x) * h_orientation
+	pos.y = pos.y + balloon.offset.y-- + (offset_y * v_orientation)
 	pos.z = 0.9
-
+	
 	go.set_position(pos, ".")
 	msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 
@@ -222,7 +297,7 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	msg.post(".", "enable")
 	self.balloon_visible = true
 	self.can_skip = allow_skip or false
-	set_active_elements(self, balloon_id)
+	set_active_elements(self, balloon_id,  h_orientation)
 	label.set_text(self.current_label, "")
 end
 
@@ -259,6 +334,7 @@ function on_message(self, message_id, message, sender)
 		local balloon = BALLOONS[self.current_balloon]
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 	end
+	
 
 	if message_id == hash("show_text") then
 		if not message.character then
