@@ -182,10 +182,11 @@ return {
 			msg.post(self.telescope_url, "disable")
 			msg.post(self.tv_url, "disable")
 			msg.post(self.nintendo_url, "disable")
-			msg.post(self.window_url, "play_animation", {id = hash("room_window3")})
 			msg.post("/inventory", "disable")
 			msg.post(self.ouija_url, "enable")
-
+			self.window_closed = true
+			self.refresh_window(self)
+			
 			go.set_position(vmath.vector3(850, 250, 0.2), "/randall")
 			msg.post("/randall", "set_state", {state=RANDALL_STATE.WIZARD_HAT})
 			msg.post("/god", "show_light", {x=976 / WIDTH, y=202 / HEIGHT, radius=0.1})
@@ -271,7 +272,77 @@ return {
 			msg.post("/context_menu", "enable_context_menu")
 			msg.post("/cutscene#cutscene", "cutscene_end")
 			msg.post("/collections#main", "restart_game")
+
+			game_state.data.awaiting_signal = false
+			game_state.data.waiting_for_night = true
+			update_context_entries(self)
 		end)
-		
+	end,
+	prolog_end = function(self)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1, function(_, id)
+			go.set_position(vmath.vector3(590,356,0.2), "/randall")
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+
+			game_state.data.day_state = "night"
+			game_state.data.stage = game_state.stages.BECKY_PARTY
+			game_state.data.waiting_for_night = false
+
+			msg.post("/collections#main", "checkpoint")
+			self.refresh_window(self)
+			update_context_entries(self)
+
+			msg.post("/god", "turn_dark")
+			msg.post("/cutscene#cutscene", "cutscene_start")
+		end)
+		event_manager:register_event(4, function(_, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/god", "back_to_day")
+			self.cutscenes.wakeup_at_night(self)
+		end)
+	end,
+	prolog_end = function(self)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1, function(_, id)
+			go.set_position(vmath.vector3(590,356,0.2), "/randall")
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
+
+			game_state.data.day_state = "night"
+			game_state.data.stage = game_state.stages.BECKY_PARTY
+			game_state.data.waiting_for_night = false
+
+			msg.post("/collections#main", "checkpoint")
+			self.refresh_window(self)
+			update_context_entries(self)
+
+			msg.post("/god", "turn_dark")
+			msg.post("/cutscene#cutscene", "cutscene_start")
+		end)
+		event_manager:register_event(4, function(_, id)
+			msg.post("/transition", "play_transition")
+		end)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/god", "back_to_day")
+			self.cutscenes.wakeup_at_night(self)
+		end)
+	end,
+	wakeup_at_night = function(self)
+		event_manager:register_event(0, function(_, id)
+			go.set_position(vmath.vector3(520,300,go.get_position("/randall").z), "/randall")
+			msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
+		end)
+		event_manager:register_event(2, function(_, id)
+			msg.post("/balloon", "show_text", {delay = 3, text="Ok, it's night.", character = "/randall", sound="#Randall_short3", skip=true})
+		end)
+		event_manager:register_event(3, function(_, id)
+			msg.post("/balloon", "show_text", {delay = 3, text="Let's go to that party!", character = "/randall", sound="#Randall_short2"})
+			msg.post("/cutscene#cutscene", "cutscene_end")
+		end)
 	end
 }
