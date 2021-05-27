@@ -5,9 +5,9 @@ local BALLOON_SPACE_X = 476
 local BALLOON_SPACE_Y = 180
 
 local LETTERS_PER_SECOND = 20
-local SMALL_BALLOON_SPACE = 30 -- letters
-local SMALL_BALLOON_MAX_LINES = 4
-local MIDDLE_BALLOON_SPACE = 38 -- letters
+local SMALL_BALLOON_SPACE = 31 -- letters
+local SMALL_BALLOON_MAX_LINES = 3
+local MIDDLE_BALLOON_SPACE = 39 -- letters
 local MIDDLE_BALLOON_MAX_LINES = 6
 local BIG_BALLOON_SPACE = 49
 
@@ -258,6 +258,7 @@ local function get_orientation(pos, balloon)
 		v_orientation = ORIENTATION.DOWN
 	end
 
+	-- NOTE: For now we don't have balloons touching the top so we are ignoring the y flip
 	return h_orientation, ORIENTATION.UP--v_orientation
 end
 
@@ -283,12 +284,10 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
 	sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
 
-	--local offset_x = BALLOON_SPACE_X / 2 + balloon.width / 2 + balloon.offset.x
-	--local offset_y = balloon.height / 2 + balloon.offset.y
 	pos.x = pos.x + (BALLOON_SPACE_X / 2 + balloon.offset.x) * h_orientation
 	pos.y = pos.y + balloon.offset.y-- + (offset_y * v_orientation)
 	pos.z = 0.9
-
+	
 	go.set_position(pos, ".")
 	msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 
