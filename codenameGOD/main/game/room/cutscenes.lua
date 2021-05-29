@@ -211,7 +211,7 @@ return {
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		if game_state.data.god_name == "ASS" or game_state.data.god_name == "DICK" or game_state.data.god_name == "PENIS" or game_state.data.god_name == "BALLS" or game_state.data.god_name == "FART"  then
 			event_manager:register_event(2, function(_, id)
-				msg.post("/balloon", "show_text", {delay=7, text = "...Wait... that name....you must be a 10 year with that sense of humor!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
+				msg.post("/balloon", "show_text", {delay=7, text = "...Wait... that name....you must be a 10 year old with that sense of humor!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
 			end)
 		elseif game_state.data.god_name == "LINK" or game_state.data.god_name == "MARIO" or game_state.data.god_name == "SAMUS" or game_state.data.god_name == "METROID"  or game_state.data.god_name == "SONIC" or game_state.data.god_name == "CLOUD" then
 			event_manager:register_event(2, function(_, id)

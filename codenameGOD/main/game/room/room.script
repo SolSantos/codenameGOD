@@ -33,7 +33,20 @@ local item_strings = {
 	[6] = {
 		text = "A weird Pepsi commercial is on screen.",
 		position = {x=800, y=200}
+	},
+	[7] = {
+		text = "My record? 3.41236 seconds. No biggie.",
+		position = {x=780, y=265}
+	},
+	[8] = {
+		text = "Hello, Mr.Cyberman. How many galaxy-wide Xi-Class cataclysms are we preventing today?\nOh? In the middle of the L76 cluster? Preposterous.",
+		position = {x=390, y=260}
+	},
+	[9] = {
+		text = "For some reason, I think Heman will be famous for entirely different reasons in the future.\nCall it a nerd's intuition.",
+		position = {x=855, y=253}
 	}
+	
 }
 
 local refresh_window = function(self)
