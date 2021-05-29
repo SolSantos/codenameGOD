@@ -106,6 +106,7 @@ local default_on_message = function(mapping, self, message_id, message, sender)
 			update_animation(self, mapping)
 		end)
 		msg.post("/balloon", "character_moved")
+		msg.post("/item_manager", "character_moved")
 	end
 	if message_id == hash("scream") then
 		set_action(self, ACTION.SCREAM)

@@ -3,7 +3,8 @@ local items = require("main.game.item.items")
 local context_data = require("main.context_data")
 local utils = require("main.utils")
 local mouse_x, mouse_y
-local ITEM_Z = 0.15
+local ITEM_Z = 0.10
+local ITEM_DROPPED_Z = 0.25
 local ITEM_INVENTORY_Z = 0.6
 
 local current_item = nil
@@ -141,7 +142,7 @@ function on_message(self, message_id, message, sender)
 		local dropped_item = items.data[message.item_name]
 		dropped_item.in_inventory = false
 		dropped_item.scenario = self.current_scenario
-		go.set_position(vmath.vector3(mouse_x, mouse_y, ITEM_Z), dropped_item.go)
+		go.set_position(vmath.vector3(mouse_x, mouse_y, ITEM_DROPPED_Z), dropped_item.go)
 		msg.post("/collections", "send_collection", {name = "item_dropped_in_scene", params={item_name=message.item_name, x=mouse_x, y=mouse_y}})
 	end
 
@@ -153,7 +154,7 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 	end
-
+	
 	if message_id == hash("inventory_closed") then
 		for name, item in pairs(items.data) do
 			if item.in_inventory then
@@ -183,6 +184,16 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("update_visible_items") then
 		update_visible_items(self)
+	end
+
+	if message_id == hash("character_moved") then
+		-- Make items go bellow characters after someone moves
+		for name, item in pairs(items.data) do
+			local pos = go.get_position(item.go)
+			if pos.z == ITEM_DROPPED_Z then
+				go.set_position(vmath.vector3(pos.x, pos.y , ITEM_Z), item.go)
+			end
+		end
 	end
 end
 
