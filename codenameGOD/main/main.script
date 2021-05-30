@@ -18,6 +18,10 @@ function on_input(self, action_id, action)
 			msg.post("/sound#1-mouse_click", "play_sound", {gain = 0.025})
 		end
 	end
+
+	if action_id == hash("m") then
+		msg.post("/transition", "play_chapter_transition", {title="Prologue", description="Say Hello To My Little Friend"})
+	end
 end
 
 function update(self, dt)
