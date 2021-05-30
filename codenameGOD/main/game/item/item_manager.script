@@ -32,7 +32,7 @@ local function handle_click(url, action_id, action, gameobject)
 			if not pressed_item.movable then
 				return
 			end
-			
+			pressed_item.found = 1
 			current_item = pressed_item
 		elseif action.released then
 			if current_item then

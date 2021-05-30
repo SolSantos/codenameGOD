@@ -222,7 +222,7 @@ return {
 				msg.post("/balloon", "show_text", {delay=4, text = "A classic directly from the arcades!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
 			end)
 		end
-		event_manager:register_event(7, function(_, id)
+		event_manager:register_event(4, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 6, text="Wow! I never would have thought that a God could have such a name as "..game_state.data.god_name..".", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(6, function(_, id)
