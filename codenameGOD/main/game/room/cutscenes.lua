@@ -8,7 +8,7 @@ return {
 		msg.post("/collections#main", "stop_game")
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		msg.post("/randall", "sleep")
-		event_manager:register_event(3, function(_, id)
+		event_manager:register_event(6, function(_, id)
 			msg.post("/balloon", "show_text", {delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = self.bro_url, sound="#Bullies_4", skip=true})
 			msg.post("/randall", "wakeup")
 		end)
@@ -222,7 +222,7 @@ return {
 				msg.post("/balloon", "show_text", {delay=4, text = "A classic directly from the arcades!", character = "/randall", sound="#Randall_2", skip=true, no_arrow=true, pos=balloon_pos})
 			end)
 		end
-		event_manager:register_event(7, function(_, id)
+		event_manager:register_event(4, function(_, id)
 			msg.post("/balloon", "show_text", {delay = 6, text="Wow! I never would have thought that a God could have such a name as "..game_state.data.god_name..".", character = "/randall", sound="#Randall_short4", skip=true, no_arrow=true, pos=balloon_pos})
 		end)
 		event_manager:register_event(6, function(_, id)
@@ -325,9 +325,11 @@ return {
 			msg.post("/cutscene#cutscene", "cutscene_start")
 		end)
 		event_manager:register_event(4, function(_, id)
-			msg.post("/transition", "play_transition")
+			msg.post("/transition", "play_chapter_transition", {
+				title="Chapter 2", description="Party Time", fade=0.5, fade_back=1
+			})
 		end)
-		event_manager:register_event(1, function(_, id)
+		event_manager:register_event(4, function(_, id)
 			msg.post("/god", "back_to_day")
 			self.cutscenes.wakeup_at_night(self)
 		end)

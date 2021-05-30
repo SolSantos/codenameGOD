@@ -162,7 +162,7 @@ local state_on_message = {
 	[RANDALL_STATE.SHOELESS] = function(self, message_id, message, sender)
 		local anims_mapping = {
 			idle="shoeless_idle",
-			walk="shoeless_walking",
+			walk="shoeless_walk",
 			talk="shoeless_talk",
 			walk_talk="shoeless_walk_talk"
 		}
@@ -171,7 +171,7 @@ local state_on_message = {
 	[RANDALL_STATE.ONE_SHOE] = function(self, message_id, message, sender)
 		local anims_mapping = {
 			idle="semi_shoeless_idle",
-			walk="semi_shoeless_walking",
+			walk="semi_shoeless_walk",
 			talk="semi_shoeless_talk",
 			walk_talk="semi_shoeless_walk_talk"
 		}
