@@ -3,32 +3,36 @@ function on_message(self, message_id, message, sender)
 		local title = gui.get_node("title")
 		local description = gui.get_node("description")
 		local transition = gui.get_node("transition")
+
 		gui.set_text(title, "")
 		gui.set_text(description, "")
-		gui.animate(description, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 1)
+
+		gui.animate(transition, "color", vmath.vector4(0, 0, 0, 1), gui.EASING_LINEAR, 1)
 		timer.delay(1.5, false, function()
 			gui.animate(transition, "color", vmath.vector4(0, 0, 0, 0), gui.EASING_LINEAR, 1)
 		end)
 	end
 
 	if message_id == hash("play_chapter_transition") then
-		-- TODO: Use another color in the background?
-		local fade_duration = 0.5
-		local fade_back_duration = 0.5
+		local fade_duration = message.fade or 0.5
+		local fade_back_duration = message.fade_back or 1
 		local title = gui.get_node("title")
 		local description = gui.get_node("description")
 		local transition = gui.get_node("transition")
+
 		gui.set_color(title, vmath.vector4(1, 1, 1, 0))
 		gui.set_color(description, vmath.vector4(1, 1, 1, 0))
-		gui.animate(transition, "color", vmath.vector4(0, 0, 0, 1), gui.EASING_LINEAR, fade_duration)
-		gui.animate(title, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, fade_duration)
-		gui.animate(description, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, fade_duration)
+
 		gui.set_text(title, message.title or "Title")
 		gui.set_text(description, message.description or "Description")
+		
+		gui.animate(title, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, fade_duration)
+		gui.animate(description, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, fade_duration)
+		gui.animate(transition, "color", vmath.vector4(0, 0.078, 0.125, 1), gui.EASING_LINEAR, fade_duration)
 		timer.delay(4, false, function()
-			gui.animate(transition, "color", vmath.vector4(0, 0, 0, 0), gui.EASING_LINEAR, fade_back_duration)
-			gui.animate(title, "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, fade_back_duration)
-			gui.animate(description, "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, fade_back_duration)
+			gui.animate(title, "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, fade_back_duration / 2)
+			gui.animate(description, "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, fade_back_duration / 2)
+			gui.animate(transition, "color", vmath.vector4(0, 0.078, 0.125, 0), gui.EASING_LINEAR, fade_back_duration)
 		end)
 	end
 end
