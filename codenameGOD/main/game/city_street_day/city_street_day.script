@@ -8,6 +8,9 @@ local update_time = 0
 local bully1_url
 local bully2_url
 local bully3_url
+local bully1_sprite_url
+local bully2_sprite_url
+local bully3_sprite_url
 
 local bullies_intro_sound_url
 local bullies_verse_sound_url
@@ -73,11 +76,23 @@ cutscenes = {
 			})
 
 			msg.post(bully3_url, "go_to", {
-				pos=vmath.vector3(250, bully3_pos.y, bully3_pos.z), 
+				pos=vmath.vector3(240, bully3_pos.y, bully3_pos.z), 
 				duration=1
 			})
 
-			timer.delay(1, false, function(self, id)
+			timer.delay(1.2, false, function(self, id)
+				msg.post(bully1_sprite_url, "play_animation", {id = hash("punch_left")})
+				msg.post(bully2_sprite_url, "play_animation", {id = hash("punch_left")})
+				msg.post(bully3_sprite_url, "play_animation", {id = hash("punch_left")})
+				msg.post("/randall#sprite", "play_animation", {id = hash("punched_right")})
+
+				sprite.play_flipbook(pow_url, "pow", function()
+					msg.post(pow_url, "disable")
+				end)
+				go.set_position(vmath.vector3(270, 260, 1), pow_url)
+				msg.post(pow_url, "enable")
+			end)
+			timer.delay(1.4, false, function(self, id)
 				msg.post(push_sound_url, "play_sound")
 			end)
 		end)
@@ -187,6 +202,9 @@ function init(self)
 	bully1_url = msg.url("bully1")
 	bully2_url = msg.url("bully2")
 	bully3_url = msg.url("bully3")
+	bully1_sprite_url = msg.url("bully1#sprite")
+	bully2_sprite_url = msg.url("bully2#sprite")
+	bully3_sprite_url = msg.url("bully3#sprite")
 	push_sound_url = msg.url("sound#9-push")
 	metal_hit_url = msg.url("sound#11-metal_hit")
 	bullies_intro_sound_url = msg.url("sound#Bullies_Theme_intro")
