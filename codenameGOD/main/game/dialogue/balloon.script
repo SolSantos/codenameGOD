@@ -166,7 +166,7 @@ end
 
 function update(self, dt)
 	local _, _, w, h = defos.get_view_size()
-	self.use_big_labels = w > 1440
+	self.use_big_labels = w > 1300
 	local new_label = get_balloon_label(self)
 	if new_label ~= self.current_label then
 		disable_labels(self)
