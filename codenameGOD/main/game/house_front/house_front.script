@@ -62,14 +62,15 @@ context_data[hash("back_to_room_door")] = {
 context_data[hash("city_street_arrow")] = {
 	{text="Inspect", click="This road leads to the city. Not the city of Rome, no."},
 	{text="Go", click=function()
-		if items.data.ticket.in_inventory then
-			msg.post("/collections#main", "load_screen", {
-				name = "city_street_day",
-				pos = vmath.vector3(200,211,0.2)
-			})
-		else
+		if game_state.data.stage == game_state.stages.PROLOG and not items.data.ticket.in_inventory then
 			msg.post("/balloon", "show_text", {text="I can't go to the tournament without the ticket.", character = "randall", sound="#Randall_6"})
+			return
 		end
+
+		msg.post("/collections#main", "load_screen", {
+			name = "city_street_day",
+			pos = vmath.vector3(200,211,0.2)
+		})
 	end}
 }
 
@@ -84,6 +85,9 @@ function init(self)
 	end
 
 	msg.post("/randall", "set_state", {state=RANDALL_STATE.NORMAL})
+	if game_state.data.day_state == "night" then
+		msg.post("background#sprite", "play_animation", { id=hash("house_front_night") })
+	end
 	STARTING_FROM_CHECKPOINT = false
 end
 

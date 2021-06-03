@@ -210,8 +210,17 @@ function init(self)
 	bullies_intro_sound_url = msg.url("sound#Bullies_Theme_intro")
 	bullies_verse_sound_url = msg.url("sound#Bullies_Theme_verse")
 	pow_url = msg.url("pow")
-	if game_state.data.allowed_leave then
+
+	if game_state.data.day_state == "night" then
+		msg.post("background#sprite", "play_animation", { id=hash("city_street_night") })
+	end
+	
+	if game_state.data.stage == game_state.stages.PROLOG and game_state.data.allowed_leave then
 		cutscenes.bullies_attack(self)
+	elseif game_state.data.stage == game_state.stages.BECKY_PARTY then
+		msg.post(bully1_url, "disable")
+		msg.post(bully2_url, "disable")
+		msg.post(bully3_url, "disable")
 	end
 end
 
