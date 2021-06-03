@@ -269,7 +269,7 @@ components {
   }
 }
 embedded_components {
-  id: "label"
+  id: "label_big"
   type: "label"
   data: "size {\n"
   "  x: 526.0\n"
@@ -307,7 +307,7 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: true\n"
   "text: \"Default\"\n"
-  "font: \"/assets/fonts/PlusSCRegular.font\"\n"
+  "font: \"/assets/fonts/PlusSCRegularBig.font\"\n"
   "material: \"/render/over_label.material\"\n"
   ""
   position {
@@ -343,7 +343,7 @@ embedded_components {
   }
 }
 embedded_components {
-  id: "big_label"
+  id: "big_label_big"
   type: "label"
   data: "size {\n"
   "  x: 872.0\n"
@@ -381,7 +381,7 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: true\n"
   "text: \"Default\"\n"
-  "font: \"/assets/fonts/PlusSCRegular.font\"\n"
+  "font: \"/assets/fonts/PlusSCRegularBig.font\"\n"
   "material: \"/render/over_label.material\"\n"
   ""
   position {
@@ -440,14 +440,14 @@ embedded_components {
   id: "label_inverted"
   type: "label"
   data: "size {\n"
-  "  x: 526.0\n"
-  "  y: 128.0\n"
+  "  x: 263.0\n"
+  "  y: 64.0\n"
   "  z: 0.0\n"
   "  w: 0.0\n"
   "}\n"
   "scale {\n"
-  "  x: 0.5\n"
-  "  y: 0.5\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
   "  z: 1.0\n"
   "  w: 0.0\n"
   "}\n"
@@ -511,7 +511,7 @@ embedded_components {
   }
 }
 embedded_components {
-  id: "middle_label"
+  id: "middle_label_big"
   type: "label"
   data: "size {\n"
   "  x: 646.0\n"
@@ -522,6 +522,208 @@ embedded_components {
   "scale {\n"
   "  x: 0.5\n"
   "  y: 0.5\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/assets/fonts/PlusSCRegularBig.font\"\n"
+  "material: \"/render/over_label.material\"\n"
+  ""
+  position {
+    x: -222.0
+    y: 78.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "middle_skip"
+  type: "sprite"
+  data: "tile_set: \"/assets/items.atlas\"\n"
+  "default_animation: \"skip_dialogue_small_dark\"\n"
+  "material: \"/render/over.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  ""
+  position {
+    x: 96.0
+    y: -2.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "middle_label_inverted_big"
+  type: "label"
+  data: "size {\n"
+  "  x: 646.0\n"
+  "  y: 180.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 0.5\n"
+  "  y: 0.5\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/assets/fonts/PlusSCRegularBig.font\"\n"
+  "material: \"/render/over_label.material\"\n"
+  ""
+  position {
+    x: -104.0
+    y: 78.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "middle_skip_inverted"
+  type: "sprite"
+  data: "tile_set: \"/assets/items.atlas\"\n"
+  "default_animation: \"skip_dialogue_small_dark\"\n"
+  "material: \"/render/over.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  ""
+  position {
+    x: 213.0
+    y: -2.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "big_label"
+  type: "label"
+  data: "size {\n"
+  "  x: 436.0\n"
+  "  y: 110.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/assets/fonts/PlusSCRegular.font\"\n"
+  "material: \"/render/over_label.material\"\n"
+  ""
+  position {
+    x: -215.0
+    y: 74.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "middle_label"
+  type: "label"
+  data: "size {\n"
+  "  x: 323.0\n"
+  "  y: 90.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
   "  z: 1.0\n"
   "  w: 0.0\n"
   "}\n"
@@ -565,37 +767,17 @@ embedded_components {
   }
 }
 embedded_components {
-  id: "middle_skip"
-  type: "sprite"
-  data: "tile_set: \"/assets/items.atlas\"\n"
-  "default_animation: \"skip_dialogue_small_dark\"\n"
-  "material: \"/render/over.material\"\n"
-  "blend_mode: BLEND_MODE_ALPHA\n"
-  ""
-  position {
-    x: 96.0
-    y: -2.0
-    z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-}
-embedded_components {
   id: "middle_label_inverted"
   type: "label"
   data: "size {\n"
-  "  x: 646.0\n"
-  "  y: 180.0\n"
+  "  x: 323.0\n"
+  "  y: 9080.0\n"
   "  z: 0.0\n"
   "  w: 0.0\n"
   "}\n"
   "scale {\n"
-  "  x: 0.5\n"
-  "  y: 0.5\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
   "  z: 1.0\n"
   "  w: 0.0\n"
   "}\n"
@@ -639,17 +821,105 @@ embedded_components {
   }
 }
 embedded_components {
-  id: "middle_skip_inverted"
-  type: "sprite"
-  data: "tile_set: \"/assets/items.atlas\"\n"
-  "default_animation: \"skip_dialogue_small_dark\"\n"
-  "material: \"/render/over.material\"\n"
+  id: "label"
+  type: "label"
+  data: "size {\n"
+  "  x: 263.0\n"
+  "  y: 64.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/assets/fonts/PlusSCRegular.font\"\n"
+  "material: \"/render/over_label.material\"\n"
   ""
   position {
-    x: 213.0
-    y: -2.0
-    z: 0.1
+    x: -222.0
+    y: 78.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "label_inverted_big"
+  type: "label"
+  data: "size {\n"
+  "  x: 526.0\n"
+  "  y: 128.0\n"
+  "  z: 0.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "scale {\n"
+  "  x: 0.5\n"
+  "  y: 0.5\n"
+  "  z: 1.0\n"
+  "  w: 0.0\n"
+  "}\n"
+  "color {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "outline {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "shadow {\n"
+  "  x: 0.0\n"
+  "  y: 0.0\n"
+  "  z: 0.0\n"
+  "  w: 1.0\n"
+  "}\n"
+  "leading: 1.0\n"
+  "tracking: 0.0\n"
+  "pivot: PIVOT_NW\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "line_break: true\n"
+  "text: \"Default\"\n"
+  "font: \"/assets/fonts/PlusSCRegularBig.font\"\n"
+  "material: \"/render/over_label.material\"\n"
+  ""
+  position {
+    x: -43.0
+    y: 78.0
+    z: 0.0
   }
   rotation {
     x: 0.0
