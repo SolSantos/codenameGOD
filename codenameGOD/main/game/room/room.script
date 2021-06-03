@@ -159,7 +159,7 @@ function init(self)
 		else
 			msg.post(".", "moved")
 		end
-	elseif game_state.data.stage == game_state.stages.BECKY_PARTY then
+	elseif STARTING_FROM_CHECKPOINT and game_state.data.stage == game_state.stages.BECKY_PARTY then
 		msg.post("/cutscene#cutscene", "cutscene_start")
 		cutscenes.wakeup_at_night(self)
 	end
