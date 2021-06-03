@@ -20,27 +20,31 @@ local cutscenes
 
 local game_state = require("main.game_state")
 local context_data = require("main.context_data")
-context_data[hash("city_street_trash")] = {
-	{text="Inspect", click=function()
-		msg.post("/balloon", "show_text", {text = "...Why am I admiring trash at a time like this.", character="randall"})
-	end},
-	{text="Hit", click=function()
-		msg.post(metal_hit_url, "play_sound")
-		trash_hit = trash_hit + 1 
 
-		if trash_hit < 3 then
-			msg.post(city_url, "bully_trash_warning")
-			if trash_hit == 1 then
-				msg.post(trash_url, "play_animation", {id = hash("street_junk5")})
-			elseif trash_hit == 2 then
-				msg.post(trash_url, "play_animation", {id = hash("street_junk6")})
+local update_context_entries = function()
+	context_data[hash("city_street_trash")] = {
+		{text="Inspect", click="...Why am I admiring trash at a time like this."}
+	}
+
+	if game_state.data.stage == game_state.stages.PROLOG then
+		table.insert(context_data[hash("city_street_trash")], {text="Hit", click=function()
+			msg.post(metal_hit_url, "play_sound")
+			trash_hit = trash_hit + 1 
+
+			if trash_hit < 3 then
+				msg.post(city_url, "bully_trash_warning")
+				if trash_hit == 1 then
+					msg.post(trash_url, "play_animation", {id = hash("street_junk5")})
+				elseif trash_hit == 2 then
+					msg.post(trash_url, "play_animation", {id = hash("street_junk6")})
+				end
+			else 
+				msg.post(trash_url, "play_animation", {id = hash("street_junk7")})
+				cutscenes.bullies_escape()
 			end
-		else 
-			msg.post(trash_url, "play_animation", {id = hash("street_junk7")})
-			cutscenes.bullies_escape()
-		end
-	end}
-}
+		end})
+	end
+end
 
 cutscenes = {
 	bullies_attack = function(self)
@@ -211,6 +215,8 @@ function init(self)
 	bullies_verse_sound_url = msg.url("sound#Bullies_Theme_verse")
 	pow_url = msg.url("pow")
 
+	update_context_entries()
+	
 	if game_state.data.day_state == "night" then
 		msg.post("background#sprite", "play_animation", { id=hash("city_street_night") })
 	end
