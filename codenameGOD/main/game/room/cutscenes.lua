@@ -289,33 +289,7 @@ return {
 			game_state.data.day_state = "night"
 			game_state.data.stage = game_state.stages.BECKY_PARTY
 			game_state.data.waiting_for_night = false
-
-			msg.post("/collections#main", "checkpoint")
-			self.refresh_window(self)
-			update_context_entries(self)
-
-			msg.post("/god", "turn_dark")
-			msg.post("/cutscene#cutscene", "cutscene_start")
-		end)
-		event_manager:register_event(4, function(_, id)
-			msg.post("/transition", "play_transition")
-		end)
-		event_manager:register_event(1, function(_, id)
-			msg.post("/god", "back_to_day")
-			self.cutscenes.wakeup_at_night(self)
-		end)
-	end,
-	prolog_end = function(self)
-		event_manager:register_event(1, function(_, id)
-			msg.post("/transition", "play_transition")
-		end)
-		event_manager:register_event(1, function(_, id)
-			go.set_position(vmath.vector3(590,356,0.2), "/randall")
-			msg.post("/randall", "set_state", {state=RANDALL_STATE.LYING_DOWN})
-
-			game_state.data.day_state = "night"
-			game_state.data.stage = game_state.stages.BECKY_PARTY
-			game_state.data.waiting_for_night = false
+			game_state.data.allowed_leave = true
 
 			msg.post("/collections#main", "checkpoint")
 			self.refresh_window(self)
