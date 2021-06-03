@@ -124,17 +124,28 @@ function init(self)
 	msg.post(".","acquire_input_focus")
 
 	self.label = msg.url("#label")
+	self.label_big = msg.url("#label_big")
 	self.label_inverted = msg.url("#label_inverted")
+	self.label_inverted_big = msg.url("#label_inverted_big")
 	self.middle_label = msg.url("#middle_label")
+	self.middle_label_big = msg.url("#middle_label_big")
 	self.middle_label_inverted = msg.url("#middle_label_inverted")
+	self.middle_label_inverted_big = msg.url("#middle_label_inverted_big")	
 	self.big_label = msg.url("#big_label")
+	self.big_label_big = msg.url("#big_label_big")
+
+	self.use_big_labels = false
+	self.h_orientation = ORIENTATION.RIGHT
+
 	self.skip = msg.url("#skip")
 	self.skip_inverted = msg.url("#skip_inverted")
 	self.middle_skip = msg.url("#middle_skip")
 	self.middle_skip_inverted = msg.url("#middle_skip_inverted")	
 	self.big_skip = msg.url("#big_skip")
+
 	self.current_label = self.label
 	self.current_skip = self.skip
+
 	self.can_skip = false
 	self.balloon_text = nil
 	self.show_elapsed = 0
@@ -154,6 +165,16 @@ function init(self)
 end
 
 function update(self, dt)
+	local _, _, w, h = defos.get_view_size()
+	self.use_big_labels = w > 1440
+	local new_label = get_balloon_label(self)
+	if new_label ~= self.current_label then
+		disable_labels(self)
+		self.current_label = new_label
+		msg.post(self.current_label, "enable")
+		label.set_text(self.current_label, "")
+	end
+	
 	if self.balloon_text then
 		self.show_elapsed = utils.clamp(self.show_elapsed + dt, 0, self.balloon_text:len() / LETTERS_PER_SECOND)
 		local visible_text = get_visible_text(self.balloon_text, self.show_elapsed)
@@ -170,35 +191,55 @@ local function hide_balloon(self)
 	self.balloon_visible = false
 end
 
-function get_balloon_label(self, balloon_id, h_orientation)
-	if balloon_id == SMALL_BALLOON or balloon_id == NO_ARROW_SMALL_BALLOON then
-		if h_orientation == ORIENTATION.RIGHT then
-			return self.label
+function get_balloon_label(self)
+	if self.current_balloon == SMALL_BALLOON or self.current_balloon == NO_ARROW_SMALL_BALLOON then
+		if self.h_orientation == ORIENTATION.RIGHT then
+			if self.use_big_labels then
+				return self.label_big
+			else
+				return self.label
+			end
 		else
-			return self.label_inverted
+			if self.use_big_labels then
+				return self.label_inverted_big
+			else
+				return self.label_inverted
+			end
 		end
-	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
-		return self.big_label
-	else
-		if h_orientation == ORIENTATION.RIGHT then
-			return self.middle_label
+	elseif self.current_balloon == BIG_BALLOON or self.current_balloon == NO_ARROW_BIG_BALLOON then
+		if self.use_big_labels then
+			return self.big_label_big
 		else
-			return self.middle_label_inverted
+			return self.big_label
+		end
+	else
+		if self.h_orientation == ORIENTATION.RIGHT then
+			if self.use_big_labels then
+				return self.middle_label_big
+			else
+				return self.middle_label
+			end
+		else
+			if self.use_big_labels then
+				return self.middle_label_inverted_big
+			else
+				return self.middle_label_inverted
+			end
 		end
 	end
 end
 
-function get_balloon_skip(self, balloon_id, h_orientation)
-	if balloon_id == SMALL_BALLOON or balloon_id == NO_ARROW_SMALL_BALLOON then
-		if h_orientation == ORIENTATION.RIGHT then
+function get_balloon_skip(self)
+	if self.current_balloon == SMALL_BALLOON or self.current_balloon == NO_ARROW_SMALL_BALLOON then
+		if self.h_orientation == ORIENTATION.RIGHT then
 			return self.skip
 		else
 			return self.skip_inverted
 		end
-	elseif balloon_id == BIG_BALLOON or balloon_id == NO_ARROW_BIG_BALLOON then
+	elseif self.current_balloon == BIG_BALLOON or self.current_balloon == NO_ARROW_BIG_BALLOON then
 		return self.big_skip
 	else
-		if h_orientation == ORIENTATION.RIGHT then
+		if self.h_orientation == ORIENTATION.RIGHT then
 			return self.middle_skip
 		else
 			return self.middle_skip_inverted
@@ -220,18 +261,24 @@ function disable_labels(self)
 	msg.post(self.middle_label, "disable")
 	msg.post(self.middle_label_inverted, "disable")	
 	msg.post(self.big_label, "disable")
+	
+	msg.post(self.label_big, "disable")
+	msg.post(self.label_inverted_big, "disable")
+	msg.post(self.middle_label_big, "disable")
+	msg.post(self.middle_label_inverted_big, "disable")	
+	msg.post(self.big_label_big, "disable")
 end
 
-local function set_active_elements(self, balloon_id, h_orientation)
+local function set_active_elements(self)
 	-- Set active label
 	disable_labels(self)	
-	self.current_label = get_balloon_label(self, balloon_id, h_orientation)
+	self.current_label = get_balloon_label(self)
 	msg.post(self.current_label, "enable")
 	label.set_text(self.current_label, "")
 
 	-- Set active skip button
 	disable_skips(self)
-	self.current_skip = get_balloon_skip(self, balloon_id, h_orientation)
+	self.current_skip = get_balloon_skip(self)
 	if self.can_skip then
 		msg.post(self.current_skip, "enable")
 	end
@@ -283,7 +330,8 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	local h_orientation, v_orientation = get_orientation(pos, balloon)
 	sprite.set_hflip("#sprite", h_orientation == ORIENTATION.LEFT)
 	sprite.set_vflip("#sprite", v_orientation == ORIENTATION.DOWN)
-
+	self.h_orientation = h_orientation
+	
 	pos.x = pos.x + (BALLOON_SPACE_X / 2 + balloon.offset.x) * h_orientation
 	pos.y = pos.y + balloon.offset.y-- + (offset_y * v_orientation)
 	pos.z = 0.9
@@ -297,7 +345,7 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	msg.post(".", "enable")
 	self.balloon_visible = true
 	self.can_skip = allow_skip or false
-	set_active_elements(self, balloon_id,  h_orientation)
+	set_active_elements(self)
 	label.set_text(self.current_label, "")
 end
 
