@@ -1,41 +1,29 @@
+local context_utils = require("main.context_utils")
+
+local CONTEXT_GOTO = {
+	{
+		key="city_center_goto_back_alley", 
+		inspect_text="Narrow street without light.", 
+		next_screen="back_alley",
+		pos=vmath.vector3(376, 211, 0.2)
+	},
+	{
+		key="city_center_goto_city_street", 
+		inspect_text="Road in direction to my house.", 
+		next_screen="city_street_day", 
+		pos=vmath.vector3(952, 211, 0.2)
+	},
+	{
+		key="city_center_goto_disco_entrace",
+		inspect_text="Road to the disco.", 
+		next_screen="disco_entrance", 
+		pos=vmath.vector3(152, 211, 0.2)
+	}
+}
+
+for _, entry in ipairs(CONTEXT_GOTO) do
+	context_utils.register_goto_screen(entry)
+end
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

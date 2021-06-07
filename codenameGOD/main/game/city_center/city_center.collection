@@ -1,4 +1,88 @@
 name: "default"
+instances {
+  id: "goto_city_street"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 32.0
+    y: 211.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "city_center_goto_city_street"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 0.633
+    y: 3.435
+    z: 1.0
+  }
+}
+instances {
+  id: "goto_back_alley"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 579.0
+    y: 461.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "city_center_goto_back_alley"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.401
+    y: 2.696
+    z: 1.0
+  }
+}
+instances {
+  id: "goto_disco_entrance"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 991.0
+    y: 213.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "city_center_goto_disco_entrace"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 0.633
+    y: 3.435
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "background"
