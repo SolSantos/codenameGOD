@@ -1,0 +1,29 @@
+local context_utils = require("main.context_utils")
+
+local CONTEXT_GOTO = {
+	{
+		key="city_center_goto_back_alley", 
+		inspect_text="Narrow street without light.", 
+		next_screen="back_alley",
+		pos=vmath.vector3(376, 211, 0.2)
+	},
+	{
+		key="city_center_goto_city_street", 
+		inspect_text="Road in direction to my house.", 
+		next_screen="city_street_day", 
+		pos=vmath.vector3(952, 211, 0.2)
+	},
+	{
+		key="city_center_goto_disco_entrace",
+		inspect_text="Road to the disco.", 
+		next_screen="disco_entrance", 
+		pos=vmath.vector3(152, 211, 0.2)
+	}
+}
+
+for _, entry in ipairs(CONTEXT_GOTO) do
+	context_utils.register_goto_screen(entry)
+end
+
+function init(self)
+end

@@ -23,25 +23,44 @@ local context_data = require("main.context_data")
 
 local update_context_entries = function()
 	context_data[hash("city_street_trash")] = {
-		{text="Inspect", click="...Why am I admiring trash at a time like this."}
+		{text="Inspect", click="Just regular trash cans."}
 	}
-
+	context_data[hash("street_goto_city_center")] = {
+		{text="Inspect", click="The road to the city center."}
+	}
+	context_data[hash("street_goto_house_front")] = {
+		{text="Inspect", click="Path back to my house."}
+	}
+	
 	if game_state.data.stage == game_state.stages.PROLOG then
-		table.insert(context_data[hash("city_street_trash")], {text="Hit", click=function()
-			msg.post(metal_hit_url, "play_sound")
-			trash_hit = trash_hit + 1 
+		context_data[hash("city_street_trash")] = {
+			{text="Inspect", click="...Why am I admiring trash at a time like this."},
+			{text="Hit", click=function()
+				msg.post(metal_hit_url, "play_sound")
+				trash_hit = trash_hit + 1 
 
-			if trash_hit < 3 then
-				msg.post(city_url, "bully_trash_warning")
-				if trash_hit == 1 then
-					msg.post(trash_url, "play_animation", {id = hash("street_junk5")})
-				elseif trash_hit == 2 then
-					msg.post(trash_url, "play_animation", {id = hash("street_junk6")})
+				if trash_hit < 3 then
+					msg.post(city_url, "bully_trash_warning")
+					if trash_hit == 1 then
+						msg.post(trash_url, "play_animation", {id = hash("street_junk5")})
+					elseif trash_hit == 2 then
+						msg.post(trash_url, "play_animation", {id = hash("street_junk6")})
+					end
+				else 
+					msg.post(trash_url, "play_animation", {id = hash("street_junk7")})
+					cutscenes.bullies_escape()
 				end
-			else 
-				msg.post(trash_url, "play_animation", {id = hash("street_junk7")})
-				cutscenes.bullies_escape()
-			end
+			end}
+		}
+	elseif game_state.data.stage == game_state.stages.BECKY_PARTY then
+		table.insert(context_data[hash("street_goto_house_front")], {text="Go", click=function()
+			local road_position = vmath.vector3(922, 181, 0.2)
+			msg.post("/collections#main", "load_screen", {name="house_front", pos=road_position})
+		end})
+		
+		table.insert(context_data[hash("street_goto_city_center")], {text="Go", click=function()
+			local road_position = vmath.vector3(152, 211, 0.2)
+			msg.post("/collections#main", "load_screen", {name="city_center", pos=road_position})
 		end})
 	end
 end

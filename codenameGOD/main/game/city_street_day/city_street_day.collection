@@ -87,6 +87,62 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "goto_city_context"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 949.0
+    y: 336.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "street_goto_city_center"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.364
+    y: 0.52
+    z: 1.0
+  }
+}
+instances {
+  id: "goto_house_context"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 916.0
+    y: 430.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "street_goto_house_front"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.668
+    y: 0.484
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "background"

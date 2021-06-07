@@ -1,0 +1,12 @@
+local context_utils = require("main.context_utils")
+
+context_utils.register_goto_screen({
+	key="back_alley_goto_city_center", 
+	inspect_text="Back to the main street.", 
+	next_screen="city_center",
+	pos=vmath.vector3(562, 211, 0.2)
+})
+
+
+function init(self)
+end
