@@ -165,6 +165,7 @@ update_context_entries = function(self)
 			end
 		})	
 	end
+
 end
 
 return update_context_entries

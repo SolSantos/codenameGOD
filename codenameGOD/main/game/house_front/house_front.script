@@ -1,11 +1,12 @@
 local update_time = 0
 local MOVE_AROUND_TIME = 10
-local context_data = require("main.context_data")
+local update_context_entries = require("main.game.house_front.context_data")
 local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local randall_utils = require("main.game.randall.utils")
 local door_sound_url = nil
 local bike_inspect = 0
+local test_trash = 0
 
 local item_strings = {
 	[1] = {
@@ -22,58 +23,6 @@ local item_strings = {
 	}
 }
 
-context_data[hash("broke_bike")] = {
-	{text="Inspect", click=function()
-		if bike_inspect == 0 then
-			msg.post("/balloon", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
-			bike_inspect = bike_inspect + 1 
-		elseif bike_inspect == 1 then
-			msg.post("/balloon", "show_text", {text = "Seriously, it doesn't even have pedals.", character="randall"})
-			bike_inspect = bike_inspect + 1 
-		elseif bike_inspect == 2 then
-			msg.post("/balloon", "show_text", {text = "The wheels aren't even made of rubber. What is this... are they made of plastic?!", character="randall"})
-			bike_inspect = bike_inspect + 1 
-		else
-			msg.post("/balloon", "show_text", {text = "Who owns this??!", character="randall"})
-			bike_inspect = 0
-		end
-	end}
-}
-context_data[hash("trash")] = {
-	{text="Inspect", click="Trash can, not trash cannot.\n Heh."}
-}
-context_data[hash("sky")] = {
-	{text="Inspect", click="Beautiful sky today. Somehow always clear."}
-}
-context_data[hash("doggo")] = {
-	{text="Inspect", click="Must. Fight. Urge. To. Pet."}
-}
-context_data[hash("back_to_room_door")] = {
-	{text="Inspect", click="The front entrance to my headquarters."},
-	{text="Go", click=function()
-		msg.post(door_sound_url, "play_sound")
-		msg.post("/collections#main", "load_screen", {
-			name = "room",
-			pos = vmath.vector3(422,311,0.2)
-		})
-	end}
-}
-
-context_data[hash("city_street_arrow")] = {
-	{text="Inspect", click="This road leads to the city. Not the city of Rome, no."},
-	{text="Go", click=function()
-		if game_state.data.stage == game_state.stages.PROLOG and not items.data.ticket.in_inventory then
-			msg.post("/balloon", "show_text", {text="I can't go to the tournament without the ticket.", character = "randall", sound="#Randall_6"})
-			return
-		end
-
-		msg.post("/collections#main", "load_screen", {
-			name = "city_street_day",
-			pos = vmath.vector3(200,211,0.2)
-		})
-	end}
-}
-
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("sound#ambiance", "play_sound")
@@ -88,6 +37,7 @@ function init(self)
 	if game_state.data.day_state == "night" then
 		msg.post("background#sprite", "play_animation", { id=hash("house_front_night") })
 	end
+	update_context_entries(self)
 	STARTING_FROM_CHECKPOINT = false
 end
 

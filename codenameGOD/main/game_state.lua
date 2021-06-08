@@ -34,7 +34,10 @@ game_state.data = {
 	-- State of the day ("day" or "night")
 	day_state = "day",
 	-- Tells us if the player is in the waiting for night puzzle
-	waiting_for_night = false
+	waiting_for_night = false,
+	-- Tells if we already opened the drawer in the room and saw the coins
+	trash_inspected = false,
+	trash_pickup = false
 }
 
 game_state.load_save = function()

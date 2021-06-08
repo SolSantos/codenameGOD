@@ -67,8 +67,19 @@ local items = {
 			found = 0,
 			label = "This is the right shoe.",
 			movable = true
-		}
+		},
 		-- END OF ROOM ITEMS
+		cd = {
+			name = "cd_case",
+			text = "A CD by Jon Bovi",
+			position = {x=800, y=360},
+			image = "items9",
+			scenario = "house_front",
+			status = "hide",
+			found = 0,
+			label = "A CD by a band called Jon Bovi.",
+			movable = true
+		}
 	}
 }
 
