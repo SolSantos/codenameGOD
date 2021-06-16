@@ -4,6 +4,8 @@ local utils = require("main.utils")
 local BALLOON_SPACE_X = 476
 local BALLOON_SPACE_Y = 180
 
+local LINE_HEIGHT = 20 -- pixels
+
 local LETTERS_PER_SECOND = 20
 local SMALL_BALLOON_SPACE = 31 -- letters
 local SMALL_BALLOON_MAX_LINES = 3
@@ -55,6 +57,78 @@ local BALLOONS = {
 		image="balloon6",
 		offset=vmath.vector3(20, 15, 0)
 	}
+}
+
+local LETTER_WIDTH = {
+	a=9,
+	b=9,
+	c=9,
+	d=9,
+	e=9,
+	f=9,
+	g=9,
+	h=9,
+	i=7,
+	j=9,
+	k=9,
+	l=9,
+	m=12,
+	n=9,
+	o=9,
+	p=9,
+	q=9,
+	r=9,
+	s=9,
+	t=9,
+	u=9,
+	v=9,
+	w=12,
+	x=9,
+	y=9,
+	z=9,
+	A=9,
+	B=9,
+	C=9,
+	D=9,
+	E=9,
+	F=9,
+	G=9,
+	H=9,
+	I=7,
+	J=9,
+	K=9,
+	L=9,
+	M=12,
+	N=9,
+	O=9,
+	P=9,
+	Q=9,
+	R=9,
+	S=9,
+	T=9,
+	U=9,
+	V=9,
+	W=12,
+	X=9,
+	Y=9,
+	Z=9,
+	["0"]=9,
+	["1"]=7,
+	["2"]=9,
+	["3"]=9,
+	["4"]=9,
+	["5"]=9,
+	["6"]=9,
+	["7"]=9,
+	["8"]=9,
+	["9"]=9,
+	[" "]=5,
+	["'"]=5,
+	[","]=5,
+	["."]=4,
+	["!"]=4,
+	["-"]=8,
+	["?"]=9
 }
 
 local get_visible_text = function(text, elapsed)
@@ -154,13 +228,26 @@ function init(self)
 	self.current_character = nil
 	self.balloon_visible = false
 	self.skip_offset = {
-		[self.skip] = vmath.vector3(34, 25, 0),
-		[self.skip_inverted] = vmath.vector3(210, 20, 0),
-		[self.middle_skip] = vmath.vector3(96, -2, 0),
-		[self.middle_skip_inverted] = vmath.vector3(213, -2, 0),		
-		[self.big_skip] = vmath.vector3(216, -28, 0)
+		[self.skip]                 = vmath.vector3(34,  25,  0),
+		[self.skip_inverted]        = vmath.vector3(210, 20,  0),
+		[self.middle_skip]          = vmath.vector3(96,  -2,  0),
+		[self.middle_skip_inverted] = vmath.vector3(213, -2,  0),
+		[self.big_skip]             = vmath.vector3(216, -28, 0)
 	}
 
+	self.label_offset = {
+		[self.label]                     = vmath.vector3(-222, 78, 0),
+		[self.label_big]                 = vmath.vector3(-222, 78, 0),
+		[self.label_inverted]            = vmath.vector3(-43,  78, 0),
+		[self.label_inverted_big]        = vmath.vector3(-43,  78, 0),
+		[self.middle_label]              = vmath.vector3(-222, 78, 0),
+		[self.middle_label_big]          = vmath.vector3(-222, 78, 0),
+		[self.middle_label_inverted]     = vmath.vector3(-104, 78, 0),
+		[self.middle_label_inverted_big] = vmath.vector3(-104, 78, 0),
+		[self.big_label]                 = vmath.vector3(-215, 74, 0),
+		[self.big_label_big]             = vmath.vector3(-215, 74, 0),
+	}
+	
 	msg.post(".", "disable")
 end
 
@@ -309,7 +396,53 @@ local function get_orientation(pos, balloon)
 	return h_orientation, ORIENTATION.UP--v_orientation
 end
 
-local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip)
+local function setup_text_effects(self, effects, ballon_pos)
+	local label_pos = ballon_pos + self.label_offset[self.current_label]
+	local areas = {}
+	for _, effect in ipairs(effects) do
+		local before_offset = 0
+		local highlight_width = 0
+		local line = 1
+		local i = 0
+		for letter in self.balloon_text:gmatch(".") do
+			if letter == "\n" then
+				local x = label_pos.x + before_offset
+				local y = label_pos.y - (LINE_HEIGHT * line)
+				local h = LINE_HEIGHT
+				table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color})
+
+				-- pass to next line
+				before_offset = 0
+				highlight_width = 0
+				line = line + 1
+			else
+				i = i + 1  -- \n do not count because they are added by the autowrap code
+				if i < effect.from then
+					before_offset = before_offset + LETTER_WIDTH[letter]
+				elseif i >= effect.from and i <= effect.to then
+					highlight_width = highlight_width + LETTER_WIDTH[letter]
+				else
+					break
+				end
+			end
+		end
+		local x = label_pos.x + before_offset
+		local y = label_pos.y - (LINE_HEIGHT * line)
+		local h = LINE_HEIGHT
+		table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color})
+	end
+
+	if #areas > 5 then
+		print("The effects in the text balloon exceeded the max supported areas.")
+	end
+	for i=1, 5 do
+		local area = areas[i]
+		go.set(self.current_label, "area"..i, area and area.rect or vmath.vector4())
+		go.set(self.current_label, "color"..i, area and area.color or vmath.vector4(1,1,1,1))
+	end
+end
+
+local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip, effects)
 	local text = break_limit_words(raw_text, SMALL_BALLOON_SPACE) or ""
 
 	local pos = user_pos or go.get_position(character)
@@ -347,6 +480,8 @@ local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow
 	self.can_skip = allow_skip or false
 	set_active_elements(self)
 	label.set_text(self.current_label, "")
+
+	setup_text_effects(self, effects, pos)
 end
 
 local function balloon_play_sound(self, sound)
@@ -383,12 +518,14 @@ function on_message(self, message_id, message, sender)
 		msg.post("#sprite", "play_animation", {id = hash(balloon.image)})
 	end
 	
-
 	if message_id == hash("show_text") then
 		if not message.character then
 			return
 		end
-		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip)
+		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip, message.effects or {
+			{from=1, to=10, color=vmath.vector4(1,0,0,1)},
+			{from=13, to=20, color=vmath.vector4(0,0,1,1)}
+		})
 
 		self.last_message_id = self.last_message_id + 1
 		local msg_id = self.last_message_id
@@ -398,7 +535,7 @@ function on_message(self, message_id, message, sender)
 			if msg_id == self.last_message_id then
 				hide_balloon(self)
 			end
-			msg.post(message.character, "stop_talking")	
+			msg.post(message.character, "stop_talking")
 		end)
 
 		if message.sound then
@@ -412,7 +549,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("show") then
-		show_balloon(self, message.character, "", message.pos, message.no_arrow, false)
+		show_balloon(self, message.character, "", message.pos, message.no_arrow, false, {})
 	end
 
 	if message_id == hash("add_text") then
