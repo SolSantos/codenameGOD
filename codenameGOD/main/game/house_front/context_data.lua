@@ -1,6 +1,7 @@
 local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local context_data = require("main.context_data")
+local randall_utils = require("main.game.randall.utils")
 
 local update_context_entries
 
@@ -53,7 +54,26 @@ update_context_entries = function(self)
 		{text="Inspect", click="Beautiful sky today. Somehow always clear."}
 	}
 	context_data[hash("doggo")] = {
-		{text="Inspect", click="Must. Fight. Urge. To. Pet."}
+		{text="Inspect", click="Must. Fight. Urge. To. Pet."},
+		{text="Pet", click=function()
+			self.petting = true
+
+			local x = 90
+	
+			if self.doggo_state == "IDLE_LEFT" then
+				x = 60
+			end
+			
+			if self.doggo_state == "WALKING" then
+				timer.delay(2.3, false, function(_, id)
+					self.make_randall_pet_dog(self, x)
+				end)	
+			else
+				self.delay_doggo_movement = true
+				self.make_randall_pet_dog(self, x)
+			end
+			
+		end},
 	}
 	context_data[hash("back_to_room_door")] = {
 		{text="Inspect", click="The front entrance to my headquarters."},

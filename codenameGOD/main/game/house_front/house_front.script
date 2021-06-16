@@ -23,10 +23,65 @@ local item_strings = {
 	}
 }
 
+local function make_randall_pet_dog(self, x)
+	local doggo_pos = go.get_position(self.doggo_url)
+	local duration = randall_utils.movement_duration(doggo_pos)
+	msg.post("/randall", "go_to", {
+		pos=vmath.vector3(doggo_pos.x+x, doggo_pos.y+72, 0.2),
+		duration=duration
+	})
+	timer.delay(duration+0.1, false, function(self, id)
+		msg.post("/randall#sprite", "play_animation", {id = hash("start_petting_left")})
+	end)
+	timer.delay(duration+0.8, false, function(self, id)
+		msg.post("/randall#sprite", "play_animation", {id = hash("petting_left")})
+	end)
+end
+
+
+local function doggo_go_right(self, delay)
+	msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_right")})
+
+	self.doggo_move_timer_right = timer.delay(10+(delay or 0), false, function(_, id)
+		msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_walk_right")})
+		self.doggo_state = "WALKING"
+		go.animate(self.doggo_url, "position.x", go.PLAYBACK_ONCE_FORWARD, 570, go.EASING_LINEAR, 3.5, 0, function()
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_right")})
+			self.doggo_state = "IDLE"
+		end)
+
+		timer.delay(17, false, function(_, id)
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_turn_left")})
+		end)
+		self.doggo_move_timer_right = nil
+	end)
+end
+
+local function doggo_go_left(self, delay)
+	msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_left")})
+
+	self.doggo_move_timer_left = timer.delay(10+(delay or 0), false, function(_, id)
+		msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_walk_left")})
+		self.doggo_state = "WALKING"
+		go.animate(self.doggo_url, "position.x", go.PLAYBACK_ONCE_FORWARD, 100, go.EASING_LINEAR, 3.5, 0, function()
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_left")})
+			self.doggo_state = "IDLE"
+		end)
+		self.doggo_move_timer_left = nil
+		timer.delay(17, false, function(_, id)
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_turn_right")})
+		end)
+	end)
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("sound#ambiance", "play_sound")
 	door_sound_url = msg.url("sound#8-door_knob")
+	self.doggo_url = msg.url("doggo")
+	self.petting = false
+	self.doggo_state = "IDLE"
+	self.doggo_sprite_url = msg.url("doggo#sprite")
 
 	if not game_state.data.leaved_house_once then
 		game_state.data.leaved_house_once = true
@@ -39,7 +94,19 @@ function init(self)
 	end
 	update_context_entries(self)
 	STARTING_FROM_CHECKPOINT = false
+
+	timer.delay(15, false, function(self, id)
+		msg.post(".", "doggo_stand_up_right")
+	end)
+
+	self.doggo_move_timer_left = nil
+	self.doggo_move_timer_right = nil
+	self.delay_doggo_movement = false
+	self.make_randall_pet_dog = make_randall_pet_dog
+	self.doggo_go_right = doggo_go_right
+	self.doggo_go_left = doggo_go_left
 end
+
 
 function final(self)
 	msg.post("sound#ambiance", "stop_sound")
@@ -59,6 +126,17 @@ function update(self,dt)
 		end
 	end
 
+	if self.delay_doggo_movement then
+		if self.doggo_move_timer_left then
+			timer.cancel(self.doggo_move_timer_left)
+			self.doggo_go_left(self, 10)
+		end
+		if self.doggo_move_timer_right then
+			timer.cancel(self.doggo_move_timer_right)
+			self.doggo_go_right(self, 10)
+		end
+		self.delay_doggo_movement = false
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -87,5 +165,59 @@ function on_message(self, message_id, message, sender)
 	
 	if message_id == hash("moved") then
 		update_time = 0
+	end
+
+	-- doggo movement
+	
+	if message_id == hash("doggo_stand_up_right") then
+		msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_up_right")})
+	end
+
+	if message_id == hash("animation_done") then
+		local pet_delay = 0
+		if self.petting == true then
+			pet_delay = 10
+		end
+		
+		if message.id == hash("doggo_stand_up_right") then
+			self.doggo_go_right(self)
+		end
+
+		if message.id == hash("doggo_turn_left") then
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_left")})
+			self.doggo_state = "IDLE_LEFT"
+			timer.delay(5, false, function(self, id)
+				msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_sit_down_left")})	
+			end)
+		end
+
+		if message.id == hash("doggo_sit_down_left") then
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_sit_idle_left")})
+			
+			timer.delay(15, false, function(self, id)
+				msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_up_left")})
+				self.doggo_state = "IDLE"
+			end)
+		end
+
+		if message.id == hash("doggo_stand_up_left") then
+			self.doggo_go_left(self)
+		end
+
+		if message.id == hash("doggo_turn_right") then
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_right")})
+
+			timer.delay(6.5, false, function(self, id)
+				msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_sit_down_right")})
+			end)
+		end
+
+		if message.id == hash("doggo_sit_down_right") then
+			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_sit_idle_right")})
+
+			timer.delay(12, false, function(self, id)
+				msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_up_right")})
+			end)
+		end
 	end
 end

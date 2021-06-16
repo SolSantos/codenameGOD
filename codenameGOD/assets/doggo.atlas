@@ -228,6 +228,52 @@ animations {
   flip_horizontal: 1
   flip_vertical: 0
 }
+animations {
+  id: "doggo_sit_down_left"
+  images {
+    image: "/assets/images/background assets/street_doggo8.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo7.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo6.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 6
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "doggo_sit_down_right"
+  images {
+    image: "/assets/images/background assets/street_doggo8.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo7.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo6.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/background assets/street_doggo5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
 margin: 0
 extrude_borders: 2
 inner_padding: 0
