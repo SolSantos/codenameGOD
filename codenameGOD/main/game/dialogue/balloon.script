@@ -247,12 +247,42 @@ function init(self)
 		[self.big_label]                 = vmath.vector3(-215, 74, 0),
 		[self.big_label_big]             = vmath.vector3(-215, 74, 0),
 	}
+
+	local _, _, w, h = defos.get_view_size()
+	self.current_resolution = {w=w, h=h}
 	
 	msg.post(".", "disable")
 end
 
+local function show_text_effects(self)
+	local w, h = window.get_size()
+	local scale = vmath.vector4(w / WIDTH, h / HEIGHT, w / WIDTH, h / HEIGHT)
+	for i=1, 3 do
+		local area = self.effect_areas[i]
+		if area then
+			local rect = area.rect
+			rect = vmath.vector4(rect.x * scale.x, rect.y * scale.y, rect.z * scale.z, rect.w * scale.w)
+			go.set(self.current_label, "area"..i, rect)
+			if area.from_color and area.to_color then
+				go.set(self.current_label, "from_color"..i, area.from_color)
+				go.set(self.current_label, "to_color"..i, area.to_color)
+				go.set(self.current_label, "use_gradient"..i, vmath.vector4(1,0,0,0))
+			else
+				go.set(self.current_label, "color"..i, area.color)
+				go.set(self.current_label, "use_gradient"..i, vmath.vector4(0,0,0,0))
+			end
+		else
+			go.set(self.current_label, "area"..i, vmath.vector4())
+			go.set(self.current_label, "color"..i, vmath.vector4(1,1,1,1))
+			go.set(self.current_label, "use_gradient"..i, vmath.vector4(0,0,0,0))
+		end
+	end
+end
+
+
 function update(self, dt)
 	local _, _, w, h = defos.get_view_size()
+	
 	self.use_big_labels = w > 1300
 	local new_label = get_balloon_label(self)
 	if new_label ~= self.current_label then
@@ -260,6 +290,11 @@ function update(self, dt)
 		self.current_label = new_label
 		msg.post(self.current_label, "enable")
 		label.set_text(self.current_label, "")
+	end
+
+	if self.current_resolution.w ~= w or self.current_resolution.h ~= h then
+		self.current_resolution.w, self.current_resolution.h = w, h
+		show_text_effects(self)
 	end
 	
 	if self.balloon_text then
@@ -398,7 +433,7 @@ end
 
 local function setup_text_effects(self, effects, ballon_pos)
 	local label_pos = ballon_pos + self.label_offset[self.current_label]
-	local areas = {}
+	self.effect_areas = {}
 	for _, effect in ipairs(effects) do
 		local before_offset = 0
 		local highlight_width = 0
@@ -409,7 +444,7 @@ local function setup_text_effects(self, effects, ballon_pos)
 				local x = label_pos.x + before_offset
 				local y = label_pos.y - (LINE_HEIGHT * line)
 				local h = LINE_HEIGHT
-				table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
+				table.insert(self.effect_areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
 					
 				-- pass to next line
 				before_offset = 0
@@ -429,24 +464,13 @@ local function setup_text_effects(self, effects, ballon_pos)
 		local x = label_pos.x + before_offset
 		local y = label_pos.y - (LINE_HEIGHT * line)
 		local h = LINE_HEIGHT
-		table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
+		table.insert(self.effect_areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
 	end
 
-	if #areas > 5 then
-		print("The effects in the text balloon exceeded the max supported areas.")
+	if #self.effect_areas > 3 then
+		print("The effects in the text balloon exceeded the max supported areas (3).")
 	end
-	for i=1, 5 do
-		local area = areas[i]
-		go.set(self.current_label, "area"..i, area and area.rect or vmath.vector4())
-		if area and area.from_color and area.to_color then
-			go.set(self.current_label, "from_color"..i, area.from_color)
-			go.set(self.current_label, "to_color"..i, area.to_color)
-			go.set(self.current_label, "use_gradient"..i, vmath.vector4(1,0,0,0))
-		else
-			go.set(self.current_label, "color"..i, area and area.color or vmath.vector4(1,1,1,1))
-			go.set(self.current_label, "use_gradient"..i, vmath.vector4(0,0,0,0))
-		end
-	end
+	show_text_effects(self)
 end
 
 local function show_balloon(self, character, raw_text, user_pos, no_arrow, allow_skip, effects)
