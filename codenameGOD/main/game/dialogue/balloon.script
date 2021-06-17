@@ -409,8 +409,8 @@ local function setup_text_effects(self, effects, ballon_pos)
 				local x = label_pos.x + before_offset
 				local y = label_pos.y - (LINE_HEIGHT * line)
 				local h = LINE_HEIGHT
-				table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color})
-
+				table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
+					
 				-- pass to next line
 				before_offset = 0
 				highlight_width = 0
@@ -429,7 +429,7 @@ local function setup_text_effects(self, effects, ballon_pos)
 		local x = label_pos.x + before_offset
 		local y = label_pos.y - (LINE_HEIGHT * line)
 		local h = LINE_HEIGHT
-		table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color})
+		table.insert(areas, {rect=vmath.vector4(x, y, highlight_width, h), color=effect.color, from_color=effect.from_color, to_color=effect.to_color})
 	end
 
 	if #areas > 5 then
@@ -438,7 +438,14 @@ local function setup_text_effects(self, effects, ballon_pos)
 	for i=1, 5 do
 		local area = areas[i]
 		go.set(self.current_label, "area"..i, area and area.rect or vmath.vector4())
-		go.set(self.current_label, "color"..i, area and area.color or vmath.vector4(1,1,1,1))
+		if area and area.from_color and area.to_color then
+			go.set(self.current_label, "from_color"..i, area.from_color)
+			go.set(self.current_label, "to_color"..i, area.to_color)
+			go.set(self.current_label, "use_gradient"..i, vmath.vector4(1,0,0,0))
+		else
+			go.set(self.current_label, "color"..i, area and area.color or vmath.vector4(1,1,1,1))
+			go.set(self.current_label, "use_gradient"..i, vmath.vector4(0,0,0,0))
+		end
 	end
 end
 
@@ -523,8 +530,8 @@ function on_message(self, message_id, message, sender)
 			return
 		end
 		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip, message.effects or {
-			{from=1, to=10, color=vmath.vector4(1,0,0,1)},
-			{from=13, to=20, color=vmath.vector4(0,0,1,1)}
+			{from=1, to=7, color=vmath.vector4(1,0,0,1)},
+			{from=26, to=39, from_color=vmath.vector4(0.2,0.8,0,1), to_color=vmath.vector4(1, 0.5, 0, 1)}
 		})
 
 		self.last_message_id = self.last_message_id + 1
