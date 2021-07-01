@@ -10,8 +10,7 @@ update_context_entries = function(self)
 	if game_state.data.waiting_for_night then
 		table.insert(context_data[hash("telescope")], {
 			text="Spy", click=function()
-				msg.post("/balloon", "show_text", {delay = 2, text="It's never a bad time to see what Mr. Will is up to, hehehe.", character = "/randall", sound="#Randall_2"})
-				self.cutscenes.prolog_end(self)
+				self.cutscenes.prolog_end(self, "spy")
 			end})	
 		end
 	context_data[hash("drawer")] = {
@@ -85,8 +84,7 @@ update_context_entries = function(self)
 	if game_state.data.waiting_for_night then
 		table.insert(context_data[hash("nes")], {
 			text="Play", click=function()
-				msg.post("/balloon", "show_text", {delay = 2, text="Oh yeah, I can play a bit for now.", character = "/randall", sound="#Randall_2"})
-				self.cutscenes.prolog_end(self)
+				self.cutscenes.prolog_end(self, "nes")
 			end})	
 		end
 	context_data[hash("tv")] = {
@@ -95,8 +93,7 @@ update_context_entries = function(self)
 	if game_state.data.waiting_for_night then
 		table.insert(context_data[hash("tv")], {
 			text="Watch TV", click=function()
-				msg.post("/balloon", "show_text", {delay = 2, text="My favorite cartoon is on!", character = "/randall", sound="#Randall_2"})
-				self.cutscenes.prolog_end(self)
+				self.cutscenes.prolog_end(self, "tv")
 			end})	
 	end
 
@@ -116,7 +113,7 @@ update_context_entries = function(self)
 		table.insert(context_data[hash("books")], {
 			text="Read", click=function()
 					msg.post("/balloon", "show_text", {delay = 2, text="Might as well read until night...", character = "/randall", sound="#Randall_2"})
-					self.cutscenes.prolog_end(self)
+					self.cutscenes.prolog_end(self, "read")
 			end})	
 	end
 
@@ -188,7 +185,7 @@ update_context_entries = function(self)
 				if not self.window_closed then
 					msg.post("/balloon", "show_text", {delay = 4, text="I can't sleep with all this light comming from the outside.", character = "/randall", sound="#Randall_2"})
 				else
-					self.cutscenes.prolog_end(self)
+					self.cutscenes.prolog_end(self, "sleep")
 				end
 			end
 		})	

@@ -278,8 +278,32 @@ return {
 			update_context_entries(self)
 		end)
 	end,
-	prolog_end = function(self)
-		event_manager:register_event(1, function(_, id)
+	prolog_end = function(self, pass_param)
+
+		if pass_param == "tv" then
+			event_manager:register_event(1, function(_, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="Wait, my favorite cartoon should be starting soon!", character = "/randall", sound="#Randall_short3", skip=true})
+			end)
+		elseif pass_param == "nes" then 
+			event_manager:register_event(1, function(_, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="This time I'm clearing that freaking dungeon!!!", character = "/randall", sound="#Randall_short3", skip=true})
+			end)
+		elseif pass_param == "sleep" then 
+			event_manager:register_event(1, function(_, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="Yea, I think a nap will do me good.", character = "/randall", sound="#Randall_short3", skip=true})
+			end)
+		elseif pass_param == "read" then 
+			event_manager:register_event(1, function(_, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="Might as well read until night...", character = "/randall", sound="#Randall_short3", skip=true})
+			end)
+		elseif pass_param == "read" then 
+			event_manager:register_event(1, function(_, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="It's never a bad time to see what Mr. Will is up to, hehehe.", character = "/randall", sound="#Randall_short3", skip=true})
+			end)
+			
+		end
+			
+		event_manager:register_event(3, function(_, id)
 			msg.post("/transition", "play_transition")
 		end)
 		event_manager:register_event(1, function(_, id)
