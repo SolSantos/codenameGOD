@@ -296,7 +296,7 @@ return {
 			event_manager:register_event(1, function(_, id)
 				msg.post("/balloon", "show_text", {delay = 2, text="Might as well read until night...", character = "/randall", sound="#Randall_short3", skip=true})
 			end)
-		elseif pass_param == "read" then 
+		elseif pass_param == "spy" then 
 			event_manager:register_event(1, function(_, id)
 				msg.post("/balloon", "show_text", {delay = 2, text="It's never a bad time to see what Mr. Will is up to, hehehe.", character = "/randall", sound="#Randall_short3", skip=true})
 			end)
