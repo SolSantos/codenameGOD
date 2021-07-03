@@ -15,9 +15,9 @@ uniform lowp vec4 to_color##n;
 DECLARE_AREA_VARS(1);
 DECLARE_AREA_VARS(2);
 DECLARE_AREA_VARS(3);
-DECLARE_AREA_VARS(4);
 
 uniform lowp vec4 use_gradient;
+uniform lowp vec4 area_scale;
 
 bool is_similar_color(vec4 c1, vec4 c2, float err_threshold){
 	return c1.r >= c2.r - err_threshold && c1.r <= c2.r + err_threshold && 
@@ -53,19 +53,21 @@ vec4 get_area_color(lowp vec4 area, lowp vec2 pos, lowp vec4 color, lowp vec4 to
 }
 
 void main()
-{
+{	
+	vec4 scaled_area1 = area1 * area_scale; 
+	vec4 scaled_area2 = area2 * area_scale;
+	vec4 scaled_area3 = area3 * area_scale;
+	
 	lowp vec4 result_color = get_base_color(gl_FragCoord.xy);
-	bool inside_area1 = is_inside_area(area1, gl_FragCoord.xy);
-	bool inside_area2 = is_inside_area(area2, gl_FragCoord.xy);
-	bool inside_area3 = is_inside_area(area3, gl_FragCoord.xy);
-	bool inside_area4 = is_inside_area(area4, gl_FragCoord.xy);
-	bool inside_any_area = inside_area1 || inside_area2 || inside_area3 || inside_area4;
+	bool inside_area1 = is_inside_area(scaled_area1, gl_FragCoord.xy);
+	bool inside_area2 = is_inside_area(scaled_area2, gl_FragCoord.xy);
+	bool inside_area3 = is_inside_area(scaled_area3, gl_FragCoord.xy);
+	bool inside_any_area = inside_area1 || inside_area2 || inside_area3;
 	
 	if(inside_any_area){
-		if(inside_area1) result_color = get_area_color(area1, gl_FragCoord.xy, color1, to_color1, use_gradient[0]);
-		if(inside_area2) result_color = get_area_color(area2, gl_FragCoord.xy, color2, to_color2, use_gradient[1]);		
-		if(inside_area3) result_color = get_area_color(area3, gl_FragCoord.xy, color3, to_color3, use_gradient[2]);
-		if(inside_area4) result_color = get_area_color(area4, gl_FragCoord.xy, color4, to_color4, use_gradient[3]);
+		if(inside_area1) result_color = get_area_color(scaled_area1, gl_FragCoord.xy, color1, to_color1, use_gradient[0]);
+		if(inside_area2) result_color = get_area_color(scaled_area2, gl_FragCoord.xy, color2, to_color2, use_gradient[1]);		
+		if(inside_area3) result_color = get_area_color(scaled_area3, gl_FragCoord.xy, color3, to_color3, use_gradient[2]);
 	}
 	
 	gl_FragColor = result_color;

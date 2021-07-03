@@ -15,7 +15,6 @@ return {
 					effects={
 						{from=1, to=7, color=vmath.vector4(0.3,0.3,0.3,1), shake_effect=true},
 						{from=10, to=13, color=vmath.vector4(1,0,0,1), float_effect=true},
-						{from=15, to=16, color=vmath.vector4(0,0,1,1)},
 						{from=26, to=39, color=vmath.vector4(0.2,0.8,0,1), to_color=vmath.vector4(1, 0.5, 0, 1), wave_effect=true},
 					}
 				}
