@@ -1,11 +1,81 @@
 name: "over_label"
 tags: "over"
-vertex_program: "/builtins/fonts/font.vp"
+vertex_program: "/render/over_label.vp"
 fragment_program: "/render/over_label.fp"
 vertex_space: VERTEX_SPACE_WORLD
 vertex_constants {
   name: "view_proj"
   type: CONSTANT_TYPE_VIEWPROJ
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "area1"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "area2"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "area3"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "wave_effect"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "effect_progress"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "float_effect"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+vertex_constants {
+  name: "shake_effect"
+  type: CONSTANT_TYPE_USER
   value {
     x: 0.0
     y: 0.0
@@ -35,26 +105,6 @@ fragment_constants {
 }
 fragment_constants {
   name: "area3"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "area4"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "area5"
   type: CONSTANT_TYPE_USER
   value {
     x: 0.0
@@ -94,123 +144,13 @@ fragment_constants {
   }
 }
 fragment_constants {
-  name: "color4"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "color5"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "use_gradient1"
+  name: "use_gradient"
   type: CONSTANT_TYPE_USER
   value {
     x: 0.0
     y: 0.0
     z: 0.0
     w: 0.0
-  }
-}
-fragment_constants {
-  name: "use_gradient2"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "use_gradient3"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "use_gradient4"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "use_gradient5"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
-  }
-}
-fragment_constants {
-  name: "from_color1"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "from_color2"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "from_color3"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "from_color4"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "from_color5"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
   }
 }
 fragment_constants {
@@ -235,26 +175,6 @@ fragment_constants {
 }
 fragment_constants {
   name: "to_color3"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "to_color4"
-  type: CONSTANT_TYPE_USER
-  value {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-}
-fragment_constants {
-  name: "to_color5"
   type: CONSTANT_TYPE_USER
   value {
     x: 1.0
