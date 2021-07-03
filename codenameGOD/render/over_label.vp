@@ -1,0 +1,88 @@
+uniform highp mat4 view_proj;
+
+varying mediump vec2 var_texcoord0;
+varying lowp vec4 var_face_color;
+varying lowp vec4 var_outline_color;
+varying lowp vec4 var_shadow_color;
+varying lowp vec4 var_layer_mask;
+varying lowp float var_is_single_layer;
+
+// positions are in world space
+attribute mediump vec4 position;
+attribute mediump vec2 texcoord0;
+attribute lowp vec4 face_color;
+attribute lowp vec4 outline_color;
+attribute lowp vec4 shadow_color;
+attribute lowp vec3 layer_mask;
+
+uniform lowp vec4 area1;
+uniform lowp vec4 area2;
+uniform lowp vec4 area3;
+
+uniform lowp vec4 wave_effect;
+uniform lowp vec4 float_effect;
+uniform lowp vec4 shake_effect;
+uniform lowp vec4 effect_progress;
+
+bool is_inside_area(vec4 rect, vec2 pos){
+	return pos.x > rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w;
+}
+
+#define WAVE_HEIGHT 4.0
+#define SHAKE_STRENGTH 1.0
+#define PI 3.1417
+
+#define NO_EFFECT    0.0
+#define WAVE_EFFECT  1.0 
+#define FLOAT_EFFECT 2.0
+#define SHAKE_EFFECT 3.0
+
+float get_progress(vec4 rect, vec2 pos, float effect){
+	if(effect == WAVE_EFFECT) {
+		return sin(((pos.x - rect.x) / rect.z + effect_progress[0]) * PI  * 2.0);
+	}
+	else if(effect == FLOAT_EFFECT) {
+		return sin(effect_progress[0] * PI);
+	}
+	return 0.0;
+}
+
+float get_effect(float wave_effect, float float_effect, float shake_effect){
+	if     (wave_effect  == 1.0) return WAVE_EFFECT;
+	else if(float_effect == 1.0) return FLOAT_EFFECT;
+	else if(shake_effect == 1.0) return SHAKE_EFFECT;
+	return NO_EFFECT;
+}
+
+vec4 get_final_position(vec4 rect, vec4 pos, float effect){
+	
+	if(effect == SHAKE_EFFECT){
+		pos.y += SHAKE_STRENGTH * effect_progress[1];
+		pos.x += SHAKE_STRENGTH * effect_progress[2];
+	}
+	else {
+		float progress = get_progress(rect, position.xz, effect);
+		pos.y += WAVE_HEIGHT * progress;
+	}
+	return pos;
+}
+
+void main()
+{
+	var_texcoord0 = texcoord0;
+	var_face_color = face_color;
+	var_outline_color = outline_color;
+	var_layer_mask.rgb = layer_mask;
+	var_layer_mask.a = var_layer_mask.x * var_layer_mask.y * var_layer_mask.z;
+	var_shadow_color = shadow_color;
+
+	vec4 final_position = vec4(position.xyz, 1.0);
+	float effect1 = get_effect(wave_effect[0], float_effect[0], shake_effect[0]);
+	float effect2 = get_effect(wave_effect[1], float_effect[1], shake_effect[1]);
+	float effect3 = get_effect(wave_effect[2], float_effect[2], shake_effect[2]);
+	if(effect1 != NO_EFFECT && is_inside_area(area1, position.xy)) final_position = get_final_position(area1, position, effect1);
+	if(effect2 != NO_EFFECT && is_inside_area(area2, position.xy)) final_position = get_final_position(area2, position, effect2);
+	if(effect3 != NO_EFFECT && is_inside_area(area3, position.xy)) final_position = get_final_position(area3, position, effect3);
+
+	gl_Position = view_proj * final_position;
+}
