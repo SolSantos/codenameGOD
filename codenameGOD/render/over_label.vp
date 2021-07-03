@@ -18,6 +18,7 @@ attribute lowp vec3 layer_mask;
 uniform lowp vec4 area1;
 uniform lowp vec4 area2;
 uniform lowp vec4 area3;
+uniform lowp vec4 area4;
 
 uniform lowp vec4 wave_effect;
 uniform lowp vec4 float_effect;
@@ -80,9 +81,11 @@ void main()
 	float effect1 = get_effect(wave_effect[0], float_effect[0], shake_effect[0]);
 	float effect2 = get_effect(wave_effect[1], float_effect[1], shake_effect[1]);
 	float effect3 = get_effect(wave_effect[2], float_effect[2], shake_effect[2]);
+	float effect4 = get_effect(wave_effect[3], float_effect[3], shake_effect[3]);
 	if     (effect1 != NO_EFFECT && is_inside_area(area1, position.xy)) final_position = get_final_position(area1, position, effect1);
 	else if(effect2 != NO_EFFECT && is_inside_area(area2, position.xy)) final_position = get_final_position(area2, position, effect2);
 	else if(effect3 != NO_EFFECT && is_inside_area(area3, position.xy)) final_position = get_final_position(area3, position, effect3);
+	else if(effect4 != NO_EFFECT && is_inside_area(area4, position.xy)) final_position = get_final_position(area4, position, effect4);
 
 	gl_Position = view_proj * final_position;
 }

@@ -265,7 +265,7 @@ local function show_text_effects(self)
 	local wave_effect  = {0,0,0,0}
 	local float_effect = {0,0,0,0}
 	local shake_effect = {0,0,0,0}
-	for i=1, 3 do
+	for i=1, 4 do
 		local area = self.effect_areas[i]
 		if area then
 			local rect = area.rect
@@ -593,10 +593,7 @@ function on_message(self, message_id, message, sender)
 		if not message.character then
 			return
 		end
-		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip, message.effects or {
-			{from=1, to=7, color=vmath.vector4(0.3,0.3,0.3,1), shake_effect=true},
-			{from=26, to=39, color=vmath.vector4(0.2,0.8,0,1), to_color=vmath.vector4(1, 0.5, 0, 1), wave_effect=true}
-		})
+		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip, message.effects or {})
 
 		self.last_message_id = self.last_message_id + 1
 		local msg_id = self.last_message_id
@@ -620,7 +617,7 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("show") then
-		show_balloon(self, message.character, "", message.pos, message.no_arrow, false, {})
+		show_balloon(self, message.character, "", message.pos, message.no_arrow, false, message.effects or {})
 	end
 
 	if message_id == hash("add_text") then
