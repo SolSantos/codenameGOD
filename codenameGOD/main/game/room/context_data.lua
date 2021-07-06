@@ -1,6 +1,7 @@
 local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local context_data = require("main.context_data")
+local balloon_utils = require("main.game.dialogue.utils")
 
 local update_context_entries
 update_context_entries = function(self)
@@ -61,19 +62,20 @@ update_context_entries = function(self)
 			elseif game_state.data.waiting_for_night then
 				msg.post("/balloon", "show_text", {delay = 4, text="The party only starts at night, so I have to wait until there.", character = "/randall", sound="#Randall_2"})
 			else
-				local r = math.random(2)
 				if items.data.ticket.in_inventory then
-					if r == 1 then
-						msg.post("/balloon", "show_text", {delay = 4, text="I need to put on my shoes before I leave...", character = "/randall", sound="#Randall_3"})
-					else
-						msg.post("/balloon", "show_text", {delay = 4, text="What am I doing? I can't go barefoot!", character = "/randall", sound="#Randall_panic1"})
-					end
+					balloon_utils.show_one_of({
+						delay=4, character="/randall", messages={
+							{text="I need to put on my shoes before I leave...", sound="#Randall_3"},
+							{text="What am I doing? I can't go barefoot!", sound="#Randall_panic1"},
+						}
+					})
 				else
-					if r == 1 then
-						msg.post("/balloon", "show_text", {delay = 4, text="I have to find my ticket before I leave!", character = "/randall", sound="#Randall_1"})
-					else
-						msg.post("/balloon", "show_text", {delay = 4, text="Shoot, almost forgot my ticket!", character = "/randall", sound="#Randall_4"})
-					end
+					balloon_utils.show_one_of({
+						delay=4, character="/randall", messages={
+							{text="I have to find my ticket before I leave!", sound="#Randall_1"},
+							{text="Shoot, almost forgot my ticket!", sound="#Randall_4"},
+						}
+					})
 				end			
 			end
 		end}

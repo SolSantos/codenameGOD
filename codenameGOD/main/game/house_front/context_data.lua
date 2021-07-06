@@ -2,25 +2,24 @@ local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local context_data = require("main.context_data")
 local randall_utils = require("main.game.randall.utils")
+local balloon_utils = require("main.game.dialogue.utils")
 
 local update_context_entries
 
 update_context_entries = function(self)
+	self.balloon_message_group = {
+		character="randall", 
+		messages={
+			{text="A useless bike. Honestly, who designed this?"},
+			{text="Seriously, it doesn't even have pedals."},
+			{text="The wheels aren't even made of rubber. What is this... are they made of plastic?!"},
+			{text="Who owns this??!"},
+		}
+	}
+	
 	context_data[hash("broke_bike")] = {
 		{text="Inspect", click=function()
-			if bike_inspect == 0 then
-				msg.post("/balloon", "show_text", {text = "A useless bike. Honestly, who designed this?", character="randall"})
-				bike_inspect = bike_inspect + 1 
-			elseif bike_inspect == 1 then
-				msg.post("/balloon", "show_text", {text = "Seriously, it doesn't even have pedals.", character="randall"})
-				bike_inspect = bike_inspect + 1 
-			elseif bike_inspect == 2 then
-				msg.post("/balloon", "show_text", {text = "The wheels aren't even made of rubber. What is this... are they made of plastic?!", character="randall"})
-				bike_inspect = bike_inspect + 1 
-			else
-				msg.post("/balloon", "show_text", {text = "Who owns this??!", character="randall"})
-				bike_inspect = 0
-			end
+			balloon_utils.show_next_in_sequence(self.balloon_message_group)
 		end}
 	}
 

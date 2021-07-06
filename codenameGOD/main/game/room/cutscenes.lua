@@ -13,8 +13,8 @@ return {
 				"/balloon", "show_text", {
 					delay=5, text="Randall, wake up!! \nYou're gonna be late for school!", character = self.bro_url, sound="#Bullies_4", skip=true,
 					effects={
-						{from=1, to=7, color=vmath.vector4(0.3,0.3,0.3,1), shake_effect=true},
-						{from=10, to=13, color=vmath.vector4(1,0,0,1), float_effect=true},
+						{from=1, to=7, color=vmath.vector4(1,0,0,1), float_effect=true},
+						{from=10, to=18, color=vmath.vector4(0.3,0.3,0.6,1), shake_effect=true},
 						{from=26, to=39, color=vmath.vector4(0.2,0.8,0,1), to_color=vmath.vector4(1, 0.5, 0, 1), wave_effect=true},
 					}
 				}

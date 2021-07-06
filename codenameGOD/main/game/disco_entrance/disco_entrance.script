@@ -1,11 +1,67 @@
+local context_data = require("main.context_data")
 local context_utils = require("main.context_utils")
+local balloon_utils = require("main.game.dialogue.utils")
+local hints = require("main.hints")
 
-context_utils.register_goto_screen({
-	key="disco_entrance_goto_city_center", 
-	inspect_text="Path to the center of the city.", 
-	next_screen="city_center",
-	pos=vmath.vector3(902, 211, 0.2)
-})
+local get_guard_talk_pos = function(self)
+	return go.get_position(self.guard_url) + vmath.vector3(-5, 70, 0)
+end
+
+local update_context_entries = function(self)
+	context_utils.register_goto_screen({
+		key="disco_entrance_goto_city_center", 
+		inspect_text="Path to the center of the city.", 
+		next_screen="city_center",
+		pos=vmath.vector3(902, 211, 0.2)
+	})
+
+	local guard_talk_sequence = {
+		character=self.guard_url, pos=get_guard_talk_pos(self),
+		messages={
+			{text="Sorry man, this is a private party, you see. Very exclusive. I was given orders to let in only the absolute sickest looking kids. You don't fill the requirements at all. Gotta be at least as built as my sweet glutes to enter, bro."},
+			{text="Never seen this many people fall in line for such a cool VIP party. I tell ya, the head of the cheerleading team really outdid herself this time."},
+			{text="You didn't hear it from me, but rumor has it this party is so exclusive, they even brought a never before seen gaming system, all the way from Japan! Can you believe it?"},
+			{text="Well, you probably can't since you'll never set foot in there. Heh, your four tiny little nerdy eyes probably wouldn't even be able to handle such a sight, ain't that right little nerd? Anyway, I still can't let you in, man."},
+			{text="Sorry, kid. I can't let you in, You don't look cool enough."},
+			{text="Don't expect this to be like one of those nerdy videogames of yours where I hand you new information every time you engage in conversation. I don't swing that way, ya see. But boy, it sure is hot tonight."},
+		}
+	}
+	context_data[hash("disco_entrance_guard")] = {
+		{text="Inspect", click="The disco security guard is blocking the entrance, I need to get in someway."},
+		{text="Talk", click=function()
+			balloon_utils.show_next_in_sequence(guard_talk_sequence)
+		end},
+	}
+end
 
 function init(self)
+	self.guard_url = msg.url("guard")
+
+	update_context_entries(self)
+end
+
+function update(self, dt)
+	hints.update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("flavor") then
+		balloon_utils.show_one_of({
+			character="/randall", sound="#Randall_6",
+			messages={
+				{text="Random flavor 1"},
+				{text="Random flavor 2"}
+			}
+		})
+	end
+
+	if message_id == hash("hint") then
+		balloon_utils.show_one_of({
+			character=self.guard_url, pos=get_guard_talk_pos(self),
+			messages={
+				{text="Warm night."}, 
+				{text="I could really use a drink right now…"}
+			}
+		})
+	end	
 end

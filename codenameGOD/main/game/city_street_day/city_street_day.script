@@ -1,10 +1,11 @@
 local inside_gameobject = require "main.inside_gameobject"
 local randall_utils = require("main.game.randall.utils")
+local balloon_utils = require("main.game.dialogue.utils")
+local hints = require("main.hints")
 local metal_hit_url
 local trash_hit = 0
 local city_url
 local MOVE_AROUND_TIME = 15
-local update_time = 0
 local bully1_url
 local bully2_url
 local bully3_url
@@ -266,45 +267,35 @@ function init(self)
 end
 
 function update(self,dt)
-	update_time = update_time + dt
-	if update_time >= MOVE_AROUND_TIME then
-		update_time = 0
-		msg.post(".", "hint")
-		hint_count = 0
-	end
-
+	hints.update(self, dt)
 end
 
 function final(self)
 	msg.post("sound#ambiance", "stop_sound")
 end
 
+
+
 function on_message(self, message_id, message, sender)
 	if message_id == hash("bully_trash_warning") then
-		math.random()
-		local r = math.random(3)
-		if r == 1 then
-			event_manager:register_event(0.04, function(self, id)
-				msg.post("/balloon", "show_text", {delay=2, text = "IS THERE S-SOMETHING IN THE TRASH??", character = bully2_url, sound="#Bullies_4"})
-			end)
-		elseif r==2 then
-			event_manager:register_event(0.04, function(self, id)
-				msg.post("/balloon", "show_text", {delay=2, text = "BRO -- T-THAT SCARED ME, BRO!", character = bully2_url, sound="#Bullies_5"})
-			end)
-
-		else
-			event_manager:register_event(0.04, function(self, id)
-				msg.post("/balloon", "show_text", {delay=2, text = "AHH! WHAT WAS THAT NOISE??", character = bully2_url, sound="#Bullies_4"})
-			end)
-		end
-	elseif message_id == hash("hint") then
+		event_manager:register_event(0.04, function(self, id)
+			balloon_utils.show_one_of({
+				delay=2, character=bully2_url, sound="#Bullies_4", 
+				messages={
+					{text="IS THERE S-SOMETHING IN THE TRASH??"},
+					{text="BRO -- T-THAT SCARED ME, BRO!", sound="#Bullies_5"},
+					{text="AHH! WHAT WAS THAT NOISE??"},
+				}
+			})
+		end)
+	elseif message_id == hash("hint") or message_id == hash("flavor") then
 		if game_state.data.in_gameplay then
 			msg.post("/balloon", "show_text", {text = "If there's a God now's a good time to act!", character = "randall", sound="#Randall_panic1", event="scream"})			
 		end
 		msg.post(".", "moved")
 	end
 	if message_id == hash("moved") then
-		update_time = 0
+		hints.reset(self)
 	elseif message_id == hash("item_dropped_in_scene") then
 		if randall_utils.was_hit(message.x, message.y) then
 			randall_utils.default_item_ignore()

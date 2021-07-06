@@ -5,6 +5,8 @@ local cutscenes = require("main.game.room.cutscenes")
 local update_context_entries = require("main.game.room.context_data")
 local ouija_mode = require("main.game.room.ouija_mode")
 local randall_utils = require("main.game.randall.utils")
+local balloon_utils = require("main.game.dialogue.utils")
+local hints = require("main.hints")
 
 local MOVE_AROUND_TIME = 10
 local DOOR_HINT_DELAY = 4
@@ -72,18 +74,7 @@ function update(self, dt)
 	end
 
 	if self.show_hints then
-		self.update_time = self.update_time + dt
-	end
-
-	if self.update_time >= MOVE_AROUND_TIME then
-		self.update_time = 0
-		if self.hint_count < 2 then
-			msg.post(".", "idle")
-			self.hint_count = self.hint_count + 1
-		else
-			msg.post(".", "hint")
-			self.hint_count = 0
-		end
+		hints.update(self, dt)
 	end
 
 	-- Puzzle solved (puzzle_solved so it only plays once)
@@ -103,7 +94,6 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 
 	self.show_hints = false
-	self.update_time = 0
 	self.hint_count = 0
 	self.ouija_in_use = false
 	self.cutscenes = cutscenes
@@ -192,7 +182,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	-- Flavor text for Randall moving around alone
-	if message_id == hash("idle") then
+	if message_id == hash("flavor") then
 		-- Randall is free to move around unless he's waiting for a sign from god
 		if game_state.data.in_gameplay and not game_state.data.awaiting_signal then
 			local r = math.random(1, #item_strings)
@@ -220,19 +210,18 @@ function on_message(self, message_id, message, sender)
 			
 		-- Triggers when the player is waiting for a sign from God
 		elseif game_state.data.awaiting_signal and game_state.data.in_gameplay then
-			local r = math.random(3)
-			if r == 1 then
-				msg.post("/balloon", "show_text", {text = "Please, anything at all...?", character = "/randall", sound="#Randall_1"})
-			elseif r==2 then
-				msg.post("/balloon", "show_text", {text = "Literally anything will do, I'm kinda desperate here.", character = "/randall", sound="#Randall_1"})
-			else
-				msg.post("/balloon", "show_text", {text = "A thunder smiting the tree outside, perhaps?", character = "/randall", sound="#Randall_1"})
-			end
+			balloon_utils.show_one_of({
+				character="/randall", sound="#Randall_1", messages={
+					{text="Please, anything at all...?"},
+					{text="Literally anything will do, I'm kinda desperate here."},
+					{text = "A thunder smiting the tree outside, perhaps?"}
+				}
+			})
 		end
 		msg.post(".", "moved")
 	end
 	if message_id == hash("moved") then
-		self.update_time = 0
+		hints.reset(self)
 	end
 
 	-- A divine message is triggered
