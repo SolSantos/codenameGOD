@@ -595,11 +595,11 @@ function on_message(self, message_id, message, sender)
 			return
 		end
 		show_balloon(self, message.character, message.text, message.pos, message.no_arrow, message.skip, message.effects or {})
-
+		
 		self.last_message_id = self.last_message_id + 1
 		local msg_id = self.last_message_id
-		
-		msg.post(message.character, message.event or "start_talking")	
+
+		msg.post(message.character, message.event or "start_talking")
 		timer.delay(message.delay or ((self.balloon_text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
 			if msg_id == self.last_message_id then
 				hide_balloon(self)

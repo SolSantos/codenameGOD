@@ -1,5 +1,5 @@
 components {
-  id: "character"
+  id: "guard"
   component: "/main/game/character.script"
   position {
     x: 0.0

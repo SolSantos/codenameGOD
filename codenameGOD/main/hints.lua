@@ -1,4 +1,4 @@
-local HINT_TIME = 10 -- seconds
+local HINT_TIME = 15 -- seconds
 local FLAVORS_BEFORE_HINT = 2 -- 2 flavors and then 1 hint
 
 local update = function(collection, dt)
@@ -19,7 +19,9 @@ local update = function(collection, dt)
 end
 
 local reset = function(collection)
-	collection._hint.update_time = 0
+	if collection._hint then
+		collection._hint.update_time = 0
+	end
 end
 
 return {

@@ -63,5 +63,9 @@ function on_message(self, message_id, message, sender)
 				{text="I could really use a drink right now…"}
 			}
 		})
-	end	
+	end
+
+	if message_id == hash("moved") then
+		hints.reset(self)
+	end
 end
