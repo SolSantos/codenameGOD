@@ -25,7 +25,7 @@ local item_strings = {
 		position = {x=450, y=300}
 	},
 	[4] = {
-		text = "I wonder if they'll still be making these in 30 years... Nah, no way.",
+		text = "I wonder if they'll still be making these movies in 30 years... Nah, no way.",
 		position = {x=800, y=280}
 	},
 	[5] = {
@@ -199,9 +199,15 @@ function on_message(self, message_id, message, sender)
 		if game_state.data.in_gameplay and not game_state.data.both_shoes then
 
 			if items.data.ticket.in_inventory then
-				msg.post("/balloon", "show_text", {delay=5, text = "Boy, I sure wish my shoes \nmagically flew towards me!", character = "/randall", sound="#Randall_4"})
+				msg.post("/balloon", "show_text", {delay=5, text = "Boy, I sure wish my shoes \nmagically flew towards me!", character = "/randall", sound="#Randall_4", 
+				effects={
+					{from=21, to=25, color=vmath.vector4(1,0,0,1)}
+				}})
 			else
-				msg.post("/balloon", "show_text", {delay=6, text = "Pretty sure I was using my ticket as a\nbookmark last night... I need to find it.", character = "/randall", sound="#Randall_3"})
+				msg.post("/balloon", "show_text", {delay=6, text = "Pretty sure I was using my ticket as a\nbookmark last night... I need to find it.", character = "/randall", sound="#Randall_3",
+				effects={
+					{from=28, to=33, color=vmath.vector4(1,0,0,1)}
+				}})
 			end
 
 		-- Triggers when the player can leave the house but is yet to do so
@@ -227,7 +233,7 @@ function on_message(self, message_id, message, sender)
 	-- A divine message is triggered
 	if message_id == hash("divine_sign") then
 		if self.divine_signs == 1 then
-			msg.post("/balloon", "show_text", {text = "Holy cow! It's really happening! Ok. One more totally unique interaction to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
+			msg.post("/balloon", "show_text", {text = "Holy cow! It's really happening! Ok. One more time to make sure it's not just some wild coincidence.", character = "/randall", sound="#Randall_panic2"})
 		elseif self.divine_signs == 2 then
 			game_state.data.awaiting_signal = false
 			cutscenes.ouija_cutscene(self)
@@ -239,10 +245,7 @@ function on_message(self, message_id, message, sender)
 			msg.post("sound#7-books_falling", "play_sound")
 			local ticket_not_touched = items.data.ticket.found == 0
 			if ticket_not_touched then
-				msg.post("/balloon", "show_text", {delay = 4, text="There's the ticket! \nNow, where to put it...", character = "/randall", sound="#Randall_4"})
-				timer.delay(4, false, function(self, id)
-					msg.post("/balloon", "show_text", {delay = 2, text="Oh.", character = "/randall"})
-				end)
+				msg.post("/balloon", "show_text", {delay = 4, text="There's the ticket! \nNow, gotta store it somewhere..", character = "/randall", sound="#Randall_4"})
 			end
 		end)
 	end
@@ -256,6 +259,9 @@ function on_message(self, message_id, message, sender)
 			end)
 			timer.delay(4, false, function(self, id)
 				msg.post(self.inv_arrow_url, "disable")
+			end)
+			timer.delay(2, false, function(self, id)
+				msg.post("/balloon", "show_text", {delay = 2, text="Oh. There's an inventory.", character = "/randall"})
 			end)
 		end
 	end

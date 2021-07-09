@@ -123,6 +123,11 @@ update_context_entries = function(self)
 		context_data[hash("room_window")] = {
 			{text="Open", click=function()
 				self.window_closed = false
+				msg.post(self.window_sound_url, "play_sound")
+				local trigger_speech = math.random(1,5)
+				if trigger_speech == 2 then 
+					msg.post("/balloon", "show_text", {delay = 4, text="Ugh, the curtains have been going wild lately.", character = "/randall", sound="#Randall_2"})
+				end
 				self.refresh_window(self)
 				update_context_entries(self)
 			end}
@@ -131,6 +136,11 @@ update_context_entries = function(self)
 		context_data[hash("room_window")] = {
 			{text="Close", click=function()
 				self.window_closed = true
+				msg.post(self.window_sound_url, "play_sound")
+				local trigger_speech = math.random(1,5)
+				if trigger_speech == 2 then 
+					msg.post("/balloon", "show_text", {delay = 4, text="Ugh, the curtains have been going wild lately.", character = "/randall", sound="#Randall_2"})
+				end
 				self.refresh_window(self)
 				update_context_entries(self)
 			end}
