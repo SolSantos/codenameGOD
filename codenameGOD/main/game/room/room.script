@@ -1,4 +1,3 @@
-local inside_gameobject = require "main.inside_gameobject"
 local game_state = require("main.game_state")
 local items = require("main.game.item.items")
 local cutscenes = require("main.game.room.cutscenes")

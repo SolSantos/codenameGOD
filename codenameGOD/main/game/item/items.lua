@@ -68,7 +68,7 @@ local items = {
 			label = "This is the right shoe.",
 			movable = true
 		},
-		-- END OF ROOM ITEMS
+		-- HOUSE FRONT Items
 		cd = {
 			name = "cd_case",
 			text = "A CD by Jon Bovi",
@@ -78,6 +78,18 @@ local items = {
 			status = "hide",
 			found = 0,
 			label = "A CD by a band called Jon Bovi.",
+			movable = true
+		},
+		-- CITY CENTER items
+		pepsi = {
+			name = "pepsi",
+			text = "A pepsi can",
+			position = {x=306, y=206},
+			image = "items8",
+			scenario = "city_center",
+			status = "hide",
+			found = 0,
+			label = "A probably stale can of pepsi.",
 			movable = true
 		}
 	}
