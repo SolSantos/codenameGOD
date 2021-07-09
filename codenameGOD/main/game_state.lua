@@ -37,7 +37,9 @@ game_state.data = {
 	waiting_for_night = false,
 	-- Tells if we already opened the drawer in the room and saw the coins
 	trash_inspected = false,
-	trash_pickup = false
+	trash_pickup = false,
+	-- Tells if the machine in the city center is broken
+	machine_broken = false
 }
 
 game_state.load_save = function()

@@ -2,6 +2,7 @@ local context_utils = require("main.context_utils")
 local context_data = require("main.context_data")
 local inside_gameobject = require("main.inside_gameobject")
 local items = require("main.game.item.items")
+local game_state = require("main.game_state")
 
 local CONTEXT_GOTO = {
 	{
@@ -39,11 +40,9 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("item_dropped_in_scene") then
 		local inside_machine = inside_gameobject(self.vending_machine_sprite, message.x, message.y)
-		local bought_pepsi = inside_machine and message.item_name == "coins"
-		local break_machine = inside_machine and message.item_name == "petrock"
-		-- TODO: Do not allow the player to spend coins in a broken machine
-		-- TODO: Do not allow the player to spend the rock in a empty machine
-		-- TODO: Make sure the machine appears broken after leaving and coming back to the screen
+		local machine_working = not game_state.data.machine_broken
+		local bought_pepsi = machine_working and inside_machine and message.item_name == "coins"
+		local break_machine = machine_working and inside_machine and message.item_name == "petrock"
 
 		if bought_pepsi then
 			msg.post("/item_manager#item_manager", "destroy_item",{text = "coins"})
@@ -58,6 +57,7 @@ function on_message(self, message_id, message, sender)
 			items.data.pepsi.position.y = 276
 			msg.post("/item_manager#item_manager", "update_visible_items")
 			-- TODO: Som de pedra a partir o vidro
+			game_state.data.machine_broken = true
 		end
 	end
 end
