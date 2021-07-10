@@ -77,7 +77,7 @@ update_context_entries = function(self)
 	context_data[hash("back_to_room_door")] = {
 		{text="Inspect", click="The front entrance to my headquarters."},
 		{text="Go", click=function()
-			msg.post(door_sound_url, "play_sound")
+			msg.post(self.door_sound_url, "play_sound")
 			msg.post("/collections#main", "load_screen", {
 				name = "room",
 				pos = vmath.vector3(422,311,0.2)
