@@ -4,6 +4,7 @@ local balloon_utils = require("main.game.dialogue.utils")
 local inside_gameobject = require("main.inside_gameobject")
 local items = require("main.game.item.items")
 local hints = require("main.hints")
+local game_state = require("main.game_state")
 
 local get_guard_talk_pos = function(self)
 	return go.get_position(self.guard_url) + vmath.vector3(-5, 70, 0)
@@ -82,6 +83,18 @@ local update_context_entries = function(self)
 			balloon_utils.show_next_in_sequence(guard_talk_sequence)
 		end},
 	}
+
+	context_data[hash("disco_entrance_disco_door")] = {
+		{text="Inspect", click="Entrance to the D.O.Ks disco."},
+	}
+	if game_state.data.guard_passed_out then
+		table.insert(context_data[hash("disco_entrance_disco_door")], {
+			text="Go in", click=function()
+				print("Not Implemented Yet!")
+				-- TODO: Go inside when we have a inside the disco space
+			end
+		})
+	end
 end
 
 function init(self)
@@ -119,16 +132,19 @@ function on_message(self, message_id, message, sender)
 
 	if message_id == hash("item_dropped_in_scene") then
 		local inside_guard = inside_gameobject(self.guard_sprite_url, message.x, message.y)
-		if inside_guard and message.item_name == "pepsi" then
+		local is_guard_ok = not game_state.data.guard_passed_out
+		if is_guard_ok and inside_guard and message.item_name == "pepsi" then
 			msg.post("/item_manager#item_manager", "destroy_item", {text = "pepsi"})
 			cutscenes.give_pepsi_to_guard(self)
-			-- TODO: Allow randall to enter the disco by the front
+			game_state.data.guard_passed_out = true
+			update_context_entries(self)
 		end
 
-		if inside_guard and message.item_name == "petrock" then
+		if is_guard_ok and inside_guard and message.item_name == "petrock" then
 			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
 			cutscenes.hit_guard_with_rock(self)
-			-- TODO: Allow randall to enter the disco by the front
+			game_state.data.guard_passed_out = true
+			update_context_entries(self)
 		end
 	end
 	

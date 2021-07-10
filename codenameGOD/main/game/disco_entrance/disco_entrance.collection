@@ -31,9 +31,9 @@ instances {
   id: "guard_context"
   prototype: "/main/game/clickable_area/context_area.go"
   position {
-    x: 718.0
-    y: 158.0
-    z: 0.0
+    x: 735.0
+    y: 157.0
+    z: 0.1
   }
   rotation {
     x: 0.0
@@ -50,8 +50,8 @@ instances {
     }
   }
   scale3 {
-    x: 1.2
-    y: 2.0
+    x: 1.0
+    y: 1.8
     z: 1.0
   }
 }
@@ -72,6 +72,34 @@ instances {
   scale3 {
     x: 1.0
     y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "disco_door"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 707.0
+    y: 291.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "disco_entrance_disco_door"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.2
+    y: 1.8
     z: 1.0
   }
 }

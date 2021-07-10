@@ -39,7 +39,9 @@ game_state.data = {
 	trash_inspected = false,
 	trash_pickup = false,
 	-- Tells if the machine in the city center is broken
-	machine_broken = false
+	machine_broken = false,
+	-- Tells if the disco guard has passed out
+	guard_passed_out = false
 }
 
 game_state.load_save = function()
