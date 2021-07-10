@@ -20,7 +20,7 @@ local cutscenes = {
 			msg.post("/balloon", "show_text", {text="It's that a pepsi?", character=self.guard_url, skip=true})
 		end)
 		event_manager:register_event(3, function(_, id)
-			-- TODO: Play drinking pepsi sound
+			msg.post(self.drink_url, "play_sound")
 			-- TODO: Play drinking pepsi animation
 		end)
 		event_manager:register_event(2, function(_, id)
@@ -71,6 +71,7 @@ end
 function init(self)
 	self.guard_url = msg.url("guard")
 	self.guard_sprite_url = msg.url("guard#sprite")
+	self.drink_url = msg.url("sound#22-drink")
 	
 	update_context_entries(self)
 end

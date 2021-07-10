@@ -188,11 +188,41 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "go"
-  data: ""
+  id: "sound"
+  data: "components {\n"
+  "  id: \"20-vending_machine\"\n"
+  "  component: \"/assets/sounds/20-vending_machine.wav\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"21-break_vending_machine\"\n"
+  "  component: \"/assets/sounds/21-break_vending_machine.wav\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
   position {
-    x: 305.0
-    y: 279.0
+    x: 0.0
+    y: 0.0
     z: 0.0
   }
   rotation {

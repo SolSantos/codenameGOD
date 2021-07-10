@@ -35,6 +35,8 @@ context_data[hash("city_center_vending_machine")] = {
 
 function init(self)
 	self.vending_machine_sprite = msg.url("vending_machine#sprite")
+	self.vending_machine_url = msg.url("sound#20-vending_machine")
+	self.break_machine_url = msg.url("sound#21-break_vending_machine")
 end
 
 function on_message(self, message_id, message, sender)
@@ -46,18 +48,23 @@ function on_message(self, message_id, message, sender)
 
 		if bought_pepsi then
 			msg.post("/item_manager#item_manager", "destroy_item",{text = "coins"})
-			items.data.pepsi.status = "show"
-			msg.post("/item_manager#item_manager", "update_visible_items")
-			-- TODO: Som de moedas e pepsi a cair
+			msg.post(self.vending_machine_url, "play_sound")
+			timer.delay(5, false, function(_, id)
+				items.data.pepsi.status = "show"
+				msg.post("/item_manager#item_manager", "update_visible_items")
+			end)
 		end
 
 		if break_machine then
 			msg.post("/item_manager#item_manager", "destroy_item",{text = "petrock"})
-			items.data.pepsi.status = "show"
-			items.data.pepsi.position.y = 276
-			msg.post("/item_manager#item_manager", "update_visible_items")
-			-- TODO: Som de pedra a partir o vidro
+			
+			msg.post(self.break_machine_url, "play_sound")
 			game_state.data.machine_broken = true
+			timer.delay(1, false, function(_, id)
+				items.data.pepsi.status = "show"
+				items.data.pepsi.position.y = 276
+				msg.post("/item_manager#item_manager", "update_visible_items")
+			end)
 		end
 	end
 end

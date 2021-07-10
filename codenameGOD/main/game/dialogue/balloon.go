@@ -405,8 +405,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 34.0
-    y: 25.0
+    x: 32.0
+    y: 24.0
     z: 0.1
   }
   rotation {
@@ -425,8 +425,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 215.0
-    y: -26.0
+    x: 212.0
+    y: -28.0
     z: 0.1
   }
   rotation {
@@ -499,8 +499,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 210.0
-    y: 23.0
+    x: 212.0
+    y: 24.0
     z: 0.1
   }
   rotation {
@@ -573,8 +573,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 96.0
-    y: -2.0
+    x: 92.0
+    y: -4.0
     z: 0.1
   }
   rotation {
@@ -647,8 +647,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
   position {
-    x: 213.0
-    y: -2.0
+    x: 212.0
+    y: -4.0
     z: 0.1
   }
   rotation {
