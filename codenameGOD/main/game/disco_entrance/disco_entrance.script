@@ -1,11 +1,45 @@
 local context_data = require("main.context_data")
 local context_utils = require("main.context_utils")
 local balloon_utils = require("main.game.dialogue.utils")
+local inside_gameobject = require("main.inside_gameobject")
+local items = require("main.game.item.items")
 local hints = require("main.hints")
 
 local get_guard_talk_pos = function(self)
 	return go.get_position(self.guard_url) + vmath.vector3(-5, 70, 0)
 end
+
+local cutscenes = {
+	give_pepsi_to_guard = function(self)
+		msg.post("/collections#main", "stop_game")
+		msg.post("/cutscene#cutscene", "cutscene_start")
+		event_manager:register_event(0, function(_, id)
+			-- TODO: Show guard with pepsi in the hand
+		end)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/balloon", "show_text", {text="It's that a pepsi?", character=self.guard_url, skip=true})
+		end)
+		event_manager:register_event(3, function(_, id)
+			-- TODO: Play drinking pepsi sound
+			-- TODO: Play drinking pepsi animation
+		end)
+		event_manager:register_event(2, function(_, id)
+			msg.post("/balloon", "show_text", {text="I don't feel so fly...", character=self.guard_url, skip=true})
+		end)
+		event_manager:register_event(3, function(_, id)
+			-- TODO: Play animation of the guard falling to the ground
+		end)
+		event_manager:register_event(2, function(_, id)
+			msg.post("/collections#main", "restart_game")
+			msg.post("/cutscene#cutscene", "cutscene_end")
+		end)
+	end,
+	hit_guard_with_rock = function(self)
+		-- TODO: Play Pow effect showing the pet hitting the guard head
+		-- TODO: Play hit sound
+		-- TODO: Play an animation of the guard falling
+	end
+}
 
 local update_context_entries = function(self)
 	context_utils.register_goto_screen({
@@ -36,7 +70,8 @@ end
 
 function init(self)
 	self.guard_url = msg.url("guard")
-
+	self.guard_sprite_url = msg.url("guard#sprite")
+	
 	update_context_entries(self)
 end
 
@@ -65,6 +100,21 @@ function on_message(self, message_id, message, sender)
 		})
 	end
 
+	if message_id == hash("item_dropped_in_scene") then
+		local inside_guard = inside_gameobject(self.guard_sprite_url, message.x, message.y)
+		if inside_guard and message.item_name == "pepsi" then
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "pepsi"})
+			cutscenes.give_pepsi_to_guard(self)
+			-- TODO: Allow randall to enter the disco by the front
+		end
+
+		if inside_guard and message.item_name == "petrock" then
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
+			cutscenes.hit_guard_with_rock(self)
+			-- TODO: Allow randall to enter the disco by the front
+		end
+	end
+	
 	if message_id == hash("moved") then
 		hints.reset(self)
 	end

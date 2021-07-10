@@ -1,7 +1,12 @@
 local HINT_TIME = 15 -- seconds
 local FLAVORS_BEFORE_HINT = 2 -- 2 flavors and then 1 hint
+local is_running = true
 
 local update = function(collection, dt)
+	if not is_running then
+		return
+	end
+	
 	local hint = collection._hint or {update_time=0, counter=0, own_url=msg.url()}
 
 	hint.update_time = hint.update_time + dt
@@ -24,7 +29,17 @@ local reset = function(collection)
 	end
 end
 
+local stop = function()
+	is_running = false
+end
+
+local restart = function()
+	is_running = true
+end
+
 return {
 	update=update,
-	reset=reset
+	reset=reset,
+	stop=stop,
+	restart=restart
 }

@@ -1,8 +1,8 @@
-hint_count = 0
 event_manager = require "main.event_manager"
 persistence = require "main.persistence"
 game_state = require "main.game_state"
 items = require "main.game.item.items"
+local hints = require "main.hints"
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -52,8 +52,10 @@ function on_message(self, message_id, message, sender)
 		msg.post("/cursor", message_id)
 		if message_id == hash("stop_game") then
 			self.is_game_stopped = true
+			hints.stop()
 		else
 			self.is_game_stopped = false
+			hints.restart()
 		end
 	end
 
