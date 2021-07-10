@@ -83,6 +83,34 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "vending_machine"
+  prototype: "/main/game/clickable_area/context_area.go"
+  position {
+    x: 305.0
+    y: 281.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "context_area"
+    properties {
+      id: "context_key"
+      value: "city_center_vending_machine"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  scale3 {
+    x: 1.5
+    y: 2.1
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "background"
@@ -129,6 +157,56 @@ embedded_instances {
   data: "components {\n"
   "  id: \"city_center\"\n"
   "  component: \"/main/game/city_center/city_center.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "sound"
+  data: "components {\n"
+  "  id: \"20-vending_machine\"\n"
+  "  component: \"/assets/sounds/20-vending_machine.wav\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"21-break_vending_machine\"\n"
+  "  component: \"/assets/sounds/21-break_vending_machine.wav\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

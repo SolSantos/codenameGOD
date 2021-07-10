@@ -1,5 +1,6 @@
 local inside_gameobject = require("main.inside_gameobject")
 local utils = require("main.utils")
+local balloon_utils = require("main.game.dialogue.utils")
 
 local BALLOON_SPACE_X = 476
 local BALLOON_SPACE_Y = 180
@@ -7,7 +8,7 @@ local BALLOON_SPACE_Y = 180
 local LINE_HEIGHT = 20 -- pixels
 
 local LETTERS_PER_SECOND = 20
-local SMALL_BALLOON_SPACE = 31 -- letters
+local SMALL_BALLOON_SPACE = 30 -- letters
 local SMALL_BALLOON_MAX_LINES = 3
 local MIDDLE_BALLOON_SPACE = 39 -- letters
 local MIDDLE_BALLOON_MAX_LINES = 4
@@ -600,7 +601,7 @@ function on_message(self, message_id, message, sender)
 		local msg_id = self.last_message_id
 
 		msg.post(message.character, message.event or "start_talking")
-		timer.delay(message.delay or ((self.balloon_text:len() / LETTERS_PER_SECOND) + 1), false, function(self, id)
+		timer.delay(message.delay or balloon_utils.get_text_duration(self.balloon_text), false, function(self, id)
 			if msg_id == self.last_message_id then
 				hide_balloon(self)
 			end

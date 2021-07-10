@@ -1,11 +1,46 @@
 local context_data = require("main.context_data")
 local context_utils = require("main.context_utils")
 local balloon_utils = require("main.game.dialogue.utils")
+local inside_gameobject = require("main.inside_gameobject")
+local items = require("main.game.item.items")
 local hints = require("main.hints")
+local game_state = require("main.game_state")
 
 local get_guard_talk_pos = function(self)
 	return go.get_position(self.guard_url) + vmath.vector3(-5, 70, 0)
 end
+
+local cutscenes = {
+	give_pepsi_to_guard = function(self)
+		msg.post("/collections#main", "stop_game")
+		msg.post("/cutscene#cutscene", "cutscene_start")
+		event_manager:register_event(0, function(_, id)
+			-- TODO: Show guard with pepsi in the hand
+		end)
+		event_manager:register_event(1, function(_, id)
+			msg.post("/balloon", "show_text", {text="It's that a pepsi?", character=self.guard_url, skip=true})
+		end)
+		event_manager:register_event(3, function(_, id)
+			msg.post(self.drink_url, "play_sound")
+			-- TODO: Play drinking pepsi animation
+		end)
+		event_manager:register_event(2, function(_, id)
+			msg.post("/balloon", "show_text", {text="I don't feel so fly...", character=self.guard_url, skip=true})
+		end)
+		event_manager:register_event(3, function(_, id)
+			-- TODO: Play animation of the guard falling to the ground
+		end)
+		event_manager:register_event(2, function(_, id)
+			msg.post("/collections#main", "restart_game")
+			msg.post("/cutscene#cutscene", "cutscene_end")
+		end)
+	end,
+	hit_guard_with_rock = function(self)
+		-- TODO: Play Pow effect showing the pet hitting the guard head
+		-- TODO: Play hit sound
+		-- TODO: Play an animation of the guard falling
+	end
+}
 
 local update_context_entries = function(self)
 	context_utils.register_goto_screen({
@@ -18,25 +53,55 @@ local update_context_entries = function(self)
 	local guard_talk_sequence = {
 		character=self.guard_url, pos=get_guard_talk_pos(self),
 		messages={
-			{text="Sorry man, this is a private party, you see. Very exclusive. I was given orders to let in only the absolute sickest looking kids. You don't fill the requirements at all. Gotta be at least as built as my sweet glutes to enter, bro."},
-			{text="Never seen this many people fall in line for such a cool VIP party. I tell ya, the head of the cheerleading team really outdid herself this time."},
-			{text="You didn't hear it from me, but rumor has it this party is so exclusive, they even brought a never before seen gaming system, all the way from Japan! Can you believe it?"},
-			{text="Well, you probably can't since you'll never set foot in there. Heh, your four tiny little nerdy eyes probably wouldn't even be able to handle such a sight, ain't that right little nerd? Anyway, I still can't let you in, man."},
-			{text="Sorry, kid. I can't let you in, You don't look cool enough."},
-			{text="Don't expect this to be like one of those nerdy videogames of yours where I hand you new information every time you engage in conversation. I don't swing that way, ya see. But boy, it sure is hot tonight."},
+			{text_group={
+				{text="Sorry man, this is a private party, you see. Very exclusive."},
+				{text="I was given orders to let in only the absolute sickest looking kids. You don't fill the requirements at all."},
+				{text="Gotta be at least as built as my sweet glutes to enter, bro."}
+			}},
+			{text_group={
+				{text="Never seen this many people fall in line for such a cool VIP party."},
+				{text="I tell ya, the head of the cheerleading team really outdid herself this time."}
+			}},
+			{text_group={
+				{text="You didn't hear it from me, but rumor has it this party is so exclusive, they even brought a never before seen gaming system, all the way from Japan!"},
+				{text="Can you believe it?"},
+				{text="Well, you probably can't since you'll never set foot in there."},
+				{text="Heh, your four tiny little nerdy eyes probably wouldn't even be able to handle such a sight, ain't that right little nerd?"},
+				{text="Anyway, I still can't let you in, man."}
+			}},
+			{text="Sorry, kid. I can't let you in. You don't look cool enough."},
+			{text_group={
+				{text="Don't expect this to be like one of those nerdy videogames of yours where I hand you new information every time you engage in conversation."},
+				{text="I don't swing that way, ya see."},
+				{text="But boy, it sure is hot tonight."}
+			}},
 		}
 	}
 	context_data[hash("disco_entrance_guard")] = {
-		{text="Inspect", click="The disco security guard is blocking the entrance, I need to get in someway."},
+		{text="Inspect", click="The bouncer is blocking the entrance. I need to get in somehow."},
 		{text="Talk", click=function()
 			balloon_utils.show_next_in_sequence(guard_talk_sequence)
 		end},
 	}
+
+	context_data[hash("disco_entrance_disco_door")] = {
+		{text="Inspect", click="Entrance to the D.O.Ks disco."},
+	}
+	if game_state.data.guard_passed_out then
+		table.insert(context_data[hash("disco_entrance_disco_door")], {
+			text="Go in", click=function()
+				print("Not Implemented Yet!")
+				-- TODO: Go inside when we have a inside the disco space
+			end
+		})
+	end
 end
 
 function init(self)
 	self.guard_url = msg.url("guard")
-
+	self.guard_sprite_url = msg.url("guard#sprite")
+	self.drink_url = msg.url("sound#22-drink")
+	
 	update_context_entries(self)
 end
 
@@ -49,8 +114,8 @@ function on_message(self, message_id, message, sender)
 		balloon_utils.show_one_of({
 			character="/randall", sound="#Randall_6",
 			messages={
-				{text="Random flavor 1"},
-				{text="Random flavor 2"}
+				{text="How can I get the bouncer to let me into Becky's party?"},
+				{text="Going to this party is the only way I can get Becky's attention."}
 			}
 		})
 	end
@@ -60,11 +125,29 @@ function on_message(self, message_id, message, sender)
 			character=self.guard_url, pos=get_guard_talk_pos(self),
 			messages={
 				{text="Warm night."}, 
-				{text="I could really use a drink right now…"}
+				{text="I could really use a drink right now..."}
 			}
 		})
 	end
 
+	if message_id == hash("item_dropped_in_scene") then
+		local inside_guard = inside_gameobject(self.guard_sprite_url, message.x, message.y)
+		local is_guard_ok = not game_state.data.guard_passed_out
+		if is_guard_ok and inside_guard and message.item_name == "pepsi" then
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "pepsi"})
+			cutscenes.give_pepsi_to_guard(self)
+			game_state.data.guard_passed_out = true
+			update_context_entries(self)
+		end
+
+		if is_guard_ok and inside_guard and message.item_name == "petrock" then
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
+			cutscenes.hit_guard_with_rock(self)
+			game_state.data.guard_passed_out = true
+			update_context_entries(self)
+		end
+	end
+	
 	if message_id == hash("moved") then
 		hints.reset(self)
 	end
