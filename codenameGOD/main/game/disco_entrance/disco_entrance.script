@@ -10,6 +10,26 @@ local get_guard_talk_pos = function(self)
 	return go.get_position(self.guard_url) + vmath.vector3(-5, 70, 0)
 end
 
+local function use_petrock(target_pos, pow_offset, end_callback)
+	go.set_position(vmath.vector3(WIDTH / 2, -30, 1), items.data.petrock.go)
+	
+	-- Give time to the update_visible_items to be processed and create the petrock gameobject
+	timer.delay(0.2, false, function()
+		go.animate(msg.url(items.data.petrock.go), "position.x", go.PLAYBACK_ONCE_FORWARD, target_pos.x, go.EASING_LINEAR, 0.4)
+		go.animate(msg.url(items.data.petrock.go), "position.y", go.PLAYBACK_ONCE_FORWARD, target_pos.y, go.EASING_LINEAR, 0.4, 0, function()
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
+			msg.post("/sound#10-hit", "play_sound")
+			sprite.play_flipbook("/pow", "pow", function()
+				msg.post("/pow", "disable")
+				if end_callback then
+					end_callback()
+				end
+			end)
+			go.set_position(vmath.vector3(target_pos.x, target_pos.y, 1) + pow_offset, "/pow")
+		end)
+	end)
+end
+
 local cutscenes = {
 	give_pepsi_to_guard = function(self)
 		msg.post("/collections#main", "stop_game")
@@ -36,8 +56,6 @@ local cutscenes = {
 		end)
 	end,
 	hit_guard_with_rock = function(self)
-		-- TODO: Play Pow effect showing the pet hitting the guard head
-		-- TODO: Play hit sound
 		-- TODO: Play an animation of the guard falling
 	end
 }
@@ -141,10 +159,13 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if is_guard_ok and inside_guard and message.item_name == "petrock" then
-			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
-			cutscenes.hit_guard_with_rock(self)
-			game_state.data.guard_passed_out = true
-			update_context_entries(self)
+			local pow_offset = vmath.vector3(50, 50, 0)
+			local target_pos = go.get_position(self.guard_url)
+			use_petrock(target_pos, pow_offset, function()
+				cutscenes.hit_guard_with_rock(self)
+				game_state.data.guard_passed_out = true
+				update_context_entries(self)
+			end)
 		end
 	end
 	
