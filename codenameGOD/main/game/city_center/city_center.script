@@ -34,9 +34,14 @@ context_data[hash("city_center_vending_machine")] = {
 }
 
 function init(self)
-	self.vending_machine_sprite = msg.url("vending_machine#sprite")
+	self.vending_machine_sprite = msg.url("vending_machine_context#sprite")
 	self.vending_machine_url = msg.url("sound#20-vending_machine")
 	self.break_machine_url = msg.url("sound#21-break_vending_machine")
+	self.vending_machine_broken = msg.url("vending_machine_broken")
+	
+	if not game_state.data.machine_broken then
+		msg.post(self.vending_machine_broken, "disable")
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -56,14 +61,17 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if break_machine then
-			msg.post("/item_manager#item_manager", "destroy_item",{text = "petrock"})
-			
-			msg.post(self.break_machine_url, "play_sound")
-			game_state.data.machine_broken = true
-			timer.delay(1, false, function(_, id)
-				items.data.pepsi.status = "show"
-				items.data.pepsi.position.y = 276
-				msg.post("/item_manager#item_manager", "update_visible_items")
+			local machine_pos = go.get_position(self.vending_machine_broken)
+			items.use_petrock(machine_pos, vmath.vector3(50, 50, 0), self.break_machine_url, function()
+				msg.post(self.vending_machine_broken, "enable")
+				sprite.play_flipbook(self.vending_machine_broken, "city_street_break_machine")
+				game_state.data.machine_broken = true
+
+				timer.delay(0.2, false, function(_, id)
+					items.data.pepsi.status = "show"
+					items.data.pepsi.position.y = 306
+					msg.post("/item_manager#item_manager", "update_visible_items")
+				end)
 			end)
 		end
 	end

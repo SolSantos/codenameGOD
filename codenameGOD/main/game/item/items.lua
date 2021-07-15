@@ -84,7 +84,7 @@ local items = {
 		pepsi = {
 			name = "pepsi",
 			text = "A pepsi can",
-			position = {x=306, y=206},
+			position = {x=336, y=206},
 			image = "items8",
 			scenario = "city_center",
 			status = "hide",
@@ -101,5 +101,30 @@ items.load_save = function()
 		items.data = loaded_data
 	end
 end
+
+items.use_petrock = function(target_pos, pow_offset, hit_sound, end_callback)
+	assert(items.data.petrock.go ~= nil)
+	pow_offset = pow_offset or vmath.vector3(0, 0, 0)
+	hit_sound = hit_sound or "/sound#10-hit"
+	
+	go.set_position(vmath.vector3(WIDTH / 2, -30, 1), items.data.petrock.go)
+
+	-- Give time to the update_visible_items to be processed and create the petrock gameobject
+	timer.delay(0.2, false, function()
+		go.animate(msg.url(items.data.petrock.go), "position.x", go.PLAYBACK_ONCE_FORWARD, target_pos.x, go.EASING_INQUINT, 0.4)
+		go.animate(msg.url(items.data.petrock.go), "position.y", go.PLAYBACK_ONCE_FORWARD, target_pos.y, go.EASING_LINEAR, 0.4, 0, function()
+			msg.post("/item_manager#item_manager", "destroy_item", {text = "petrock"})
+			msg.post(hit_sound, "play_sound")
+			sprite.play_flipbook("/pow", "pow", function()
+				msg.post("/pow", "disable")
+			end)
+			go.set_position(vmath.vector3(target_pos.x, target_pos.y, 1) + pow_offset, "/pow")
+			if end_callback then
+				end_callback()
+			end
+		end)
+	end)
+end
+
 
 return items
