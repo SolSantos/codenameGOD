@@ -885,6 +885,29 @@ animations {
   flip_horizontal: 1
   flip_vertical: 0
 }
+animations {
+  id: "stop_petting_left"
+  images {
+    image: "/assets/images/characters/special/special103.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/special/special104.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/special/special105.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/images/characters/special/special106.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 6
+  flip_horizontal: 1
+  flip_vertical: 0
+}
 margin: 0
 extrude_borders: 1
 inner_padding: 0

@@ -34,16 +34,22 @@ local function make_randall_pet_dog(self, x)
 	timer.delay(duration+0.8, false, function(self, id)
 		msg.post("/randall#sprite", "play_animation", {id = hash("petting_left")})
 	end)
+	timer.delay(duration+4.3, false, function(self, id)
+		msg.post("/randall#sprite", "play_animation", {id = hash("stop_petting_left")})
+	end)
+	timer.delay(duration+5.0, false, function(self, id)
+		msg.post("/randall#sprite", "play_animation", {id = hash("idle")})
+	end)
 end
 
 
 local function doggo_go_right(self, delay)
 	msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_right")})
 
-	self.doggo_move_timer_right = timer.delay(10+(delay or 0), false, function(_, id)
+	self.doggo_move_timer_right = timer.delay(8.5+(delay or 0), false, function(_, id)
 		msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_walk_right")})
 		self.doggo_state = "WALKING"
-		go.animate(self.doggo_url, "position.x", go.PLAYBACK_ONCE_FORWARD, 570, go.EASING_LINEAR, 3.5, 0, function()
+		go.animate(self.doggo_url, "position.x", go.PLAYBACK_ONCE_FORWARD, 510, go.EASING_LINEAR, 3.5, 0, function()
 			msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_right")})
 			self.doggo_state = "IDLE"
 		end)
@@ -58,7 +64,7 @@ end
 local function doggo_go_left(self, delay)
 	msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_stand_idle_left")})
 
-	self.doggo_move_timer_left = timer.delay(10+(delay or 0), false, function(_, id)
+	self.doggo_move_timer_left = timer.delay(8.5+(delay or 0), false, function(_, id)
 		msg.post(self.doggo_sprite_url, "play_animation", {id = hash("doggo_walk_left")})
 		self.doggo_state = "WALKING"
 		go.animate(self.doggo_url, "position.x", go.PLAYBACK_ONCE_FORWARD, 100, go.EASING_LINEAR, 3.5, 0, function()
